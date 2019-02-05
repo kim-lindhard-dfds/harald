@@ -1,0 +1,11 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: Harald
+  description: The one notification
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /api/v1/
+paths:

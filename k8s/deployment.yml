@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: harald
+  namespace: $(kubernetes-namespace)
+  labels:
+    project: selfservice
+    department: devex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: harald
+  template:
+    metadata:
+      labels:
+        app: harald
+        project: selfservice
+        department: devex
+    spec:
+      initContainers:
+      - name: dbmigrations
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/harald/dbmigrations:$(Build.BuildId)
+        env:
+        - name:  PGDATABASE
+          value: harald-db
+        - name:  PGHOST
+          value: $(PGHOST)
+        - name:  PGPORT
+          value: "1433"
+        - name:  PGUSER
+          value: $(PGUSER)
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: harald
+              key: password
+      containers:
+      - name: harald
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/harald:$(Build.BuildId)
+        ports:
+        - containerPort: 80
+          name: web
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: HARALD_DATABASE_CONNECTIONSTRING
+          valueFrom:
+            secretKeyRef:
+              name: harald
+              key: connection-string

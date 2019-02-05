@@ -1,0 +1,35 @@
+name: $(Build.BuildId)
+pool:
+  vmImage: 'ubuntu-16.04'
+trigger:
+- master
+
+steps:
+- bash: |
+    sudo pip install setuptools
+    sudo pip install awscli
+    chmod +x ./pipeline.sh
+    ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
+  env:
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  displayName: Pipeline Bash Script
+
+- task: PublishTestResults@2
+  displayName: Publish Test Results
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: testresults.trx
+    searchFolder: '$(System.DefaultWorkingDirectory)/output'
+  condition: succeededOrFailed()
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
+
+- task: PublishBuildArtifacts@1
+  displayName: "Publish Artifact: manifests"
+  inputs:
+    PathtoPublish: k8s
+    ArtifactName: manifests
