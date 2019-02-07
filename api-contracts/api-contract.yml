@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 0.0.1
+  version: 1
   title: Harald
   description: The one notification
 consumes:
@@ -9,3 +9,23 @@ produces:
   - application/json
 basePath: /api/v1/
 paths:
+  /messages:
+    post:
+      summary: Queue a message for dispatching
+      parameters:
+        - in: body
+          required: true
+          schema:
+            $ref: "#/definitions/message"
+      responses:
+        202:
+          description: Accepted - message is queued for dispatching
+
+definitions:
+  message:
+    type: object
+    properties:
+      capabilityId:
+        type: string
+      message:
+        type: string
