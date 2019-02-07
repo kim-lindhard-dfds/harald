@@ -1,0 +1,30 @@
+sequenceDiagram
+
+    participant CapabilityService
+    participant MessageBroker
+    participant Harald
+    participant Database
+    participant Slack
+
+    activate MessageBroker
+    activate CapabilityService
+    activate Harald
+
+    CapabilityService ->> MessageBroker: publishMessage(topic, msg)
+    Note over CapabilityService,MessageBroker: topic: CapabilityCreated
+    MessageBroker -->> CapabilityService: 
+
+    deactivate CapabilityService
+
+
+    Harald ->> MessageBroker: receiveMessage(topic)
+    MessageBroker -->> Harald: msg
+
+    Harald ->>+ Slack: createChannel(capabilityName)
+    Slack -->>- Harald: 
+
+    Harald ->>+ Database: save(capability, slackChannelName)
+    Database -->>- Harald: 
+
+    deactivate Harald
+    deactivate MessageBroker

@@ -1,0 +1,23 @@
+sequenceDiagram
+
+    participant User
+    participant Harald
+    participant Database
+    participant Slack
+
+    activate User
+    activate Harald
+
+    User ->> Harald: [http post] /messages
+    Note over User,Harald: { "capabilityId": "...", "message": "..." }
+    Harald -->> User: 202 Accepted
+
+    deactivate User
+
+    Harald ->>+ Database: retrieveSlackChannelFor(capabilityId)
+    Database -->>- Harald: slackChannelName
+
+    Harald ->>+ Slack: sendMessage(slackChannelName, message)
+    Slack -->>- Harald: 
+
+    deactivate Harald
