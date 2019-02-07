@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 using Harald.Application.Facades;
 
 
-namespace Harald.Infrastructure
+namespace Harald.Infrastructure.Facades
 {
     public class SlackFacade : ISlackFacade
     {
