@@ -53,13 +53,11 @@ namespace Harald.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
 
             app.UseHealthChecks("/healthz", new HealthCheckOptions
             {
                 ResponseWriter = MyPrometheusStuff.WriteResponseAsync
-
             });
 
             app.UseMetricServer();
