@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Persistence;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Prometheus;
 
 namespace Harald.WebApi
@@ -31,13 +33,13 @@ namespace Harald.WebApi
 
             var connectionString = Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
 
-            Console.WriteLine(connectionString);
-            
             services
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
             services.AddTransient<ICapabilityRepository, CapabilityRepository>();
+
+            services.AddHostedService<MetricHostedService>();
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
@@ -46,7 +48,7 @@ namespace Harald.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -59,8 +61,33 @@ namespace Harald.WebApi
             {
                 ResponseWriter = MyPrometheusStuff.WriteResponseAsync
             });
+        }
+    }
 
-            app.UseMetricServer();
+    public class MetricHostedService : IHostedService
+    {
+        private const string Host = "0.0.0.0";
+        private const int Port = 8080;
+
+        private IMetricServer _metricServer;
+
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine($"Staring metric server on {Host}:{Port}");
+
+            _metricServer = new KestrelMetricServer(Host, Port).Start();
+
+            return Task.CompletedTask;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            using (_metricServer)
+            {
+                Console.WriteLine("Shutting down metric server");
+                await _metricServer.StopAsync();
+                Console.WriteLine("Done shutting down metric server");
+            }
         }
     }
 
