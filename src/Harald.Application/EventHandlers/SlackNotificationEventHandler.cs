@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Harald.Application.Facades;
+using Harald.Application.Facades.Slack;
 using Harald.Domain.Capability.Events;
 
 namespace Harald.Application.EventHandlers

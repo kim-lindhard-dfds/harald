@@ -2,8 +2,9 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Harald.Application.Facades;
-using Harald.Infrastructure.Facades;
+using Harald.Application.Facades.Slack;
+using Harald.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Serialization;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -50,6 +51,8 @@ namespace Harald.WebApi
                 ;
             
             services.AddSwaggerDocument();
+
+            services.AddTransient<JsonSerializer>();
 
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {

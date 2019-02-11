@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Harald.Application.Facades;
+using Harald.Application.Facades.Slack;
 using Harald.Domain.Capability.Events;
 
 namespace Harald.Application.EventHandlers
@@ -15,7 +15,13 @@ namespace Harald.Application.EventHandlers
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            await _slackFacade.CreateChannel(domainEvent.CapabilityName);
+            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.CapabilityName);
+
+            if (createChannelResponse.Ok)
+            {
+                // TODO: Save Slack channel ID for capability.
+                var channelId = createChannelResponse?.Channel?.Id;
+            }
         }
     }
 }

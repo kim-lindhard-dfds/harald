@@ -3,7 +3,8 @@ using System.Net.Http;
 using Xunit;
 using Harald.Application.EventHandlers;
 using Harald.Domain.Capability.Events;
-using Harald.Infrastructure.Facades;
+using Harald.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Serialization;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -21,9 +22,9 @@ namespace Harald.IntegrationTests.EventHandlers
 
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
-            var slackFacade = new SlackFacade(httpClient);
+            var slackFacade = new SlackFacade(httpClient, new JsonSerializer());
             var sut = new SlackNotificationEventHandler(slackFacade);
-            var recipient = "ded-team-one";
+            var recipient = "janie-test";//"ded-team-one";
             var message = "Test via facade.";
             var domainEvent = new SendNotificationDomainEvent(
                 aggregateRootId: Guid.NewGuid(),
