@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Harald.Application.Facades;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Harald.WebApi.Controllers
@@ -8,9 +10,20 @@ namespace Harald.WebApi.Controllers
     [ApiController]
     public class DispatchController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult DispatchMessage(DispatchMessageInput input)
+        private readonly ISlackFacade _slackFacade;
+
+        public DispatchController(ISlackFacade slackFacade)
         {
+            _slackFacade = slackFacade;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DispatchMessage(DispatchMessageInput input)
+        {
+            // TODO: Fetch channel from DB using capibilityId.
+            const string capabilityChannel = "ded-team-one";
+            await _slackFacade.SendNotification(capabilityChannel, input.Message);
+         
             return Accepted();
         }
     }

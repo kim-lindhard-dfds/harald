@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Harald.Application.Facades;
+using Harald.Infrastructure.Facades;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -47,6 +50,22 @@ namespace Harald.WebApi
                 ;
             
             services.AddSwaggerDocument();
+
+            services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
+            {
+                var baseUrl = Configuration["SLACK_API_BASE_URL"];
+                if (baseUrl != null)
+                {
+                    cfg.BaseAddress = new Uri(baseUrl);
+                }
+
+                var authToken = Configuration["SLACK_API_BOT_TOKEN"];
+                if (authToken != null)
+                {
+                    cfg.DefaultRequestHeaders
+                    .Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
+                }
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

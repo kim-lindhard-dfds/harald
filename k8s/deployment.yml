@@ -56,6 +56,13 @@ spec:
             secretKeyRef:
               name: harald
               key: connection-string
+        - name: SLACK_API_BASE_URL
+          value: https://slack.com
+        - name: SLACK_API_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: harald
+              key: slack-bot-token
         livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 5
