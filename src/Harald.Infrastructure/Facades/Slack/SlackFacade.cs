@@ -1,10 +1,7 @@
-using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Harald.Application.Facades.Slack;
 using Harald.Infrastructure.Serialization;
-
 
 namespace Harald.Infrastructure.Facades.Slack
 {
@@ -38,6 +35,26 @@ namespace Harald.Infrastructure.Facades.Slack
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
             response.EnsureSuccessStatusCode();
+        }
+
+        public async Task InviteToChannel(string email, string channelId)
+        {
+            var userId = await GetUserId(email);
+            var payload = _serializer.GetPayload(new { Channel = channelId, user = userId });
+
+            var response = await _client.PostAsync("/api/channels.invite", payload);
+            response.EnsureSuccessStatusCode();
+        }
+
+        private async Task<string> GetUserId(string email)
+        {
+            var response = await _client.GetAsync($"/api/users.lookupByEmail?email={email}");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            string userId = _serializer.GetTokenValue<string>(content, "['user']['id']");
+            
+            return userId;
         }
     }
 }

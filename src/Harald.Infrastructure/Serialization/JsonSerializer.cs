@@ -1,7 +1,9 @@
+using System;
 using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace Harald.Infrastructure.Serialization
@@ -44,6 +46,15 @@ namespace Harald.Infrastructure.Serialization
             );
 
             return payload;
+        }
+
+        public T GetTokenValue<T>(string jsonInput, string path)
+        {
+            dynamic json = JValue.Parse(jsonInput);
+            
+            T tokenValue = (T)Convert.ChangeType(json.SelectToken(path), typeof(T));
+
+            return tokenValue;
         }
     }
 }

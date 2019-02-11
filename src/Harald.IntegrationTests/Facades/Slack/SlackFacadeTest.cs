@@ -31,5 +31,25 @@ namespace Harald.IntegrationTests.Facades.Slack
             Assert.Equal(channelName, createChannelResponse.Channel.Name);
             Assert.NotEmpty(createChannelResponse.Channel.Id);
         }
+
+        [Fact]
+        public async Task InviteToChannel_Given_valid_input_Should_invite_to_channel()
+        {
+            // Arrange
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://slack.com");
+            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
+
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
+
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var channelId = "CG3H7GARG";
+            var userEmail = "janie@dfds.com";
+            
+            // Act
+            await sut.InviteToChannel(userEmail, channelId);
+            
+            // Assert
+        }
     }
 }

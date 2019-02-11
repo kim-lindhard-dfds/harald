@@ -6,5 +6,6 @@ namespace Harald.Application.Facades.Slack
     {
         Task SendNotification(string recipient, string message);
         Task<CreateChannelResponse> CreateChannel(string channelName);
+        Task InviteToChannel(string email, string channelId);
     }
 }
