@@ -58,11 +58,11 @@ spec:
               key: connection-string
         - name: SLACK_API_BASE_URL
           value: https://slack.com
-        - name: SLACK_API_BOT_TOKEN
+        - name: SLACK_API_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: harald
-              key: slack-bot-token
+              key: slack-auth-token
         livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 5

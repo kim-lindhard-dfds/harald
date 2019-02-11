@@ -59,7 +59,7 @@ namespace Harald.WebApi
                     cfg.BaseAddress = new Uri(baseUrl);
                 }
 
-                var authToken = Configuration["SLACK_API_BOT_TOKEN"];
+                var authToken = Configuration["SLACK_API_AUTH_TOKEN"];
                 if (authToken != null)
                 {
                     cfg.DefaultRequestHeaders

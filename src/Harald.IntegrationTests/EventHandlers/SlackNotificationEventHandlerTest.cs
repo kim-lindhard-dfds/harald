@@ -17,9 +17,9 @@ namespace Harald.IntegrationTests.EventHandlers
             // Arrange
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
-            var botToken = Environment.GetEnvironmentVariable("SLACK_API_BOT_TOKEN");
+            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
 
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {botToken}");
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
             var slackFacade = new SlackFacade(httpClient);
             var sut = new SlackNotificationEventHandler(slackFacade);
