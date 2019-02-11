@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace Harald.Application
 {
     public interface IEventHandler<in T>
     {
-        void Handle(T domainEvent);
+        Task HandleAsync(T domainEvent);
     }
 }

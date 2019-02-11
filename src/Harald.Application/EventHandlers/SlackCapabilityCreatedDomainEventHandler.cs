@@ -13,9 +13,9 @@ namespace Harald.Application.EventHandlers
             _slackFacade = slackFacade;
         }
 
-        public void Handle(CapabilityCreatedDomainEvent domainEvent)
+        public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            _slackFacade.CreateChannel(domainEvent.CapabilityName);
+            await _slackFacade.CreateChannel(domainEvent.CapabilityName);
         }
     }
 }

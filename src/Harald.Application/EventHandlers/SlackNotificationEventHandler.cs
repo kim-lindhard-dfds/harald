@@ -13,9 +13,9 @@ namespace Harald.Application.EventHandlers
             _slackFacade = slackFacade;
         }
 
-        public void Handle(SendNotificationDomainEvent domainEvent)
+        public async Task HandleAsync(SendNotificationDomainEvent domainEvent)
         {
-            _slackFacade.SendNotification(domainEvent.Recipient, domainEvent.Message);
+            await _slackFacade.SendNotification(domainEvent.Recipient, domainEvent.Message);
         }
     }
 }

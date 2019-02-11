@@ -21,16 +21,16 @@ namespace Harald.Infrastructure.Facades
         public async Task CreateChannel(string channelName)
         {
             var payload = GetPayload(new { Name = channelName, Validate = true });
-            var response = await _client.PostAsync("/channels.create", payload);
-            
+            var response = await _client.PostAsync("/api/channels.create", payload);
+
             response.EnsureSuccessStatusCode();
         }
 
         public async Task SendNotification(string recipient, string message)
         {
             var payload = GetPayload(new { Channel = recipient, Text = message });
-            var response = await _client.PostAsync("/chat.postMessage", payload);
-            
+
+            var response = await _client.PostAsync("/api/chat.postMessage", payload);
             response.EnsureSuccessStatusCode();
         }
 
