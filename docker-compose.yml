@@ -24,3 +24,12 @@ services:
     - PGUSER=postgres             # same as above
     - PGPASSWORD=p                # same as above
     - PGSSLMODE=disable           # ignore SSLMODE for local development (overwritten - see ./db/Dockerfile)
+
+  kafka:
+    image: spotify/kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+        ADVERTISED_HOST: 0.0.0.0
+        ADVERTISED_PORT: "9092"
