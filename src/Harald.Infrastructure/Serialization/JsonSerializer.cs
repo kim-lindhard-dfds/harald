@@ -50,11 +50,10 @@ namespace Harald.Infrastructure.Serialization
 
         public T GetTokenValue<T>(string jsonInput, string path)
         {
-            dynamic json = JValue.Parse(jsonInput);
-            
-            T tokenValue = (T)Convert.ChangeType(json.SelectToken(path), typeof(T));
+            dynamic json = JValue.Parse(jsonInput);    
+            var token = json.SelectToken(path);
 
-            return tokenValue;
+            return token.ToObject<T>();
         }
     }
 }

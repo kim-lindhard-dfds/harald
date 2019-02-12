@@ -14,12 +14,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
             // Arrange
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://slack.com");
-            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
-
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
-
+            var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer());
             var channelName = "janie-test";
             
@@ -36,12 +31,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task InviteToChannel_Given_valid_input_Should_invite_to_channel()
         {
             // Arrange
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://slack.com");
-            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
-
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
-
+            var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer());
             var channelId = "CG3H7GARG";
             var userEmail = "janie@dfds.com";
@@ -50,6 +40,37 @@ namespace Harald.IntegrationTests.Facades.Slack
             await sut.InviteToChannel(userEmail, channelId);
             
             // Assert
+        }
+
+        [Fact]
+        public async Task CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var groupName = "Harald Integration Test Group";
+            var handle = "harald-int-test";
+            var description = "Group created through integration test.";
+            var userEmail = "janie@dfds.com";
+
+            // Act
+            var createUserGroupResponse = await sut.CreateUserGroup(name: groupName, handle: handle, description: description);
+            await sut.AddUserGroupUser(userGroupId: createUserGroupResponse.UserGroup.Id, email: userEmail);
+
+            // Assert
+            Assert.True(createUserGroupResponse.Ok);
+            Assert.Equal(groupName, createUserGroupResponse.UserGroup.Name);
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://slack.com");
+            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
+
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
+
+            return httpClient;
         }
     }
 }

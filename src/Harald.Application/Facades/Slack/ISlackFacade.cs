@@ -8,5 +8,8 @@ namespace Harald.Application.Facades.Slack
         Task<CreateChannelResponse> CreateChannel(string channelName);
         Task InviteToChannel(string email, string channelId);
         Task RemoveFromChannel(string email, string channelId);
+        Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description);
+        Task AddUserGroupUser(string userGroupId, string email);
+        Task RemoveUserGroupUser(string userGroupId, string email);
     }
 }
