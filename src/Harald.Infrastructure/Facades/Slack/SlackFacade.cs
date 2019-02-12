@@ -46,6 +46,15 @@ namespace Harald.Infrastructure.Facades.Slack
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task RemoveFromChannel(string email, string channelId)
+        {
+            var userId = await GetUserId(email);
+            var payload = _serializer.GetPayload(new { Channel = channelId, user = userId });
+
+            var response = await _client.PostAsync("/api/channels.kick", payload);
+            response.EnsureSuccessStatusCode();
+        }
+
         private async Task<string> GetUserId(string email)
         {
             var response = await _client.GetAsync($"/api/users.lookupByEmail?email={email}");
