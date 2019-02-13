@@ -122,7 +122,8 @@ namespace Harald.WebApi
 
     public static class MyPrometheusStuff
     {
-        private const string HealthCheckLabelName = "healthcheck";
+        private const string HealthCheckLabelServiceName = "service";
+        private const string HealthCheckLabelStatusName = "status";
 
         private static readonly Gauge HealthChecksDuration;
         private static readonly Gauge HealthChecksResult;
@@ -130,9 +131,9 @@ namespace Harald.WebApi
         static MyPrometheusStuff()
         {
             HealthChecksResult = Metrics.CreateGauge("healthcheck",
-                "Shows raw health check status (0 = Unhealthy, 1 = Degraded, 2 = Healthy)", new GaugeConfiguration
+                "Shows health check status (status=unhealthy|degraded|healthy) 1 for triggered, otherwise 0", new GaugeConfiguration
                 {
-                    LabelNames = new[] {HealthCheckLabelName},
+                    LabelNames = new[] {HealthCheckLabelServiceName, HealthCheckLabelStatusName},
                     SuppressInitialValue = false
                 });
 
@@ -140,7 +141,7 @@ namespace Harald.WebApi
                 "Shows duration of the health check execution in seconds",
                 new GaugeConfiguration
                 {
-                    LabelNames = new[] {HealthCheckLabelName},
+                    LabelNames = new[] {HealthCheckLabelServiceName},
                     SuppressInitialValue = false
                 });
         }
@@ -157,7 +158,9 @@ namespace Harald.WebApi
         {
             foreach (var (key, value) in report.Entries)
             {
-                HealthChecksResult.Labels(key).Set((double) value.Status);
+                HealthChecksResult.Labels(key, "healthy").Set(value.Status == HealthStatus.Healthy ? 1 : 0);
+                HealthChecksResult.Labels(key, "unhealthy").Set(value.Status == HealthStatus.Unhealthy ? 1 : 0);
+                HealthChecksResult.Labels(key, "degraded").Set(value.Status == HealthStatus.Degraded ? 1 : 0);
 
                 HealthChecksDuration.Labels(key).Set(value.Duration.TotalSeconds);
             }
