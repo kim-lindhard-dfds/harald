@@ -12,11 +12,11 @@ namespace Harald.WebApi
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // setting Information here will e.g. output SQL from EntityFramework Core
-                .Enrich.FromLogContext() // important for request logging
-                .WriteTo.Console(new CompactJsonFormatter()) // ensures structured console logging
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console(new CompactJsonFormatter())
                 .CreateLogger();
-            
+
             CreateWebHostBuilder(args).Build().Run();
         }
 
@@ -25,8 +25,7 @@ namespace Harald.WebApi
             return WebHost
                 .CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseSerilog()
-                ;
+                .UseSerilog();
         }
     }
 }
