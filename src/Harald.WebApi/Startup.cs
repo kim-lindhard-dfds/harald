@@ -6,6 +6,7 @@ using Harald.Application.Facades.Slack;
 using Harald.Infrastructure.Facades.Slack;
 using Harald.Infrastructure.Serialization;
 using Harald.WebApi.Domain;
+using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -44,6 +45,7 @@ namespace Harald.WebApi
             services.AddTransient<ICapabilityRepository, CapabilityRepository>();
 
             services.AddHostedService<MetricHostedService>();
+            services.AddHostedService<ConsumerHostedService>();
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
