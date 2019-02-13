@@ -43,8 +43,8 @@ namespace Harald.WebApi.Infrastructure.Messaging
                     using (var consumer = new Consumer<string, string>(config, new StringDeserializer(Encoding.UTF8), new StringDeserializer(Encoding.UTF8)))
                     {
                         consumer.Subscribe(new[] {"capability"});
-                        consumer.OnPartitionsRevoked += (sender, topicPartitions) => (sender as Consumer<string, string>)?.Unassign();
-                        consumer.OnPartitionsAssigned += (sender, topicPartitions) => (sender as Consumer<string, string>)?.Assign(topicPartitions);
+                        consumer.OnPartitionsRevoked += (sender, topicPartitions) => consumer.Unassign();
+                        consumer.OnPartitionsAssigned += (sender, topicPartitions) => consumer.Assign(topicPartitions);
                         //consumer.OnLog += Consumer_OnLog;
                         //consumer.OnStatistics += Consumer_OnStatistics;
 
@@ -61,7 +61,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
                                 var channelId = response.Channel.Id;
 
-                                await requiredService.InviteToChannel("thfis@dfds.com", channelId);
+                                await requiredService.InviteToChannel("janie@dfds.com", channelId);
 
                                 await consumer.CommitAsync(msg);
                             }
