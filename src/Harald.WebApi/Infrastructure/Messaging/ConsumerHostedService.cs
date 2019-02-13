@@ -55,13 +55,8 @@ namespace Harald.WebApi.Infrastructure.Messaging
                             {
                                 _logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>> Topic: {Topic} Partition: {Partition}, Offset: {Offset} {Value}", msg.Topic, msg.Partition, msg.Offset, msg.Value);
 
-                                var requiredService = _serviceProvider.GetRequiredService<ISlackFacade>();
-
-                                var response = await requiredService.CreateChannel(msg.Value);
-
-                                var channelId = response.Channel.Id;
-
-                                await requiredService.InviteToChannel("janie@dfds.com", channelId);
+                                var eventDispatcher = _serviceProvider.GetRequiredService<IEventDispatcher>();
+                                await eventDispatcher.Send(msg.Value);
 
                                 await consumer.CommitAsync(msg);
                             }

@@ -3,6 +3,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
+using Harald.WebApi.Domain.Events;
+using Harald.WebApi.EventHandlers;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
@@ -42,6 +44,9 @@ namespace Harald.WebApi
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
             services.AddTransient<ICapabilityRepository, CapabilityRepository>();
+
+            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services.AddTransient<IEventDispatcher, EventDispatcher>();
 
             services.AddHostedService<MetricHostedService>();
             services.AddHostedService<ConsumerHostedService>();
