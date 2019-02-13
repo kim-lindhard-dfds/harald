@@ -1,10 +1,10 @@
 using System;
 using System.Net.Http;
 using Xunit;
-using Harald.Infrastructure.Facades.Slack;
-using Harald.Infrastructure.Serialization;
 using System.Net;
 using System.Threading.Tasks;
+using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.WebApi.Infrastructure.Serialization;
 
 namespace Harald.IntegrationTests.Facades.Slack
 {

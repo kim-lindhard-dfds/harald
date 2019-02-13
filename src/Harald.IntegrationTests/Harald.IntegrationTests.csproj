@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Harald.Application\Harald.Application.csproj" />
-    <ProjectReference Include="..\Harald.Infrastructure\Harald.Infrastructure.csproj" />
-    <ProjectReference Include="..\Harald.Domain\Harald.Domain.csproj" />
+    <ProjectReference Include="..\Harald.WebApi\Harald.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

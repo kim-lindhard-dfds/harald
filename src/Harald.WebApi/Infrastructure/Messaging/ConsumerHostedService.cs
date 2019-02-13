@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
-using Harald.Application.Facades.Slack;
+using Harald.WebApi.Infrastructure.Facades.Slack;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

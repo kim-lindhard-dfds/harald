@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Harald.Application.Facades.Slack;
-using Harald.Infrastructure.Serialization;
+using Harald.WebApi.Infrastructure.Serialization;
 
-namespace Harald.Infrastructure.Facades.Slack
+namespace Harald.WebApi.Infrastructure.Facades.Slack
 {
     public class SlackFacade : ISlackFacade
     {

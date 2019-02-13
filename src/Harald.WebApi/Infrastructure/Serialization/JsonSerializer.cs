@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace Harald.Infrastructure.Serialization
+namespace Harald.WebApi.Infrastructure.Serialization
 {
     public class JsonSerializer
     {

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Harald.Application.Facades.Slack;
+using Harald.WebApi.Infrastructure.Facades.Slack;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Harald.WebApi.Controllers

@@ -2,12 +2,11 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Harald.Application.Facades.Slack;
-using Harald.Infrastructure.Facades.Slack;
-using Harald.Infrastructure.Serialization;
 using Harald.WebApi.Domain;
+using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
+using Harald.WebApi.Infrastructure.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
