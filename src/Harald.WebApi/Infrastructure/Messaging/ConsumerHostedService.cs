@@ -23,10 +23,12 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public ConsumerHostedService(ILogger<ConsumerHostedService> logger, IServiceProvider serviceProvider)
         {
+            Console.WriteLine($"Starting event consumer.");
+
             _logger = logger;
             _serviceProvider = serviceProvider;
             // TODO: Inject topics, or introduce registry which can be injected.
-            _topics = new[] { "capability" };
+            _topics = new[] { "build.capabilities" };
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -46,7 +48,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
                         {
                             if (consumer.Consume(out var msg, 1000))
                             {
-                                _logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>> Topic: {Topic} Partition: {Partition}, Offset: {Offset} {Value}", msg.Topic, msg.Partition, msg.Offset, msg.Value);
+                                _logger.LogInformation($"Received event: Topic: {msg.Topic} Partition: {msg.Partition}, Offset: {msg.Offset} {msg.Value}");
 
                                 var eventDispatcher = _serviceProvider.GetRequiredService<IEventDispatcher>();
                                 await eventDispatcher.Send(msg.Value);
