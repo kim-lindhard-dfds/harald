@@ -17,6 +17,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<ConsumerHostedService> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly string[] _topics;
 
         private Task _executingTask;
 
@@ -24,29 +25,21 @@ namespace Harald.WebApi.Infrastructure.Messaging
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
+            // TODO: Inject topics, or introduce registry which can be injected.
+            _topics = new[] { "capability" };
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var config = new Dictionary<string, object>
-            {
-                {"group.id", "harald-consumer"},
-                {"bootstrap.servers", "localhost:9092"},
-                {"auto.commit.enable", "false"},
-                {"debug", "consumer"},
-                //{"log_level", "7" },
-            };
-
-
             _executingTask = Task.Factory.StartNew(async () =>
                 {
-                    using (var consumer = new Consumer<string, string>(config, new StringDeserializer(Encoding.UTF8), new StringDeserializer(Encoding.UTF8)))
+                    var consumerFactory = _serviceProvider.GetRequiredService<KafkaConsumerFactory>();
+
+                    using (var consumer = consumerFactory.Create())
                     {
-                        consumer.Subscribe(new[] {"capability"});
+                        consumer.Subscribe(_topics);
                         consumer.OnPartitionsRevoked += (sender, topicPartitions) => consumer.Unassign();
                         consumer.OnPartitionsAssigned += (sender, topicPartitions) => consumer.Assign(topicPartitions);
-                        //consumer.OnLog += Consumer_OnLog;
-                        //consumer.OnStatistics += Consumer_OnStatistics;
 
                         // consume loop
                         while (!_cancellationTokenSource.IsCancellationRequested)

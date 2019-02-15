@@ -53,8 +53,7 @@ namespace Harald.WebApi
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"})
-                ;
+                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
             
             services.AddSwaggerDocument();
 
@@ -75,6 +74,14 @@ namespace Harald.WebApi
                     .Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
                 }
             });
+
+            ConfigureDomainEvents(services);
+        }
+
+        private static void ConfigureDomainEvents(IServiceCollection services)
+        {
+            services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
+            services.AddTransient<KafkaConsumerFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

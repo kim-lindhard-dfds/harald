@@ -63,6 +63,24 @@ spec:
             secretKeyRef:
               name: harald
               key: slack-auth-token
+        - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
+          value: $(KAFKA_BOOTSTRAP_SERVERS)
+        - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
+          value: "0.10.0.0"
+        - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
+          value: "0"
+        - name: HARALD_KAFKA_SASL_USERNAME
+          value: $(KAFKA_SASL_USERNAME)
+        - name: HARALD_KAFKA_SASL_PASSWORD
+          value: $(KAFKA_SASL_PASSWORD)
+        - name: HARALD_KAFKA_GROUP_ID
+          value: "$(KAFKA_CONSUMER_GROUP_ID)"
+        - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
+          value: "false"
+        - name: HARALD_KAFKA_SASL_MECHANISMS
+          value: "PLAIN"
+        - name: HARALD_KAFKA_SECURITY_PROTOCOL
+          value: "SASL_SSL"
         livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 5

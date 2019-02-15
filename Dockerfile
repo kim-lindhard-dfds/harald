@@ -8,4 +8,8 @@ RUN curl -o /tmp/rds-combined-ca-bundle.pem https://s3.amazonaws.com/rds-downloa
 WORKDIR /app
 COPY ./output/app ./
 
+# OpenSSL cert for Kafka
+RUN curl -sS -o /app/cert.pem https://curl.haxx.se/ca/cacert.pem
+ENV HARALD_KAFKA_SSL_CA_LOCATION=/app/cert.pem
+
 ENTRYPOINT [ "dotnet", "Harald.WebApi.dll" ]
