@@ -32,9 +32,9 @@ namespace Harald.WebApi.Infrastructure.Messaging
             List<object> handlersList = _handlers[handler.EventTypeImplementation];
             handlersList.Add(handler);
 
-            if (!_eventTypeMap.ContainsKey(handler.EventType))
+            if (!_eventTypeMap.ContainsKey(handler.EventType.ToLower()))
             {
-                _eventTypeMap.Add(handler.EventType, handler.EventTypeImplementation);
+                _eventTypeMap.Add(handler.EventType.ToLower(), handler.EventTypeImplementation);
             }
         }
 
@@ -46,7 +46,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public async Task SendAsync(GeneralDomainEvent generalDomainEvent)
         {
-            var eventType = _eventTypeMap[generalDomainEvent.Type];
+            var eventType = _eventTypeMap[generalDomainEvent.Type.ToLower()];
             dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
 
             dynamic handlersList = Convert.ChangeType(_handlers[eventType], typeof(List<object>));
