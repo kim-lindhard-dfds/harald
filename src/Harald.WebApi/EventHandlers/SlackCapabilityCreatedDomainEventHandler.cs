@@ -29,7 +29,8 @@ namespace Harald.WebApi.EventHandlers
             {
                 // TODO: Save Slack channel ID for capability.
                 var channelId = createChannelResponse?.Channel?.Id;
-                _logger.LogInformation($"Slack channel for capability {domainEvent.Data.CapabilityName} created with ID: {channelId}");
+                var channelName = createChannelResponse?.Channel?.Name;
+                _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Data.CapabilityName}' created with ID: {channelId}");
             }
         }
     }
