@@ -6,6 +6,8 @@ metadata:
   labels:
     project: selfservice
     department: devex
+    app: harald
+    component: harald
 spec:
   replicas: 1
   selector:

@@ -9,6 +9,7 @@ metadata:
     app: harald
     project: selfservice
     department: devex    
+    component: harald
 spec:
   ports:
   - name: external
