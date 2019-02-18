@@ -16,10 +16,14 @@ namespace Harald.WebApi.Infrastructure.Messaging
         
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
-            IEventHandler<CapabilityCreatedDomainEvent> capabilityCreatedEventhandler)
+            IEventHandler<CapabilityCreatedDomainEvent> capabilityCreatedEventhandler,
+            IEventHandler<MemberJoinedCapabilityDomainEvent> memberJoinedCapabilityDomainEventHandler,
+            IEventHandler<MemberLeftCapabilityDomainEvent> memberLeftCapabilityDomainEventHandler)
         {
             _logger = logger;
             Register(capabilityCreatedEventhandler);
+            Register(memberJoinedCapabilityDomainEventHandler);
+            Register(memberLeftCapabilityDomainEventHandler);
         }
 
         private void Register<T>(IEventHandler<T> handler)

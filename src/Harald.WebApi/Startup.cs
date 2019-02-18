@@ -62,8 +62,7 @@ namespace Harald.WebApi
                 }
             });
 
-            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
-            services.AddTransient<IEventDispatcher, EventDispatcher>();
+            ConfigureDomainEvents(services);
 
             services.AddHostedService<MetricHostedService>();
             services.AddHostedService<ConsumerHostedService>();
@@ -75,14 +74,16 @@ namespace Harald.WebApi
             services.AddSwaggerDocument();
 
             services.AddTransient<JsonSerializer>();
-
-            
-
-            ConfigureDomainEvents(services);
         }
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
+            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
+            services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
+            
+            services.AddTransient<IEventDispatcher, EventDispatcher>();
+
             services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
             services.AddTransient<KafkaConsumerFactory>();
         }
