@@ -32,9 +32,18 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return createChannelResponse;
         }
 
-        public async Task SendNotification(string recipient, string message)
+        public async Task SendNotificationToChannel(string channel, string message)
         {
-            var payload = _serializer.GetPayload(new { Channel = recipient, Text = message });
+            var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
+
+            var response = await _client.PostAsync("/api/chat.postMessage", payload);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task SendNotificationToUser(string email, string message)
+        {
+            var userId = await GetUserId(email);
+            var payload = _serializer.GetPayload(new { Channel = userId, Text = message, As_user = true });
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
             response.EnsureSuccessStatusCode();

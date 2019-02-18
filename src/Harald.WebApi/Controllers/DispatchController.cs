@@ -22,7 +22,7 @@ namespace Harald.WebApi.Controllers
         {
             // TODO: Fetch channel from DB using capibilityId.
             const string capabilityChannel = "ded-team-one";
-            await _slackFacade.SendNotification(capabilityChannel, input.Message);
+            await _slackFacade.SendNotificationToChannel(capabilityChannel, input.Message);
          
             return Accepted();
         }
