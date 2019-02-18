@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Harald.WebApi
 {
@@ -44,21 +45,7 @@ namespace Harald.WebApi
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
             services.AddTransient<ICapabilityRepository, CapabilityRepository>();
-
-            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
-            services.AddTransient<IEventDispatcher, EventDispatcher>();
-
-            services.AddHostedService<MetricHostedService>();
-            services.AddHostedService<ConsumerHostedService>();
-
-            services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
             
-            services.AddSwaggerDocument();
-
-            services.AddTransient<JsonSerializer>();
-
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {
                 var baseUrl = Configuration["SLACK_API_BASE_URL"];
@@ -75,6 +62,22 @@ namespace Harald.WebApi
                 }
             });
 
+            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services.AddTransient<IEventDispatcher, EventDispatcher>();
+
+            services.AddHostedService<MetricHostedService>();
+            services.AddHostedService<ConsumerHostedService>();
+
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
+            
+            services.AddSwaggerDocument();
+
+            services.AddTransient<JsonSerializer>();
+
+            
+
             ConfigureDomainEvents(services);
         }
 
@@ -85,7 +88,7 @@ namespace Harald.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
