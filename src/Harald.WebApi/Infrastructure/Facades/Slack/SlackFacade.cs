@@ -20,7 +20,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
         public async Task<CreateChannelResponse> CreateChannel(string channelName)
         {
-            var validChannelName = FixChannelAndHandleNameForSlack(channelName);
+            var validChannelName = FixChannelNameForSlack(channelName);
             var payload = _serializer.GetPayload(new { Name = validChannelName, Validate = true });
             var response = await _client.PostAsync("/api/channels.create", payload);
 
@@ -60,7 +60,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
         public async Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
         {
-            var validHandle = FixChannelAndHandleNameForSlack(handle);
+            var validHandle = FixHandleNameForSlack(handle);
             var payload = _serializer.GetPayload(new { Name = name, Handle = validHandle, Description = description });
             var response = await _client.PostAsync("/api/usergroups.create", payload);
 
@@ -122,7 +122,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             response.EnsureSuccessStatusCode();
         }
 
-        private string FixChannelAndHandleNameForSlack(string channelName)
+        private string FixChannelNameForSlack(string channelName)
         {
             // Max channel name length is 21.
             if (channelName.Length > 21)
@@ -137,6 +137,20 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             var lowerCaseChannelNameWithHypens = string.Join("-", lowerCaseWords);
 
             return lowerCaseChannelNameWithHypens;
+        }
+
+        private string FixHandleNameForSlack(string handleName)
+        {
+            const string handleSuffix = "Members";
+            handleName = handleName + handleSuffix;
+
+            var lowerCaseWords = Regex.Matches(handleName, @"([A-Z][a-z]+)")
+            .Cast<Match>()
+            .Select(m => m.Value.ToLower());
+
+            var lowerCaseHandleNameWithHypens = string.Join("-", lowerCaseWords);
+
+            return lowerCaseHandleNameWithHypens;
         }
     }
 }
