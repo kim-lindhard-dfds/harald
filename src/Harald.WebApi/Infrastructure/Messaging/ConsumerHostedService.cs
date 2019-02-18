@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Confluent.Kafka;
-using Confluent.Kafka.Serialization;
-using Harald.WebApi.Infrastructure.Facades.Slack;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -50,10 +45,17 @@ namespace Harald.WebApi.Infrastructure.Messaging
                             {
                                 _logger.LogInformation($"Received event: Topic: {msg.Topic} Partition: {msg.Partition}, Offset: {msg.Offset} {msg.Value}");
 
-                                var eventDispatcher = _serviceProvider.GetRequiredService<IEventDispatcher>();
-                                await eventDispatcher.Send(msg.Value);
+                                try
+                                {
+                                    var eventDispatcher = _serviceProvider.GetRequiredService<IEventDispatcher>();
+                                    await eventDispatcher.Send(msg.Value);
 
-                                await consumer.CommitAsync(msg);
+                                    await consumer.CommitAsync(msg);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex.Message, ex);
+                                }
                             }
                         }
                     }
