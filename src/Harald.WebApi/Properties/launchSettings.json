@@ -14,7 +14,8 @@
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
       }
     },
     "Harald.WebApi": {
@@ -24,7 +25,10 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "HARALD_DATABASE_CONNECTIONSTRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=harald_db;"
+        "HARALD_DATABASE_CONNECTIONSTRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=harald_db;",
+        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
+        "HARALD_KAFKA_GROUP_ID": "harald-consumer",
+        "HARALD_KAFKA_ENABLE_AUTO_COMMIT": "false"
       }
     }
   }
