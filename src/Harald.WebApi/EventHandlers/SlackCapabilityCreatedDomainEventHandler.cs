@@ -9,7 +9,7 @@ namespace Harald.WebApi.EventHandlers
 {
     public class SlackCapabilityCreatedDomainEventHandler : IEventHandler<CapabilityCreatedDomainEvent>
     {
-        public string EventType => "capabilitycreated";
+        public string EventType => "capability_created";
         public Type EventTypeImplementation => typeof(CapabilityCreatedDomainEvent);
         private readonly ILogger<SlackCapabilityCreatedDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
