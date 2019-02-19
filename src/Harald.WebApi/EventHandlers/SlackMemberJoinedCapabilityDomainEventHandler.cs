@@ -13,20 +13,29 @@ namespace Harald.WebApi.EventHandlers
         public Type EventTypeImplementation => typeof(MemberJoinedCapabilityDomainEvent);
         private readonly ILogger<SlackMemberJoinedCapabilityDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
+        private readonly ICapabilityRepository _capabilityRepository;
 
         public SlackMemberJoinedCapabilityDomainEventHandler(
             ILogger<SlackMemberJoinedCapabilityDomainEventHandler> logger,
-            ISlackFacade slackFacade)
+            ISlackFacade slackFacade,
+            ICapabilityRepository capabilityRepository)
         {
             _logger = logger;
             _slackFacade = slackFacade;
+            _capabilityRepository = capabilityRepository;
         }
 
         public async Task HandleAsync(MemberJoinedCapabilityDomainEvent domainEvent)
         {
-            // TODO: Get capability from DB.
-            var capability = new Capability(Guid.NewGuid(), null, null, null); 
-            
+            var capability = await _capabilityRepository.Get(domainEvent.Data.CapabilityId);
+
+            if (capability == null)
+            {
+                _logger.LogError(
+                    $"Couldn't get capability with ID {domainEvent.Data.CapabilityId}. Can't add member {domainEvent.Data.MemberEmail} to Slack.");
+                return;    
+            }
+                        
             // Invite user to Slack channel:
             await _slackFacade.InviteToChannel(
                 email: domainEvent.Data.MemberEmail,
