@@ -32,21 +32,44 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return createChannelResponse;
         }
 
-        public async Task SendNotificationToChannel(string channel, string message)
+        public async Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
         {
             var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
             response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var sendNotificationResponse = _serializer.Deserialize<SendNotificationResponse>(content);
+
+            return sendNotificationResponse;
         }
 
-        public async Task SendNotificationToUser(string email, string message)
+        public async Task<SendNotificationResponse> SendNotificationToUser(string email, string message)
         {
             var userId = await GetUserId(email);
             var payload = _serializer.GetPayload(new { Channel = userId, Text = message, As_user = true });
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
             response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var sendNotificationResponse = _serializer.Deserialize<SendNotificationResponse>(content);
+
+            return sendNotificationResponse;
+        }
+
+        public async Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp)
+        {
+            var payload = _serializer.GetPayload(new { Channel = channel, Timestamp = messageTimeStamp });
+
+            var response = await _client.PostAsync("/api/pins.add", payload);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            return generalResponse;
         }
 
         public async Task InviteToChannel(string email, string channelId)

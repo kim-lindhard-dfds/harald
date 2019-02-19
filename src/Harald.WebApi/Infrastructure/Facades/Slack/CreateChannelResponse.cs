@@ -1,10 +1,8 @@
 namespace Harald.WebApi.Infrastructure.Facades.Slack
 {
-    public class CreateChannelResponse
+    public class CreateChannelResponse : GeneralResponse
     {
-        public bool Ok { get; set; }
         public Channel Channel { get; set; }
-        public string Error { get; set; }
     }
 
     public class Channel
