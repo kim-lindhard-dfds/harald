@@ -13,16 +13,16 @@ namespace Harald.WebApi.EventHandlers
         public Type EventTypeImplementation => typeof(CapabilityCreatedDomainEvent);
         private readonly ILogger<SlackCapabilityCreatedDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
-        // private readonly ICapabilityRepository _capabilityRepository;
+        private readonly ICapabilityRepository _capabilityRepository;
 
         public SlackCapabilityCreatedDomainEventHandler(
             ILogger<SlackCapabilityCreatedDomainEventHandler> logger,
-            ISlackFacade slackFacade)//,
-            // ICapabilityRepository capabilityRepository)
+            ISlackFacade slackFacade,
+            ICapabilityRepository capabilityRepository)
         {
             _logger = logger;
             _slackFacade = slackFacade;
-            // _capabilityRepository = capabilityRepository;
+            _capabilityRepository = capabilityRepository;
         }
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
@@ -45,13 +45,13 @@ namespace Harald.WebApi.EventHandlers
                 _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Data.CapabilityName}' created with ID: {channelId}");
 
                 // Save even without user group.
-                // var capability = Capability.Create(
-                //     id: domainEvent.Data.CapabilityId,
-                //     name: domainEvent.Data.CapabilityName,
-                //     slackChannelId: channelId,
-                //     slackUserGroupId: userGroupId);
+                var capability = Capability.Create(
+                    id: domainEvent.Data.CapabilityId,
+                    name: domainEvent.Data.CapabilityName,
+                    slackChannelId: channelId,
+                    slackUserGroupId: userGroupId);
 
-                // await _capabilityRepository.Add(capability);
+                await _capabilityRepository.Add(capability);
             }
             else
             {

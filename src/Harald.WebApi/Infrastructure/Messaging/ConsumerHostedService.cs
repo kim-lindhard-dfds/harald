@@ -43,18 +43,21 @@ namespace Harald.WebApi.Infrastructure.Messaging
                         {
                             if (consumer.Consume(out var msg, 1000))
                             {
-                                _logger.LogInformation($"Received event: Topic: {msg.Topic} Partition: {msg.Partition}, Offset: {msg.Offset} {msg.Value}");
-
-                                try
+                                using (var scope = _serviceProvider.CreateScope())
                                 {
-                                    var eventDispatcher = _serviceProvider.GetRequiredService<IEventDispatcher>();
-                                    await eventDispatcher.Send(msg.Value);
+                                    _logger.LogInformation($"Received event: Topic: {msg.Topic} Partition: {msg.Partition}, Offset: {msg.Offset} {msg.Value}");
 
-                                    await consumer.CommitAsync(msg);
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogError(ex.Message, ex);
+                                    try
+                                    {
+                                        var eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
+                                        await eventDispatcher.Send(msg.Value);
+
+                                        await consumer.CommitAsync(msg);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger.LogError(ex.Message, ex);
+                                    }
                                 }
                             }
                         }
