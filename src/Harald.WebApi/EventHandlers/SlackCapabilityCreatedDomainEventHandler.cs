@@ -57,10 +57,10 @@ namespace Harald.WebApi.EventHandlers
                 var sendNotificationResponse = await _slackFacade.SendNotificationToChannel(
                   channel: channelId, 
                   message: 
-                  $"Thank you for creating capability {capability.Name}.\n" +
+                  $"Thank you for creating capability '{capability.Name}'.\n" +
                   $"This channel along with handle @{createUserGroupResponse.UserGroup.Handle} has been created.\n" + 
                   "Use the handle to notify capability members.\n" + 
-                  $"If you wan't to define a better handle, you can do this in user group {createUserGroupResponse.UserGroup.Name}");
+                  $"If you wan't to define a better handle, you can do this in the '{createUserGroupResponse.UserGroup.Name}'");
 
                 // Pin message.
                 await _slackFacade.PinMessageToChannel(channelId, sendNotificationResponse.TimeStamp);
