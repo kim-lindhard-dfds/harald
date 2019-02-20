@@ -11,35 +11,14 @@ namespace Harald.WebApi.Infrastructure.Messaging
     public class EventDispatcher : IEventDispatcher
     {
         private readonly ILogger<EventDispatcher> _logger;
-        private readonly Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
-        private Dictionary<string, Type> _eventTypeMap = new Dictionary<string, Type>();
+        private readonly DomainEventRegistry _eventRegistry;
         
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
-            IEventHandler<CapabilityCreatedDomainEvent> capabilityCreatedEventhandler,
-            IEventHandler<MemberJoinedCapabilityDomainEvent> memberJoinedCapabilityDomainEventHandler,
-            IEventHandler<MemberLeftCapabilityDomainEvent> memberLeftCapabilityDomainEventHandler)
+            DomainEventRegistry eventRegistry)
         {
             _logger = logger;
-            Register(capabilityCreatedEventhandler);
-            Register(memberJoinedCapabilityDomainEventHandler);
-            Register(memberLeftCapabilityDomainEventHandler);
-        }
-
-        private void Register<T>(IEventHandler<T> handler)
-        {
-            if (!_handlers.ContainsKey(handler.EventTypeImplementation))
-            {
-                _handlers.Add(handler.EventTypeImplementation, new List<object>());
-            }
-            
-            List<object> handlersList = _handlers[handler.EventTypeImplementation];
-            handlersList.Add(handler);
-
-            if (!_eventTypeMap.ContainsKey(handler.EventType.ToLower()))
-            {
-                _eventTypeMap.Add(handler.EventType.ToLower(), handler.EventTypeImplementation);
-            }
+            _eventRegistry = eventRegistry;
         }
 
         public async Task Send(string generalDomainEventJson)
@@ -50,11 +29,10 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public async Task SendAsync(GeneralDomainEvent generalDomainEvent)
         {
-            var eventType = _eventTypeMap[generalDomainEvent.Type.ToLower()];
+            var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.Type);
             dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
-
-            dynamic handlersList = Convert.ChangeType(_handlers[eventType], typeof(List<object>));
-
+            dynamic handlersList = _eventRegistry.GetEventHandlersFor(domainEvent);
+            
             foreach (var handler in handlersList)
             {
                 await handler.HandleAsync(domainEvent);

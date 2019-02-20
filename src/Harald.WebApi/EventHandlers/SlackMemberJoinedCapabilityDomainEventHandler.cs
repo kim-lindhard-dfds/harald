@@ -9,8 +9,6 @@ namespace Harald.WebApi.EventHandlers
 {
     public class SlackMemberJoinedCapabilityDomainEventHandler : IEventHandler<MemberJoinedCapabilityDomainEvent>
     {
-        public string EventType => "member_joined_capability";
-        public Type EventTypeImplementation => typeof(MemberJoinedCapabilityDomainEvent);
         private readonly ILogger<SlackMemberJoinedCapabilityDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;

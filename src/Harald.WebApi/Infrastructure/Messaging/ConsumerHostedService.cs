@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<ConsumerHostedService> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly string[] _topics;
+        private readonly IEnumerable<string> _topics;
 
         private Task _executingTask;
 
@@ -22,8 +24,9 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
             _logger = logger;
             _serviceProvider = serviceProvider;
-            // TODO: Inject topics, or introduce registry which can be injected.
-            _topics = new[] { "build.capabilities" };
+
+            var eventRegistry = _serviceProvider.GetRequiredService<DomainEventRegistry>();
+            _topics = eventRegistry.GetAllTopics();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -34,6 +37,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
                     using (var consumer = consumerFactory.Create())
                     {
+                        _logger.LogInformation($"Event consumer started. Listening to topics: {string.Join(",", _topics)}");
                         consumer.Subscribe(_topics);
                         consumer.OnPartitionsRevoked += (sender, topicPartitions) => consumer.Unassign();
                         consumer.OnPartitionsAssigned += (sender, topicPartitions) => consumer.Assign(topicPartitions);
@@ -56,7 +60,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
                                     }
                                     catch (Exception ex)
                                     {
-                                        _logger.LogError(ex.Message, ex);
+                                        _logger.LogError($"Error consuming event. Exception message: {ex.Message}", ex);
                                     }
                                 }
                             }

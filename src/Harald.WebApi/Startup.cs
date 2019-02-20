@@ -45,7 +45,7 @@ namespace Harald.WebApi
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
             services.AddTransient<ICapabilityRepository, CapabilityRepository>();
-            
+
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {
                 var baseUrl = Configuration["SLACK_API_BASE_URL"];
@@ -62,6 +62,8 @@ namespace Harald.WebApi
                 }
             });
 
+            services.AddTransient<JsonSerializer>();
+
             ConfigureDomainEvents(services);
 
             services.AddHostedService<MetricHostedService>();
@@ -69,19 +71,36 @@ namespace Harald.WebApi
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
-            
-            services.AddSwaggerDocument();
+                .AddNpgSql(connectionString, tags: new[] { "backing services", "postgres" });
 
-            services.AddTransient<JsonSerializer>();
+            services.AddSwaggerDocument();
         }
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
+            var eventRegistry = new DomainEventRegistry();
+            services.AddSingleton(eventRegistry);
+
             services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
-            
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            eventRegistry
+            .Register<CapabilityCreatedDomainEvent>(
+                eventTypeName: "capability_created",
+                topicName: "build.capabilities",
+                eventHandler: serviceProvider.GetRequiredService<IEventHandler<CapabilityCreatedDomainEvent>>())
+            .Register<MemberJoinedCapabilityDomainEvent>(
+                eventTypeName: "member_joined_capability",
+                topicName: "build.capabilities",
+                eventHandler: serviceProvider.GetRequiredService<IEventHandler<MemberJoinedCapabilityDomainEvent>>())
+            .Register<MemberLeftCapabilityDomainEvent>(
+                eventTypeName: "member_left_capability",
+                topicName: "build.capabilities",
+                eventHandler: serviceProvider.GetRequiredService<IEventHandler<MemberLeftCapabilityDomainEvent>>());
+
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
             services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
@@ -98,7 +117,7 @@ namespace Harald.WebApi
 
             app.UseSwagger();
             app.UseSwaggerUi3();
-            
+
             app.UseMvc();
 
             app.UseHealthChecks("/healthz", new HealthCheckOptions
@@ -148,7 +167,7 @@ namespace Harald.WebApi
             HealthChecksResult = Metrics.CreateGauge("healthcheck",
                 "Shows health check status (status=unhealthy|degraded|healthy) 1 for triggered, otherwise 0", new GaugeConfiguration
                 {
-                    LabelNames = new[] {HealthCheckLabelServiceName, HealthCheckLabelStatusName},
+                    LabelNames = new[] { HealthCheckLabelServiceName, HealthCheckLabelStatusName },
                     SuppressInitialValue = false
                 });
 
@@ -156,7 +175,7 @@ namespace Harald.WebApi
                 "Shows duration of the health check execution in seconds",
                 new GaugeConfiguration
                 {
-                    LabelNames = new[] {HealthCheckLabelServiceName},
+                    LabelNames = new[] { HealthCheckLabelServiceName },
                     SuppressInitialValue = false
                 });
         }
