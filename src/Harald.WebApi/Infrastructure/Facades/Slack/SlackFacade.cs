@@ -162,6 +162,9 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
                 channelName = channelName.Substring(0, 21);
             }
 
+            // Make sure camel-casing is used, in order to split words.
+            channelName = UppercaseFirstCharacter(channelName);
+
             var lowerCaseWords = Regex.Matches(channelName, @"([A-Z][a-z]+)")
             .Cast<Match>()
             .Select(m => m.Value.ToLower());
@@ -183,6 +186,17 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             var lowerCaseHandleNameWithHypens = string.Join("-", lowerCaseWords);
 
             return lowerCaseHandleNameWithHypens;
+        }
+
+        private string UppercaseFirstCharacter(string s)
+        {
+            // Check for empty string.
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+            // Return char and concat substring.
+            return char.ToUpper(s[0]) + s.Substring(1);
         }
     }
 }
