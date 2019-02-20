@@ -162,7 +162,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
                 channelName = channelName.Substring(0, 21);
             }
 
-            // Make sure camel-casing is used, in order to split words.
+            // Make sure at least one word is matched below (starts with upper-case character).
             channelName = UppercaseFirstCharacter(channelName);
 
             var lowerCaseWords = Regex.Matches(channelName, @"([A-Z][a-z]+)")
@@ -178,6 +178,9 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         {
             const string handleSuffix = "Members";
             handleName = handleName + handleSuffix;
+
+            // Make sure at least one word is matched below (starts with upper-case character).
+            handleName = UppercaseFirstCharacter(handleName);
 
             var lowerCaseWords = Regex.Matches(handleName, @"([A-Z][a-z]+)")
             .Cast<Match>()
