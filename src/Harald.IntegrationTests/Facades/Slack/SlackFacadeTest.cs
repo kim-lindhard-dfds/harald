@@ -15,7 +15,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             var channelName = "janie-test";
             
             // Act
@@ -32,7 +32,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             var channelId = "CG3H7GARG";
             var userEmail = "janie@dfds.com";
             
@@ -47,7 +47,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             var groupName = "Harald Integration Test Group";
             var handle = "harald-int-test";
             var description = "Group created through integration test.";
