@@ -17,12 +17,12 @@ namespace Harald.IntegrationTests.Facades.Slack
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             var channelName = "janie-test";
-            
+
             // Act
             var createChannelResponse = await sut.CreateChannel(channelName);
-            
+
             // Assert
-             Assert.True(createChannelResponse.Ok);
+            Assert.True(createChannelResponse.Ok);
             Assert.Equal(channelName, createChannelResponse.Channel.Name);
             Assert.NotEmpty(createChannelResponse.Channel.Id);
         }
@@ -35,10 +35,10 @@ namespace Harald.IntegrationTests.Facades.Slack
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             var channelId = "CG3H7GARG";
             var userEmail = "janie@dfds.com";
-            
+
             // Act
             await sut.InviteToChannel(userEmail, channelId);
-            
+
             // Assert
         }
 
@@ -61,6 +61,43 @@ namespace Harald.IntegrationTests.Facades.Slack
             Assert.True(createUserGroupResponse.Ok);
             Assert.Equal(groupName, createUserGroupResponse.UserGroup.Name);
         }
+
+        [Fact]
+        public async Task SendNotificationToChannel_Given_valid_input_Should_send_notfication_to_channel()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var channel = "ded-team-one";
+            var message = "Integration test message.";
+
+            // Act
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channel: channel, message: message);
+
+            // Assert
+            Assert.True(sendNotificationToChannelResponse.Ok);
+            Assert.NotEmpty(sendNotificationToChannelResponse.TimeStamp);
+        }
+
+        [Fact]
+        public async Task PinMessageToChannel_Given_valid_input_Should_send_notfication_to_channel()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var channel = "ded-team-one";
+            var message = "Integration test message.";
+
+            // Act
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channel: channel, message: message);
+            var pinMessageToChannelResponse = await sut.PinMessageToChannel(channel: channel, messageTimeStamp: sendNotificationToChannelResponse.TimeStamp);
+
+            // Assert
+            Assert.True(sendNotificationToChannelResponse.Ok);
+            Assert.NotEmpty(sendNotificationToChannelResponse.TimeStamp);
+            Assert.True(pinMessageToChannelResponse.Ok);
+        }
+        
 
         private HttpClient GetHttpClient()
         {
