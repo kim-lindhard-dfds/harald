@@ -19,8 +19,13 @@ paths:
             $ref: "#/definitions/message"
       responses:
         202:
-          description: Accepted - message is queued for dispatching
-
+          description: Accepted - message is queued for dispatching.
+        400:
+          description: Bad request - required input is missing.
+        422:
+          description: Unprocessable entity - capability ID can't be processed.
+        503:
+          description: Service unavailable - error trying to send the message.
 definitions:
   message:
     type: object

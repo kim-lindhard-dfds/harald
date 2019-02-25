@@ -44,7 +44,7 @@ namespace Harald.WebApi.Controllers
             if (!sendNotificationToChannelResponse.Ok)
             {
                 return StatusCode(
-                    StatusCodes.Status424FailedDependency,
+                    StatusCodes.Status503ServiceUnavailable,
                     $"An error occured trying to send notification: {sendNotificationToChannelResponse.Error}");
             }
 
