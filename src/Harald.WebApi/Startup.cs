@@ -79,28 +79,26 @@ namespace Harald.WebApi
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
-            var eventRegistry = new DomainEventRegistry();
-            services.AddSingleton(eventRegistry);
-
             services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
 
-            var serviceProvider = services.BuildServiceProvider();
+            services.AddTransient<EventHandlerFactory>();
 
-            eventRegistry
+            var topic = "build.capabilities";
+
+            var eventRegistry = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
                 eventTypeName: "capability_created",
-                topicName: "build.capabilities",
-                eventHandler: serviceProvider.GetRequiredService<IEventHandler<CapabilityCreatedDomainEvent>>())
+                topicName: topic)
             .Register<MemberJoinedCapabilityDomainEvent>(
                 eventTypeName: "member_joined_capability",
-                topicName: "build.capabilities",
-                eventHandler: serviceProvider.GetRequiredService<IEventHandler<MemberJoinedCapabilityDomainEvent>>())
+                topicName: topic)
             .Register<MemberLeftCapabilityDomainEvent>(
                 eventTypeName: "member_left_capability",
-                topicName: "build.capabilities",
-                eventHandler: serviceProvider.GetRequiredService<IEventHandler<MemberLeftCapabilityDomainEvent>>());
+                topicName: topic);
+
+            services.AddSingleton(eventRegistry);
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 

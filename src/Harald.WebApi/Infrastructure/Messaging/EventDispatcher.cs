@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.EventHandlers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -12,26 +13,29 @@ namespace Harald.WebApi.Infrastructure.Messaging
     {
         private readonly ILogger<EventDispatcher> _logger;
         private readonly DomainEventRegistry _eventRegistry;
+        private readonly EventHandlerFactory _eventHandlerFactory;
         
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
-            DomainEventRegistry eventRegistry)
+            DomainEventRegistry eventRegistry,
+            EventHandlerFactory eventHandlerFactory)
         {
             _logger = logger;
             _eventRegistry = eventRegistry;
+            _eventHandlerFactory = eventHandlerFactory;
         }
 
-        public async Task Send(string generalDomainEventJson)
+        public async Task Send(string generalDomainEventJson, IServiceScope serviceScope)
         {
             var generalDomainEventObj = JsonConvert.DeserializeObject<GeneralDomainEvent>(generalDomainEventJson);
-            await SendAsync(generalDomainEventObj);
+            await SendAsync(generalDomainEventObj, serviceScope);
         }
 
-        public async Task SendAsync(GeneralDomainEvent generalDomainEvent)
+        public async Task SendAsync(GeneralDomainEvent generalDomainEvent, IServiceScope serviceScope)
         {
             var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.Type);
             dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
-            dynamic handlersList = _eventRegistry.GetEventHandlersFor(domainEvent);
+            dynamic handlersList = _eventHandlerFactory.GetEventHandlersFor(domainEvent, serviceScope);
             
             foreach (var handler in handlersList)
             {

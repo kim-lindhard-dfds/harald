@@ -13,32 +13,37 @@ namespace Harald.WebApi.Infrastructure.Messaging
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<ConsumerHostedService> _logger;
+        private readonly KafkaConsumerFactory _consumerFactory;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IEnumerable<string> _topics;
+        private readonly DomainEventRegistry _eventRegistry;
 
         private Task _executingTask;
 
-        public ConsumerHostedService(ILogger<ConsumerHostedService> logger, IServiceProvider serviceProvider)
+        public ConsumerHostedService(
+            ILogger<ConsumerHostedService> logger,
+            IServiceProvider serviceProvider,
+            KafkaConsumerFactory kafkaConsumerFactory,
+            DomainEventRegistry domainEventRegistry)
         {
             Console.WriteLine($"Starting event consumer.");
 
             _logger = logger;
+            _consumerFactory = kafkaConsumerFactory;
             _serviceProvider = serviceProvider;
-
-            var eventRegistry = _serviceProvider.GetRequiredService<DomainEventRegistry>();
-            _topics = eventRegistry.GetAllTopics();
+            _eventRegistry = domainEventRegistry;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _executingTask = Task.Factory.StartNew(async () =>
                 {
-                    var consumerFactory = _serviceProvider.GetRequiredService<KafkaConsumerFactory>();
-
-                    using (var consumer = consumerFactory.Create())
+                    using (var consumer = _consumerFactory.Create())
                     {
-                        _logger.LogInformation($"Event consumer started. Listening to topics: {string.Join(",", _topics)}");
-                        consumer.Subscribe(_topics);
+                        var topics = _eventRegistry.GetAllTopics();
+
+                        _logger.LogInformation($"Event consumer started. Listening to topics: {string.Join(",", topics)}");
+                                                
+                        consumer.Subscribe(topics);
                         consumer.OnPartitionsRevoked += (sender, topicPartitions) => consumer.Unassign();
                         consumer.OnPartitionsAssigned += (sender, topicPartitions) => consumer.Assign(topicPartitions);
 
@@ -54,7 +59,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
                                     try
                                     {
                                         var eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
-                                        await eventDispatcher.Send(msg.Value);
+                                        await eventDispatcher.Send(msg.Value, scope);
 
                                         await consumer.CommitAsync(msg);
                                     }
