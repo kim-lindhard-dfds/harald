@@ -83,7 +83,7 @@ docker-compose up --build
 After adding new migrations, run `docker-compose down` and re-run the above command.
 
 ## Domain Events
-Domain events consumes is following:
+Domain events consumed is following:
 * capability_created
 * member_joined_capability
 * member_left_capability
