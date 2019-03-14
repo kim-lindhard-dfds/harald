@@ -1,0 +1,22 @@
+PRODUCER non-keyed-json-message
+topic: build.capabilities
+{
+    "messageId": "dce4c21f-888f-4e17-b083-75d7fc8f33ea",
+    "type": "capability_created",
+    "data": {
+        "capabilityId": "7bc56898-035b-4489-8bba-8e2396ae5061",
+        "capabilityName": "janie4-test"
+    }
+}
+
+PRODUCER keyed-json-message
+topic: build.capabilities
+key: 42
+{
+    "messageId": "dce4c21f-888f-4e17-b083-75d7fc8f33ea",
+    "type": "capability_created",
+    "data": {
+        "capabilityId": "7bc56898-035b-4489-8bba-8e2396ae5061",
+        "capabilityName": "janie4-test"
+    }
+}
