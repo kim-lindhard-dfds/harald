@@ -18,7 +18,6 @@ namespace Harald.WebApi.Domain.Events
             Data = (domainEvent.Data as JObject)?.ToObject<CapabilityCreatedData>();
         }
     }
-
     public class CapabilityCreatedData
     {
         public Guid CapabilityId { get; private set; }
