@@ -14,25 +14,25 @@ namespace Harald.Tests.Domain
             var CapabilityId = Guid.NewGuid();
             var ContextId = Guid.NewGuid();
             var ContextName = "foo";
-            
+
             dynamic data = new JObject();
             data.capabilityId = CapabilityId;
             data.contextId = ContextId;
             data.contextName = ContextName;
-            
-            
+
+
             var messageId = Guid.NewGuid();
             var generalDomainEvent = new GeneralDomainEvent(
                 messageId: messageId,
                 type: "context_added_to_capability",
                 data: data
             );
-            
-            
+
+
             // Act 
             var contextAddedToCapabilityDomainEvent = new ContextAddedToCapabilityDomainEvent(generalDomainEvent);
-            
-            
+
+
             // Assert
             Assert.Equal(CapabilityId, contextAddedToCapabilityDomainEvent.Data.CapabilityId);
             Assert.Equal(ContextId, contextAddedToCapabilityDomainEvent.Data.ContextId);

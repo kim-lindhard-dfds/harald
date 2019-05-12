@@ -89,18 +89,21 @@ namespace Harald.WebApi
             var topic = "build.capabilities";
 
             var eventRegistry = new DomainEventRegistry()
-            .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: "capability_created",
-                topicName: topic)
-            .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "member_joined_capability",
-                topicName: topic)
-            .Register<MemberLeftCapabilityDomainEvent>(
-                eventTypeName: "member_left_capability",
-                topicName: topic)
-            .Register<ContextAddedToCapabilityDomainEvent>(
-                eventTypeName: "context_added_to_capability",
-                topicName: topic);
+                .Register<CapabilityCreatedDomainEvent>(
+                    eventTypeName: "capability_created",
+                    topicName: topic)
+                .Register<MemberJoinedCapabilityDomainEvent>(
+                    eventTypeName: "member_joined_capability",
+                    topicName: topic)
+                .Register<MemberLeftCapabilityDomainEvent>(
+                    eventTypeName: "member_left_capability",
+                    topicName: topic)
+                .Register<ContextAddedToCapabilityDomainEvent>(
+                    eventTypeName: "context_added_to_capability",
+                    topicName: topic)
+                .Register<AWSContextAccountCreatedDomainEvent>(
+                    eventTypeName: "aws_context_account_created",
+                    topicName: topic);
            
                 var serviceProvider = services.BuildServiceProvider();
 
