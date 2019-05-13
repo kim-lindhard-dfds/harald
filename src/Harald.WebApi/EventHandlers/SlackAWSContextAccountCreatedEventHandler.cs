@@ -28,7 +28,12 @@ namespace Harald.WebApi.EventHandlers
             sb.AppendLine(addUserCmd);
             sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
             sb.AppendLine(installToolsCmd);
-            
+            sb.AppendLine("---");
+            sb.AppendLine($"Please manually set Tax settings for AWS Account {domainEvent.Data.AccountId}");
+            sb.AppendLine($"\tCountry: Denmark");
+            sb.AppendLine($"\tTax registration number: DK14194711");
+            sb.AppendLine($"\tBusiness Legal Name: DFDS A/S");
+
             var hardCodedDedChannelId = "GFYE9B99Q";
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, sb.ToString());
         }
