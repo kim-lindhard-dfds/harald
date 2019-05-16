@@ -25,28 +25,28 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(MemberLeftCapabilityDomainEvent domainEvent)
         {
-            var capability = await _capabilityRepository.Get(domainEvent.Data.CapabilityId);
+            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
             
             if (capability == null)
             {
                 _logger.LogError(
-                    $"Couldn't get capability with ID {domainEvent.Data.CapabilityId}. Can't remove member {domainEvent.Data.MemberEmail} from Slack.");
+                    $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't remove member {domainEvent.Payload.MemberEmail} from Slack.");
                 return;    
             }
 
             // Remove user from Slack channel:
             await _slackFacade.RemoveFromChannel(
-                email: domainEvent.Data.MemberEmail,
+                email: domainEvent.Payload.MemberEmail,
                 channelId: capability.SlackChannelId);
 
             // Remove user from Slack user group:
             await _slackFacade.RemoveUserGroupUser(
-                email: domainEvent.Data.MemberEmail,
+                email: domainEvent.Payload.MemberEmail,
                 userGroupId: capability.SlackUserGroupId);
 
             // Notify user that it has been invited.
             await _slackFacade.SendNotificationToUser(
-                email: domainEvent.Data.MemberEmail, 
+                email: domainEvent.Payload.MemberEmail, 
                 message: 
                 $"Thank you for your contributions to capability {capability.Name}.\nYou have been removed from corresponding Slack channel and user group.");
         }

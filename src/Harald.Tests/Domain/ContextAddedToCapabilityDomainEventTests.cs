@@ -12,20 +12,26 @@ namespace Harald.Tests.Domain
         {
             // Arrange
             var CapabilityId = Guid.NewGuid();
+            var CapabilityName = "barbar";
+            var CapabilityRootId = "barbar-Skak";
             var ContextId = Guid.NewGuid();
             var ContextName = "foo";
 
             dynamic data = new JObject();
             data.capabilityId = CapabilityId;
+            data.capabilityName = CapabilityName;
+            data.capabilityRootId = CapabilityRootId;
             data.contextId = ContextId;
             data.contextName = ContextName;
 
 
             var messageId = Guid.NewGuid();
             var generalDomainEvent = new GeneralDomainEvent(
-                messageId: messageId,
-                type: "context_added_to_capability",
-                data: data
+                version: "1",
+                eventName: "context_added_to_capability",
+                xCorrelationId: Guid.NewGuid(), 
+                xSender: "",
+                payload: data
             );
 
 
@@ -34,9 +40,11 @@ namespace Harald.Tests.Domain
 
 
             // Assert
-            Assert.Equal(CapabilityId, contextAddedToCapabilityDomainEvent.Data.CapabilityId);
-            Assert.Equal(ContextId, contextAddedToCapabilityDomainEvent.Data.ContextId);
-            Assert.Equal(ContextName, contextAddedToCapabilityDomainEvent.Data.ContextName);
+            Assert.Equal(CapabilityId, contextAddedToCapabilityDomainEvent.Payload.CapabilityId);
+            Assert.Equal(ContextId, contextAddedToCapabilityDomainEvent.Payload.ContextId);
+            Assert.Equal(ContextName, contextAddedToCapabilityDomainEvent.Payload.ContextName);
+            Assert.Equal(CapabilityName, contextAddedToCapabilityDomainEvent.Payload.CapabilityName);
+            Assert.Equal(CapabilityRootId, contextAddedToCapabilityDomainEvent.Payload.CapabilityRootId);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public async Task SendAsync(GeneralDomainEvent generalDomainEvent, IServiceScope serviceScope)
         {
-            var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.Type);
+            var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.EventName);
             dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
             dynamic handlersList = _eventHandlerFactory.GetEventHandlersFor(domainEvent, serviceScope);
             

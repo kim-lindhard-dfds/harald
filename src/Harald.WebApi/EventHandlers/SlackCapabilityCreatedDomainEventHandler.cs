@@ -25,11 +25,11 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Data.CapabilityName);
+            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
             var createUserGroupResponse = await _slackFacade.CreateUserGroup(
-                name: $"{domainEvent.Data.CapabilityName} user group",
-                handle: domainEvent.Data.CapabilityName,
-                description: $"User group for capability {domainEvent.Data.CapabilityName}.");
+                name: $"{domainEvent.Payload.CapabilityName} user group",
+                handle: domainEvent.Payload.CapabilityName,
+                description: $"User group for capability {domainEvent.Payload.CapabilityName}.");
 
             var channelId = createChannelResponse?.Channel?.Id;
             var channelName = createChannelResponse?.Channel?.Name;
@@ -40,12 +40,12 @@ namespace Harald.WebApi.EventHandlers
 
             if (createChannelResponse.Ok)
             {
-                _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Data.CapabilityName}' created with ID: {channelId}");
+                _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Payload.CapabilityName}' created with ID: {channelId}");
 
                 // Save even without user group.
                 var capability = Capability.Create(
-                    id: domainEvent.Data.CapabilityId,
-                    name: domainEvent.Data.CapabilityName,
+                    id: domainEvent.Payload.CapabilityId,
+                    name: domainEvent.Payload.CapabilityName,
                     slackChannelId: channelId,
                     slackUserGroupId: userGroupId);
 
@@ -69,7 +69,7 @@ namespace Harald.WebApi.EventHandlers
             }
             if (createUserGroupResponse.Ok)
             {
-                _logger.LogInformation($"Slack user group '{userGroupName}' for capability '{domainEvent.Data.CapabilityName}' created with Slack handle: {userGroupHandle} and ID: {userGroupId}");
+                _logger.LogInformation($"Slack user group '{userGroupName}' for capability '{domainEvent.Payload.CapabilityName}' created with Slack handle: {userGroupHandle} and ID: {userGroupId}");
             }
             else
             {

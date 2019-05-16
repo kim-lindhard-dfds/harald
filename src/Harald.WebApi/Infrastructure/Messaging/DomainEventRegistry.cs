@@ -10,11 +10,11 @@ namespace Harald.WebApi.Infrastructure.Messaging
     {
         private readonly List<DomainEventRegistration> _registrations = new List<DomainEventRegistration>();
         
-        public DomainEventRegistry Register<TEvent>(string eventTypeName, string topicName)
+        public DomainEventRegistry Register<TEvent>(string eventName, string topicName)
         {
             _registrations.Add(new DomainEventRegistration
             {
-                EventType = eventTypeName,
+                EventName = eventName,
                 EventInstanceType = typeof(TEvent),
                 Topic = topicName
             });
@@ -24,7 +24,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public string GetTopicFor(string eventType)
         {
-            var registration = _registrations.SingleOrDefault(x => x.EventType == eventType);
+            var registration = _registrations.SingleOrDefault(x => x.EventName == eventType);
 
             if (registration != null)
             {
@@ -41,13 +41,13 @@ namespace Harald.WebApi.Infrastructure.Messaging
             return topics;
         }
 
-        public Type GetInstanceTypeFor(string eventType)
+        public Type GetInstanceTypeFor(string eventName)
         {
-            var registration = _registrations.SingleOrDefault(x => x.EventType == eventType);
+            var registration = _registrations.SingleOrDefault(x => x.EventName == eventName);
 
             if (registration == null)
             {
-                throw new MessagingException($"Error! Could not determine \"event instance type\" due to no registration was found for type {eventType}!");
+                throw new MessagingException($"Error! Could not determine \"event instance type\" due to no registration was found for type {eventName}!");
             }
 
             return registration.EventInstanceType;
@@ -55,7 +55,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public class DomainEventRegistration
         {
-            public string EventType { get; set; }
+            public string EventName { get; set; }
             public Type EventInstanceType { get; set; }
             public string Topic { get; set; }
         }

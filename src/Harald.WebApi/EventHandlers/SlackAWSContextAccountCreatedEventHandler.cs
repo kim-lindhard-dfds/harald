@@ -17,19 +17,19 @@ namespace Harald.WebApi.EventHandlers
         public async Task HandleAsync(AWSContextAccountCreatedDomainEvent domainEvent)
         {
 
-            var addUserCmd = $"Get-ADUser \"CN=IT BuildSource DevEx,OU=Shared Mailboxes,OU=IT,OU=DFDS AS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:${domainEvent.Data.RoleEmail}\"}}";
+            var addUserCmd = $"Get-ADUser \"CN=IT BuildSource DevEx,OU=Shared Mailboxes,OU=IT,OU=DFDS AS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:${domainEvent.Payload.RoleEmail}\"}}";
             var installToolsCmd = $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
 
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"An AWS Context account has been created for ContextId: {domainEvent.Data.ContextId}");
+            sb.AppendLine($"An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}");
             sb.AppendLine($"Please execute the following command:");
             sb.AppendLine(addUserCmd);
             sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
             sb.AppendLine(installToolsCmd);
             sb.AppendLine("---");
-            sb.AppendLine($"Please manually set Tax settings for AWS Account {domainEvent.Data.AccountId}");
+            sb.AppendLine($"Please manually set Tax settings for AWS Account {domainEvent.Payload.AccountId}");
             sb.AppendLine($"\tCountry: Denmark");
             sb.AppendLine($"\tTax registration number: DK14194711");
             sb.AppendLine($"\tBusiness Legal Name: DFDS A/S");
