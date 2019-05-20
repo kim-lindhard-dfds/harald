@@ -20,15 +20,25 @@ namespace Harald.WebApi.EventHandlers
         public async Task HandleAsync(ContextAddedToCapabilityDomainEvent domainEvent)
         {
             var capability = await _capabilityRepository.Get(domainEvent.Data.CapabilityId);
-            
-            var message = capability != null
-                ? $"Context: \"{domainEvent.Data.ContextName}\" have been added to capability : \"{capability.Name}\"."
-                : $"Context: \"{domainEvent.Data.ContextName}\" have been added to capabilityId : \"{domainEvent.Data.CapabilityId.ToString()}\".\n" +
-                    "No capability matching the id could be found in Haralds database, this could be symptom of data being out of sync";
-           
+
+            var message = CreateMessage(domainEvent, capability);
 
             var hardCodedDedChannelId = "GFYE9B99Q";
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
+        }
+
+        public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, Capability capability)
+        {
+            var capabilityNameMessage = capability != null
+                ? $" capability : \"{capability.Name}\"."
+                : " no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync";
+
+            var message = "Context added to capability\n" +
+                          $"contextId: \"{domainEvent.Data.ContextId}\" contextName: \"{domainEvent.Data.ContextName}\"\n" +
+                          $"capabilityId: \"{domainEvent.Data.CapabilityId}\"" + capabilityNameMessage;
+
+
+            return message;
         }
     }
 }
