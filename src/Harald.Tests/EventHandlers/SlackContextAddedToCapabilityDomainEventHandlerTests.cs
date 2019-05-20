@@ -1,5 +1,4 @@
 using System;
-using Harald.Tests.Domain.Events;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.EventHandlers;
@@ -14,10 +13,15 @@ namespace Harald.Tests.EventHandlers
         {
             // Arrange
             var contextAddedToCapabilityDomainEvent = new ContextAddedToCapabilityDomainEvent(new GeneralDomainEvent(
-                Guid.NewGuid(), "context_added_to_capability", new ContextAddedToCapabilityData(
+                "1",
+                "context_added_to_capability",
+                Guid.NewGuid(),
+                "myFqdn", new ContextAddedToCapabilityData(
                     Guid.NewGuid(),
+                    "capabilityName",
+                    "foo",
                     Guid.NewGuid(),
-                    "foo"
+                    "contextName"
                 )));
             
             Capability capability = null;

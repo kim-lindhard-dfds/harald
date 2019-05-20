@@ -19,7 +19,7 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(ContextAddedToCapabilityDomainEvent domainEvent)
         {
-            var capability = await _capabilityRepository.Get(domainEvent.Data.CapabilityId);
+            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
 
             var message = CreateMessage(domainEvent, capability);
 
@@ -31,11 +31,13 @@ namespace Harald.WebApi.EventHandlers
         {
             var capabilityNameMessage = capability != null
                 ? $" capability : \"{capability.Name}\"."
-                : " no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync";
+                : $" no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync. The name from event is: {domainEvent.Payload.CapabilityName}";
 
             var message = "Context added to capability\n" +
-                          $"contextId: \"{domainEvent.Data.ContextId}\" contextName: \"{domainEvent.Data.ContextName}\"\n" +
-                          $"capabilityId: \"{domainEvent.Data.CapabilityId}\"" + capabilityNameMessage;
+                          $"contextId: \"{domainEvent.Payload.ContextId}\" contextName: \"{domainEvent.Payload.ContextName}\"\n" +
+                          $"capabilityId: \"{domainEvent.Payload.CapabilityId}\"" + capabilityNameMessage + "\n" +
+                          $"capabilityRootId: {domainEvent.Payload.CapabilityRootId}\n" +
+                          $"x-correlationId: {domainEvent.XCorrelationId}, x-sender: {domainEvent.XSender}";
 
 
             return message;
