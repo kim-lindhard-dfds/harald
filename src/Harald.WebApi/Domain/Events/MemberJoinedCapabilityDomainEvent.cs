@@ -5,24 +5,28 @@ namespace Harald.WebApi.Domain.Events
 {
     public class MemberJoinedCapabilityDomainEvent : IDomainEvent<MemberJoinedCapabilityData>
     {
-        public Guid MessageId { get; private set; }
-
-        public string Type { get; private set; }
-
-        public MemberJoinedCapabilityData Data { get; private set; }
+        public string Version { get; }
+        public string EventName { get; }
+        public Guid XCorrelationId { get; }
+        public string XSender { get; }
+        public MemberJoinedCapabilityData Payload { get; }
 
         public MemberJoinedCapabilityDomainEvent(GeneralDomainEvent domainEvent)
         {
-            MessageId = domainEvent.MessageId;
-            Type = domainEvent.Type;
-            Data = (domainEvent.Data as JObject)?.ToObject<MemberJoinedCapabilityData>();
+            Version = domainEvent.Version;
+            EventName = domainEvent.EventName;
+            XCorrelationId = domainEvent.XCorrelationId;
+            XSender = domainEvent.XSender;
+            Payload = (domainEvent.Payload as JObject)?.ToObject<MemberJoinedCapabilityData>();
         }
+
+    
     }
 
     public class MemberJoinedCapabilityData
     {
-        public Guid CapabilityId { get; private set; }
-        public string MemberEmail { get; private set; }
+        public Guid CapabilityId { get; }
+        public string MemberEmail { get; }
 
         public MemberJoinedCapabilityData(Guid capabilityId, string memberEmail)
         {

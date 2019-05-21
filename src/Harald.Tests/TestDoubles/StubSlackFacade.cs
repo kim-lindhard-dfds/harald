@@ -7,6 +7,8 @@ namespace Harald.Tests.TestDoubles
     {
         private readonly bool _simulateFailOnSendMessage;
 
+        public bool SendNotificationToChannelCalled { get; private set; } = false;
+
         public StubSlackFacade(bool simulateFailOnSendMessage)
         {
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
@@ -49,6 +51,7 @@ namespace Harald.Tests.TestDoubles
 
         public Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
         {
+            SendNotificationToChannelCalled = true;
             if (_simulateFailOnSendMessage)
             {
                 return Task.FromResult(new SendNotificationResponse

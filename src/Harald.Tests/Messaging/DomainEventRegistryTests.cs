@@ -20,13 +20,13 @@ namespace Harald.Tests.Messaging
 
             var sut = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: eventTypeName,
+                eventName: eventTypeName,
                 topicName: topic)
             .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "member_joined_capability",
+                eventName: "member_joined_capability",
                 topicName: topic)
             .Register<MemberLeftCapabilityDomainEvent>(
-                eventTypeName: "member_left_capability",
+                eventName: "member_left_capability",
                 topicName: topic);
 
             // Act
@@ -44,13 +44,13 @@ namespace Harald.Tests.Messaging
             
             var sut = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: "capability_created",
+                eventName: "capability_created",
                 topicName: topic)
             .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "member_joined_capability",
+                eventName: "member_joined_capability",
                 topicName: topic)
             .Register<MemberLeftCapabilityDomainEvent>(
-                eventTypeName: "member_left_capability",
+                eventName: "member_left_capability",
                 topicName: topic);
 
             // Act
@@ -69,10 +69,10 @@ namespace Harald.Tests.Messaging
 
             var sut = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: "eventDummyName1",
+                eventName: "eventDummyName1",
                 topicName: topic1)
             .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "eventDummyName2",
+                eventName: "eventDummyName2",
                 topicName: topic2);
 
             // Act
@@ -93,13 +93,13 @@ namespace Harald.Tests.Messaging
 
             var sut = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: eventTypeName,
+                eventName: eventTypeName,
                 topicName: topic)
             .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "member_joined_capability",
+                eventName: "member_joined_capability",
                 topicName: topic)
             .Register<MemberLeftCapabilityDomainEvent>(
-                eventTypeName: "member_left_capability",
+                eventName: "member_left_capability",
                 topicName: topic);
 
             // Act
@@ -118,13 +118,13 @@ namespace Harald.Tests.Messaging
 
             var sut = new DomainEventRegistry()
             .Register<CapabilityCreatedDomainEvent>(
-                eventTypeName: "capability_created",
+                eventName: "capability_created",
                 topicName: topic)
             .Register<MemberJoinedCapabilityDomainEvent>(
-                eventTypeName: "member_joined_capability",
+                eventName: "member_joined_capability",
                 topicName: topic)
             .Register<MemberLeftCapabilityDomainEvent>(
-                eventTypeName: "member_left_capability",
+                eventName: "member_left_capability",
                 topicName: topic);
 
             // Act and assert

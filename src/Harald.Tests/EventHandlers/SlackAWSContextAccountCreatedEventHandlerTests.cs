@@ -12,12 +12,14 @@ namespace Harald.Tests.EventHandlers
         [Fact]
         public void can_handle_domain_event()
         {
-            var sut = new SlackAWSContextAccountCreatedEventHandler(new StubSlackFacade(false));
+            var slackStub = new StubSlackFacade(false);
+            var sut = new SlackAWSContextAccountCreatedEventHandler(slackStub);
             var eventData = DomainEventBuilder.BuildAWSContextAccountCreatedEventData();
             var @event = new AWSContextAccountCreatedDomainEvent(eventData);
 
             sut.HandleAsync(@event);
 
+            Assert.True(slackStub.SendNotificationToChannelCalled);
         }
     }
 }

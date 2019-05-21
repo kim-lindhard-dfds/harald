@@ -5,30 +5,41 @@ namespace Harald.WebApi.Domain.Events
 {
     public class AWSContextAccountCreatedDomainEvent : IDomainEvent<AWSContextAccountCreatedData>
     {
-        public Guid MessageId { get; private set; }
-
-        public string Type { get; private set; }
-
-        public AWSContextAccountCreatedData Data { get; private set; }
-
         public AWSContextAccountCreatedDomainEvent(GeneralDomainEvent domainEvent)
         {
-            MessageId = domainEvent.MessageId;
-            Type = domainEvent.Type;
-            Data = (domainEvent.Data as JObject)?.ToObject<AWSContextAccountCreatedData>();
+            Version = domainEvent.Version;
+            EventName = domainEvent.EventName;
+            XCorrelationId = domainEvent.XCorrelationId;
+            XSender = domainEvent.XSender;
+            Payload = (domainEvent.Payload as JObject)?.ToObject<AWSContextAccountCreatedData>();
         }
+
+        public string Version { get; }
+        public string EventName { get; }
+        public Guid XCorrelationId { get; }
+        public string XSender { get; }
+        public AWSContextAccountCreatedData Payload { get; }
     }
 
-    public class AWSContextAccountCreatedData
-    {
-        public Guid ContextId { get; private set; }
-        public string AccountId { get; private set; }
-        public string RoleArn { get; private set; }
-        public string RoleEmail { get; private set; }
+
+public class AWSContextAccountCreatedData
+{
+    public Guid CapabilityId { get; }
+    public string CapabilityName { get; }
+    public string CapabilityRootId { get; }
+    public Guid ContextId { get; }
+    public string ContextName { get; }
+    public string AccountId { get;  }
+        public string RoleArn { get; }
+        public string RoleEmail { get;  }
         
-        public AWSContextAccountCreatedData(Guid contextId, string accountId, string roleArn, string roleEmail)
+        public AWSContextAccountCreatedData(Guid capabilityId, string capabilityName, string capabilityRootId, Guid contextId, string contextName, string accountId, string roleArn, string roleEmail)
         {
+            CapabilityId = capabilityId;
+            CapabilityName = capabilityName;
+            CapabilityRootId = capabilityRootId;
             ContextId = contextId;
+            ContextName = contextName;
             AccountId = accountId;
             RoleArn = roleArn;
             RoleEmail = roleEmail;

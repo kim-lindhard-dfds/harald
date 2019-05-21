@@ -25,28 +25,28 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(MemberJoinedCapabilityDomainEvent domainEvent)
         {
-            var capability = await _capabilityRepository.Get(domainEvent.Data.CapabilityId);
+            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
 
             if (capability == null)
             {
                 _logger.LogError(
-                    $"Couldn't get capability with ID {domainEvent.Data.CapabilityId}. Can't add member {domainEvent.Data.MemberEmail} to Slack.");
+                    $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't add member {domainEvent.Payload.MemberEmail} to Slack.");
                 return;    
             }
                         
             // Invite user to Slack channel:
             await _slackFacade.InviteToChannel(
-                email: domainEvent.Data.MemberEmail,
+                email: domainEvent.Payload.MemberEmail,
                 channelId: capability.SlackChannelId);
 
             // Add user to Slack user group:
             await _slackFacade.AddUserGroupUser(
-                email: domainEvent.Data.MemberEmail,
+                email: domainEvent.Payload.MemberEmail,
                 userGroupId: capability.SlackUserGroupId);
 
             // Notify user that it has been invited.
             await _slackFacade.SendNotificationToUser(
-                email: domainEvent.Data.MemberEmail, 
+                email: domainEvent.Payload.MemberEmail, 
                 message: 
                 $"Thank you for joining capability {capability.Name}.\nYou have been invited to corresponding Slack channel and user group.");
         }
