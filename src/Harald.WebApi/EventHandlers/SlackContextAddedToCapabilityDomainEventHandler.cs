@@ -29,8 +29,12 @@ namespace Harald.WebApi.EventHandlers
 
         public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, Capability capability)
         {
+//            var capabilityNameMessage = capability != null
+//                ? $" capability : \"{capability.Name}\"."
+//                : $" no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync. The name from event is: {domainEvent.Payload.CapabilityName}";
+            
             var capabilityNameMessage = capability != null
-                ? $" capability : \"{capability.Name}\"."
+                ? $" capability : ."
                 : $" no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync. The name from event is: {domainEvent.Payload.CapabilityName}";
 
             var message = "Context added to capability\n" +
