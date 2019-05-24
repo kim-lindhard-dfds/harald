@@ -83,7 +83,7 @@ namespace Harald.WebApi
             services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();
-
+            services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAWSContextAccountCreatedEventHandler>();
             services.AddTransient<EventHandlerFactory>();
 
             var topic = "build.capabilities";
