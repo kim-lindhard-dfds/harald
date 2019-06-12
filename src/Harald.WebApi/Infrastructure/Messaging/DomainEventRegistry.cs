@@ -47,7 +47,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
             if (registration == null)
             {
-                throw new MessagingException($"Error! Could not determine \"event instance type\" due to no registration was found for type {eventName}!");
+                throw new EventTypeNotFoundException($"Error! Could not determine \"event instance type\" due to no registration was found for type {eventName}!");
             }
 
             return registration.EventInstanceType;

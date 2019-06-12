@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Harald.WebApi.Domain.Events;
 using Harald.WebApi.EventHandlers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,17 +13,18 @@ namespace Harald.WebApi.Infrastructure.Messaging
             return eventHandlers;
         }
 
-        public IEnumerable<IEventHandler<TEvent>> GetEventHandlersFor<TEvent>(TEvent domainEvent, IServiceScope serviceScope)
+        public IEnumerable<IEventHandler<TEvent>> GetEventHandlersFor<TEvent>(TEvent domainEvent,
+            IServiceScope serviceScope)
         {
             var eventHandlers = Create<TEvent>(serviceScope);
 
             if (eventHandlers == null || eventHandlers.Count() == 0)
             {
-                throw new MessagingException($"Error! Could not determine \"event handlers\" for type {domainEvent.GetType().FullName}!");
+                throw new EventHandlerNotFoundException(
+                    $"Error! Could not determine \"event handlers\" due to no registration was found for type {domainEvent.GetType().FullName}!");
             }
 
             return eventHandlers;
         }
     }
-
 }

@@ -63,6 +63,11 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
                                         await consumer.CommitAsync(msg);
                                     }
+                                    catch (Exception ex) when (ex is EventTypeNotFoundException || ex is EventHandlerNotFoundException )
+                                    {
+                                        _logger.LogWarning($"Message skipped. Exception message: {ex.Message}", ex);
+                                        await consumer.CommitAsync(msg);
+                                    }
                                     catch (Exception ex)
                                     {
                                         _logger.LogError($"Error consuming event. Exception message: {ex.Message}", ex);

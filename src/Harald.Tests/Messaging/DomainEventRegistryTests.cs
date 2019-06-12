@@ -128,7 +128,7 @@ namespace Harald.Tests.Messaging
                 topicName: topic);
 
             // Act and assert
-            Exception ex = Assert.Throws<MessagingException>(() => sut.GetInstanceTypeFor(eventTypeName));
+            Exception ex = Assert.Throws<EventTypeNotFoundException>(() => sut.GetInstanceTypeFor(eventTypeName));
             Assert.Contains("Error! Could not determine \"event instance type\"", ex.Message);
         }
     }
