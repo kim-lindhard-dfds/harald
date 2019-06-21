@@ -32,13 +32,18 @@ namespace Harald.WebApi.EventHandlers
             var capabilityNameMessage = capability != null
                 ? $" capability : \"{capability.Name}\"."
                 : $" no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync. The name from event is: {domainEvent.Payload.CapabilityName}";
-            
-            var message = "Context added to capability\n" +
-                          $"contextId: \"{domainEvent.Payload.ContextId}\" contextName: \"{domainEvent.Payload.ContextName}\"\n" +
-                          $"capabilityId: \"{domainEvent.Payload.CapabilityId}\"" + capabilityNameMessage + "\n" +
-                          $"capabilityRootId: {domainEvent.Payload.CapabilityRootId}\n" +
-                          $"x-correlationId: {domainEvent.XCorrelationId}, x-sender: {domainEvent.XSender}";
 
+            var message = "Context added to capability\n" +
+                          "run the following command from https://github.com/dfds/aws-account-manifests:\n" +
+                          "---\n" +
+                          $"CORRELATION_ID=\"{domainEvent.Payload.XCorrelationId}\" \\\n" +
+                          $"CAPABILITY_NAME=\"{domainEvent.Payload.CapabilityName}\" \\\n" +
+                          $"CAPABILITY_ID=\"{domainEvent.Payload.CapabilityId}\" \\\n" +
+                          $"CAPABILITY_ROOT_ID=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" +
+                          $"ACCOUNT_NAME=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" + // OBS: for now account name and capabilty root id is the same by design
+                          $"CONTEXT_NAME=\"{domainEvent.Payload.ContextName}\" \\\n" +
+                          $"CONTEXT_ID=\"{domainEvent.Payload.ContextId}\" \\\n" +
+                          "./generate-tfvars.sh";
 
             return message;
         }
