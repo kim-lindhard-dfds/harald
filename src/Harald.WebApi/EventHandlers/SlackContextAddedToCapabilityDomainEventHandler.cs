@@ -36,7 +36,7 @@ namespace Harald.WebApi.EventHandlers
             var message = "Context added to capability\n" +
                           "run the following command from https://github.com/dfds/aws-account-manifests:\n" +
                           "---\n" +
-                          $"CORRELATION_ID=\"{domainEvent.Payload.XCorrelationId}\" \\\n" +
+                          $"CORRELATION_ID=\"{domainEvent.XCorrelationId}\" \\\n" +
                           $"CAPABILITY_NAME=\"{domainEvent.Payload.CapabilityName}\" \\\n" +
                           $"CAPABILITY_ID=\"{domainEvent.Payload.CapabilityId}\" \\\n" +
                           $"CAPABILITY_ROOT_ID=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" +
