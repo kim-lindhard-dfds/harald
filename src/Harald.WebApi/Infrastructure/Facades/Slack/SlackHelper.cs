@@ -17,7 +17,9 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
                 channelName = channelName.Substring(0, 21);
             }
 
-            var fixedChannelName = GetLowerCaseNameWithHypens(channelName);
+            var fixedChannelName = channelName.Replace('_', '-').ToLowerInvariant();
+            
+            
 
             return fixedChannelName;
         }
