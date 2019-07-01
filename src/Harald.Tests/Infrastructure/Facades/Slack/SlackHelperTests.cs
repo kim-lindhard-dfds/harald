@@ -138,6 +138,7 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
             // Arrange
             var sut = new SlackHelper();
             var channelName = "123numbers-456moreNumbers";
+            
 
             // Act
             var fixedChannelName = sut.FixChannelNameForSlack(channelName);
@@ -173,6 +174,22 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
         }
+        
+        
+        [Fact]
+        public void FixChannelNameForSlack_NameWithMultipleUpperCaseLetters_ReturnsValidSlackChannelName()
+        {
+            // Arrange
+            var sut = new SlackHelper();
+            var channelName = "TestNoDoubleNSCreation";
+
+            // Act
+            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+
+            // Assert
+            AssertValidSlackChannelName(fixedChannelName);
+        }
+
 
         private void AssertValidSlackChannelName(string name)
         {
