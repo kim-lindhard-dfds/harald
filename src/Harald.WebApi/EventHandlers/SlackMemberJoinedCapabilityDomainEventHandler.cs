@@ -44,11 +44,15 @@ namespace Harald.WebApi.EventHandlers
                 email: domainEvent.Payload.MemberEmail,
                 userGroupId: capability.SlackUserGroupId);
 
+            /*
+            // Disabled for now due to redundant messages. Read commit where this line is introduced in order to find further information.
+             
             // Notify user that it has been invited.
             await _slackFacade.SendNotificationToUser(
                 email: domainEvent.Payload.MemberEmail, 
                 message: 
                 $"Thank you for joining capability {capability.Name}.\nYou have been invited to corresponding Slack channel and user group.");
+            */
         }
     }
 }
