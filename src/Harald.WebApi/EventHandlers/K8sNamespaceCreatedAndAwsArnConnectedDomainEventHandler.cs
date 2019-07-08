@@ -25,8 +25,8 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(K8sNamespaceCreatedAndAwsArnConnectedDomainEvent domainEvent)
         {
-            // Handle whatever messages one might wanna sent via Slack when said event is triggered, here.
-            _logger.LogDebug($"k8s_namespace_created_and_aws_arn_connected not in use yet. Do something with the event at EventHandlers/K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler.cs");
+            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Namespace {domainEvent.Payload.NamespaceName} has been created.");
         }
     }
 }

@@ -22,11 +22,13 @@ namespace Harald.WebApi.Domain.Events
     }
     public class K8sNamespaceCreatedAndAwsArnConnectedData
     {
+        public Guid CapabilityId { get; private set; }
         public Guid ContextId { get; private set; }
         public string NamespaceName { get; private set; }
 
-        public K8sNamespaceCreatedAndAwsArnConnectedData(Guid contextId, string namespaceName)
+        public K8sNamespaceCreatedAndAwsArnConnectedData(Guid capabilityId, Guid contextId, string namespaceName)
         {
+            CapabilityId = capabilityId;
             ContextId = contextId;
             NamespaceName = namespaceName;
         }
