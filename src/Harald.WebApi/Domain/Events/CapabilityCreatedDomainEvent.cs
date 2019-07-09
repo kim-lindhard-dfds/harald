@@ -5,7 +5,7 @@ namespace Harald.WebApi.Domain.Events
 {
     public class CapabilityCreatedDomainEvent : IDomainEvent<CapabilityCreatedData>
     {
-      
+
 
         public CapabilityCreatedDomainEvent(GeneralDomainEvent domainEvent)
         {
@@ -18,7 +18,7 @@ namespace Harald.WebApi.Domain.Events
 
         public string Version { get; }
         public string EventName { get; }
-        public Guid XCorrelationId { get; }
+        public string XCorrelationId { get; }
         public string XSender { get; }
         public CapabilityCreatedData Payload { get; }
     }

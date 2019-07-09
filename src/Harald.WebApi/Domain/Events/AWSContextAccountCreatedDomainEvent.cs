@@ -16,7 +16,7 @@ namespace Harald.WebApi.Domain.Events
 
         public string Version { get; }
         public string EventName { get; }
-        public Guid XCorrelationId { get; }
+        public string XCorrelationId { get; }
         public string XSender { get; }
         public AWSContextAccountCreatedData Payload { get; }
     }
@@ -32,7 +32,7 @@ public class AWSContextAccountCreatedData
     public string AccountId { get;  }
         public string RoleArn { get; }
         public string RoleEmail { get;  }
-        
+
         public AWSContextAccountCreatedData(Guid capabilityId, string capabilityName, string capabilityRootId, Guid contextId, string contextName, string accountId, string roleArn, string roleEmail)
         {
             CapabilityId = capabilityId;

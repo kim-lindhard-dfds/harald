@@ -29,13 +29,13 @@ namespace Harald.Tests.Domain
             var generalDomainEvent = new GeneralDomainEvent(
                 version: "1",
                 eventName: "context_added_to_capability",
-                xCorrelationId: Guid.NewGuid(), 
+                xCorrelationId: Guid.NewGuid().ToString(),
                 xSender: "",
                 payload: data
             );
 
 
-            // Act 
+            // Act
             var contextAddedToCapabilityDomainEvent = new ContextAddedToCapabilityDomainEvent(generalDomainEvent);
 
 

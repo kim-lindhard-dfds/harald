@@ -7,7 +7,7 @@ namespace Harald.WebApi.Domain.Events
     {
         public string Version { get; }
         public string EventName { get; }
-        public Guid XCorrelationId { get; }
+        public string XCorrelationId { get; }
         public string XSender { get; }
         public MemberJoinedCapabilityData Payload { get; }
 
@@ -20,7 +20,7 @@ namespace Harald.WebApi.Domain.Events
             Payload = (domainEvent.Payload as JObject)?.ToObject<MemberJoinedCapabilityData>();
         }
 
-    
+
     }
 
     public class MemberJoinedCapabilityData
