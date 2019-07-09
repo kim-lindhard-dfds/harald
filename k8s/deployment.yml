@@ -88,7 +88,7 @@ spec:
           value: "SASL_SSL"
         livenessProbe:
           initialDelaySeconds: 5
-          periodSeconds: 5
+          periodSeconds: 60
           timeoutSeconds: 5
           httpGet:
             port: web
@@ -100,4 +100,3 @@ spec:
           httpGet:
             port: web
             path: /healthz
-          
