@@ -26,7 +26,14 @@ namespace Harald.WebApi.EventHandlers
         public async Task HandleAsync(K8sNamespaceCreatedAndAwsArnConnectedDomainEvent domainEvent)
         {
             var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
-            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Namespace {domainEvent.Payload.NamespaceName} has been created.");
+            
+            // 1st Message, instant.
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Task status:\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, false)}");
+
+            var timeToWait = (60 * 15); // 15 Minutes
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + timeToWait;
+            // 2nd Message, delayed.
+            await _slackFacade.SendDelayedNotificationToChannel(capability.SlackChannelId, $"Task status:\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, true)}", timestamp);
         }
     }
 }

@@ -25,6 +25,12 @@ namespace Harald.WebApi.EventHandlers
 
             var hardCodedDedChannelId = "GFYE9B99Q";
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
+            
+            // Send message to Capability Slack channel
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId,
+                $"Your context \"{domainEvent.Payload.ContextName}\" has been added. Following tasks are in progress:" +
+                $"\n" +
+                $"{CreateTaskTable(false, false, false)}");
         }
 
         public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, Capability capability)
@@ -46,6 +52,15 @@ namespace Harald.WebApi.EventHandlers
                           "./generate-tfvars.sh";
 
             return message;
+        }
+
+        public static string CreateTaskTable(bool awsAccDone, bool k8sCreatedDone, bool adsyncDone)
+        {
+            var awsMessage = awsAccDone ? $":heavy_check_mark: AWS Account\n" : $":black_large_square: AWS Account\n";
+            var k8sMessage = k8sCreatedDone ? $":heavy_check_mark: K8s Namespace created\n" : $":black_large_square: K8s Namespace created\n";
+            var adsyncMessage = adsyncDone ? $":heavy_check_mark: ADSync\n" : $":black_large_square: ADSync\n";
+
+            return $"{awsMessage}{k8sMessage}{adsyncMessage}";
         }
     }
 }

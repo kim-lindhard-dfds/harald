@@ -5,6 +5,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
     public interface ISlackFacade
     {
         Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message);
+        Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch);
         Task<SendNotificationResponse> SendNotificationToUser(string email, string message);
         Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp);
         Task<CreateChannelResponse> CreateChannel(string channelName);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -39,6 +40,20 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var sendNotificationResponse = _serializer.Deserialize<SendNotificationResponse>(content);
+
+            return sendNotificationResponse;
+        }
+
+        public async Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
+        {
+            var payload = _serializer.GetPayload(new { Channel = channel, Text = message, post_at = delayTimeInEpoch });
+            var raaa = await payload.ReadAsStringAsync();
+
+            var response = await _client.PostAsync("/api/chat.scheduleMessage", payload);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
