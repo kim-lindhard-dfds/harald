@@ -28,7 +28,7 @@ namespace Harald.WebApi.EventHandlers
             
             // Send message to Capability Slack channel
             await _slackFacade.SendNotificationToChannel(capability.SlackChannelId,
-                $"Your context \"{domainEvent.Payload.ContextName}\" has been added. Following tasks are in progress:" +
+                $"We're working on setting up your environment. Currently the following resources are being provisioned and are awaiting status updates" +
                 $"\n" +
                 $"{CreateTaskTable(false, false, false)}");
         }
@@ -56,9 +56,9 @@ namespace Harald.WebApi.EventHandlers
 
         public static string CreateTaskTable(bool awsAccDone, bool k8sCreatedDone, bool adsyncDone)
         {
-            var awsMessage = awsAccDone ? $":heavy_check_mark: AWS Account\n" : $":black_large_square: AWS Account\n";
-            var k8sMessage = k8sCreatedDone ? $":heavy_check_mark: K8s Namespace created\n" : $":black_large_square: K8s Namespace created\n";
-            var adsyncMessage = adsyncDone ? $":heavy_check_mark: ADSync\n" : $":black_large_square: ADSync\n";
+            var awsMessage = awsAccDone ? $":heavy_check_mark: AWS account provisioned\n" : $":white_check_mark: AWS account provisioned\n";
+            var k8sMessage = k8sCreatedDone ? $":heavy_check_mark: Kubernetes namespace created\n" : $":white_check_mark: Kubernetes namespace created\n";
+            var adsyncMessage = adsyncDone ? $":heavy_check_mark: AWS and Kubernetes account enrollment\n" : $":white_check_mark: AWS and Kubernetes account enrollment\n";
 
             return $"{awsMessage}{k8sMessage}{adsyncMessage}";
         }
