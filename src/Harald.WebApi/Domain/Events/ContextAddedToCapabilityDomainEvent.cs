@@ -7,10 +7,10 @@ namespace Harald.WebApi.Domain.Events
     {
         public string Version { get; }
         public string EventName { get; }
-        public Guid XCorrelationId { get; }
+        public string XCorrelationId { get; }
         public string XSender { get; }
         public ContextAddedToCapabilityData Payload { get; }
-       
+
         public ContextAddedToCapabilityDomainEvent(GeneralDomainEvent domainEvent)
         {
             Version = domainEvent.Version;
@@ -28,13 +28,13 @@ namespace Harald.WebApi.Domain.Events
         public string CapabilityRootId { get; }
         public Guid ContextId { get; }
         public string ContextName { get; }
-        
+
 
         public ContextAddedToCapabilityData(
             Guid capabilityId,
             string capabilityName,
             string capabilityRootId,
-            Guid contextId, 
+            Guid contextId,
             string contextName
         )
         {

@@ -13,20 +13,20 @@ namespace Harald.Tests.EventHandlers
         public void CreateMessage_can_handle_null_capability()
         {
             // Arrange
-            
+
             dynamic payload = new JObject();
             payload.CapabilityId = Guid.NewGuid();
             payload.CapabilityName = "CapabilityNameHere";
             payload.CapabilityRootId = "blah";
-            payload.ContextId = Guid.NewGuid();
+            payload.ContextId = Guid.NewGuid().ToString();
             payload.ContextName = "default";
-            
-            
+
+
             var contextAddedToCapabilityDomainEvent = new ContextAddedToCapabilityDomainEvent(new GeneralDomainEvent(
-                "1","context_added_to_capability", Guid.NewGuid(),"", payload));
-            
-            
-            
+                "1","context_added_to_capability", Guid.NewGuid().ToString(),"", payload));
+
+
+
             Capability capability = null;
 
 
