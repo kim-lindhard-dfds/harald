@@ -55,6 +55,11 @@ namespace Harald.Tests.TestDoubles
         {
             throw new System.NotImplementedException();
         }
+        
+        public Task<GetConversationsResponse> GetConversations()
+        {
+            throw new System.NotImplementedException();
+        }
 
         public Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
         {

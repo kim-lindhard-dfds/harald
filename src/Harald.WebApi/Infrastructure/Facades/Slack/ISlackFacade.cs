@@ -16,5 +16,6 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         Task AddUserGroupUser(string userGroupId, string email);
         Task RemoveUserGroupUser(string userGroupId, string email);
         Task<List<UserGroup>> GetUserGroups();
+        Task<GetConversationsResponse> GetConversations();
     }
 }

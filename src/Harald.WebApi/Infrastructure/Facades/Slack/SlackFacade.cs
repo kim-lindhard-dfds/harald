@@ -117,6 +117,17 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             await UpdateUserGroupUsers(userGroupId, users);
         }
 
+        public async Task<GetConversationsResponse> GetConversations()
+        {
+            var response = await _client.GetAsync("/api/conversations.list");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var getConversationsResponse = _serializer.Deserialize<GetConversationsResponse>(content);
+            
+            return getConversationsResponse;
+        }
+
         private async Task<string> GetUserId(string email)
         {
             var response = await _client.GetAsync($"/api/users.lookupByEmail?email={email}");
