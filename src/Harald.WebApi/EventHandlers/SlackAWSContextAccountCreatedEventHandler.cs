@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 
@@ -8,10 +9,12 @@ namespace Harald.WebApi.EventHandlers
     public class SlackAWSContextAccountCreatedEventHandler : IEventHandler<AWSContextAccountCreatedDomainEvent>
     {
         private readonly ISlackFacade _slackFacade;
+        private readonly ICapabilityRepository _capabilityRepository;
 
-        public SlackAWSContextAccountCreatedEventHandler(ISlackFacade slackFacade)
+        public SlackAWSContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
         {
             _slackFacade = slackFacade;
+            _capabilityRepository = capabilityRepository;
         }
 
         public async Task HandleAsync(AWSContextAccountCreatedDomainEvent domainEvent)
@@ -36,6 +39,11 @@ namespace Harald.WebApi.EventHandlers
 
             var hardCodedDedChannelId = "GFYE9B99Q";
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, sb.ToString());
+            
+            // Send message to Capability Slack channel
+            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
+            
         }
     }
 }

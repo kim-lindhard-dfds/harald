@@ -68,6 +68,11 @@ namespace Harald.Tests.TestDoubles
             });
         }
 
+        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<SendNotificationResponse> SendNotificationToUser(string email, string message)
         {
             if (_simulateFailOnSendMessage)

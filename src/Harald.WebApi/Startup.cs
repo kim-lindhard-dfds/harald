@@ -84,6 +84,7 @@ namespace Harald.WebApi
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAWSContextAccountCreatedEventHandler>();
+            services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
             services.AddTransient<EventHandlerFactory>();
 
             var topic = "build.capabilities";
@@ -103,6 +104,9 @@ namespace Harald.WebApi
                     topicName: topic)
                 .Register<AWSContextAccountCreatedDomainEvent>(
                     eventName: "aws_context_account_created",
+                    topicName: topic)
+                .Register<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>(
+                    eventName: "k8s_namespace_created_and_aws_arn_connected",
                     topicName: topic);
            
                 var serviceProvider = services.BuildServiceProvider();

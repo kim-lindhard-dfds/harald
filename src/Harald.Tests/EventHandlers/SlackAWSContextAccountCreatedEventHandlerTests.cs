@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Harald.Tests.Builders;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Domain.Events;
@@ -13,7 +15,8 @@ namespace Harald.Tests.EventHandlers
         public void can_handle_domain_event()
         {
             var slackStub = new StubSlackFacade(false);
-            var sut = new SlackAWSContextAccountCreatedEventHandler(slackStub);
+            var capabilityRepositoryStub = new StubCapabilityRepository(new List<Guid>());
+            var sut = new SlackAWSContextAccountCreatedEventHandler(slackStub, capabilityRepositoryStub);
             var eventData = DomainEventBuilder.BuildAWSContextAccountCreatedEventData();
             var @event = new AWSContextAccountCreatedDomainEvent(eventData);
 
