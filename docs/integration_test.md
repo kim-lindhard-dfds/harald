@@ -83,6 +83,8 @@ Run in following order:
 	Requires following scope:
 	
 	* usergroups:write
+	
+	It also requires a "*paid_teams_only*" scopes, which sadly isn't as easy as the previous scopes. Documentation on said scope is rather light, but from what I've gathered it requires a paid plan for the Slack Workspace.
 
 The scopes mentioned are in regards to the Slack API and how it grants permissions. You can read more here: [https://api.slack.com/scopes](https://api.slack.com/scopes)
 

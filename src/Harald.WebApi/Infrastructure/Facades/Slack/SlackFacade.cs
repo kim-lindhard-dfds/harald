@@ -175,4 +175,11 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             public SlackFacadeException(string message, Exception inner) : base(message, inner) {}
         }
     }
+
+    public class SlackFacadeException : Exception
+    {
+        public SlackFacadeException() : base() {}
+        public SlackFacadeException(string message) : base(message) {}
+        public SlackFacadeException(string message, Exception inner) : base(message, inner) {}
+    }
 }
