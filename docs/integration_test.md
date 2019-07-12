@@ -48,7 +48,42 @@ When that is done, click on "Install App to Workspace" on the same page. Assumin
 
 ### Running the test
 
-#### How to run:
+Now, depending on how you run your tests, how this is done may differ. The **key** component in this is that two environment variables gets passed to the process running the tests. These two environment variables being:
+
+- SLACK_API_AUTH_TOKEN
+
+  **value**: The "OAuth Access Token" that you received from following the step above goes here.
+
+- SLACK_TESTING_USER_EMAIL
+  **value**: This needs to contain an Email address from a user that resides in the created Slack Workspace. Assuming that you've followed the steps from above, this would be the email address you used to register the Workspace/your user. 
+
+
+
+#### Running from bash with dotnet CLI
+
+```bash
+SLACK_API_AUTH_TOKEN=TokenGoesHere \
+SLACK_TESTING_USER_EMAIL=YourEmailGoesHere \
+dotnet test
+```
+
+#### Running from Powershell with dotnet CLI
+
+```powershell
+$env:SLACK_API_AUTH_TOKEN='TokenGoesHere'; $env:SLACK_TESTING_USER_EMAIL='YourEmailGoesHere'; dotnet test; $env:SLACK_API_AUTH_TOKEN=''; $env:SLACK_TESTING_USER_EMAIL='';
+```
+
+#### Using Rider
+
+1. File -> Settings -> "Build, Execution, Deployment" -> "Unit Testing" -> "Test Runner"
+2. There should be a section called "Environment Variables". Set them as described above.
+
+
+
+If you've followed all steps so far, there should be at least one test that has failed, namely *CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user*, due to it requiring a *paid_teams_only* scope, which isn't found in a newly created Workspace that doesn't have a paid plan.
+
+
+#### Order to run tests in:
 
 Run in following order:
 

@@ -58,6 +58,11 @@ namespace Harald.IntegrationTests.Facades.Slack
 
             // Act
             var createUserGroupResponse = await sut.CreateUserGroup(name: groupName, handle: handle, description: description);
+            if (!createUserGroupResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {createUserGroupResponse.Error}");
+            }
+            
             await sut.AddUserGroupUser(userGroupId: createUserGroupResponse.UserGroup.Id, email: userEmail);
 
             // Assert
