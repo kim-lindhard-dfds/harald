@@ -52,9 +52,12 @@ Now, depending on how you run your tests, how this is done may differ. The **key
 
 - SLACK_API_AUTH_TOKEN
 
+
   **value**: The "OAuth Access Token" that you received from following the step above goes here.
 
 - SLACK_TESTING_USER_EMAIL
+
+
   **value**: This needs to contain an Email address from a user that resides in the created Slack Workspace. Assuming that you've followed the steps from above, this would be the email address you used to register the Workspace/your user. 
 
 
@@ -78,7 +81,9 @@ $env:SLACK_API_AUTH_TOKEN='TokenGoesHere'; $env:SLACK_TESTING_USER_EMAIL='YourEm
 1. File -> Settings -> "Build, Execution, Deployment" -> "Unit Testing" -> "Test Runner"
 2. There should be a section called "Environment Variables". Set them as described above.
 
+#### Using other IDEs/editors
 
+I've taken a quick look at VSCODE and VS, but have so far been unable to quickly find an option for providing environment variables to integration tests. Nonetheless the first two provided examples should be a viable alternative until a better solution has been found for VSCODE and VS.
 
 If you've followed all steps so far, there should be at least one test that has failed, namely *CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user*, due to it requiring a *paid_teams_only* scope, which isn't found in a newly created Workspace that doesn't have a paid plan.
 
