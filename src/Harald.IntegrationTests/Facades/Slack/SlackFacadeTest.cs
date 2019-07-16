@@ -18,7 +18,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            var channelName = "ded-team-one";
+            const string channelName = "ded-team-one";
 
             // Act
             var createChannelResponse = await sut.CreateChannel(channelName);
@@ -51,9 +51,9 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            var groupName = "Harald Integration Test Group";
-            var handle = "harald-int-test";
-            var description = "Group created through integration test.";
+            const string groupName = "Harald Integration Test Group";
+            const string handle = "harald-int-test";
+            const string description = "Group created through integration test.";
             var userEmail = GetUserEmail();
 
             // Act
@@ -76,8 +76,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            var channel = "ded-team-one";
-            var message = "Integration test message.";
+            const string channel = "ded-team-one";
+            const string message = "Integration test message.";
 
             // Act
             var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channel: channel, message: message);
@@ -93,8 +93,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            var channel = "ded-team-one";
-            var message = "Integration test message.";
+            const string channel = "ded-team-one";
+            const string message = "Integration test message.";
 
             var conversations = await sut.GetConversations();
             var slackChannelObj = conversations.GetChannel(channel);
