@@ -173,14 +173,14 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var users = _serializer.GetTokenValue<List<string>>(content, "['users']");
             
             var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
             if (!generalResponse.Ok)
             {
                 throw new SlackFacadeException($"API error: {generalResponse.Error}");
             }
-
+            
+            var users = _serializer.GetTokenValue<List<string>>(content, "['users']");
             return users;
         }
 
