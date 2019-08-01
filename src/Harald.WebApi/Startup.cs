@@ -9,6 +9,7 @@ using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
 using Harald.WebApi.Infrastructure.Serialization;
+using Harald.WebApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +65,8 @@ namespace Harald.WebApi
 
             services.AddTransient<JsonSerializer>();
             services.AddTransient<SlackHelper>();
+
+            services.AddTransient<ISlackService, SlackService>();
 
             ConfigureDomainEvents(services);
 

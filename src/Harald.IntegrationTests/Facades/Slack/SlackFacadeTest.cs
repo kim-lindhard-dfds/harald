@@ -10,6 +10,24 @@ namespace Harald.IntegrationTests.Facades.Slack
 {
     public class SlackFacadeTest
     {
+        
+        [Fact]
+        public async Task ListUserGroups_give_meaningful_response()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var channelName = "janie-test";
+
+            // Act
+            var listUserGroupsResponse = await sut.GetUserGroups();
+
+            // Assert
+//            Assert.True(createChannelResponse.Ok);
+//            Assert.Equal(channelName, createChannelResponse.Channel.Name);
+//            Assert.NotEmpty(createChannelResponse.Channel.Id);
+        }
+        
         [Fact]
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
@@ -104,7 +122,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
             var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
-
+            
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
             return httpClient;

@@ -23,7 +23,7 @@ namespace Harald.Tests.Controllers
             {
                 var client = builder
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
-                    .WithService<ISlackFacade>(new StubSlackFacade(simulateFailOnSendMessage: false))
+                    .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
                 var message = "Route test";
@@ -43,7 +43,7 @@ namespace Harald.Tests.Controllers
             {
                 var client = builder
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid>{}))
-                    .WithService<ISlackFacade>(new StubSlackFacade(simulateFailOnSendMessage: false))
+                    .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
                 var message = "Route test";
@@ -65,7 +65,7 @@ namespace Harald.Tests.Controllers
             {
                 var client = builder
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
-                    .WithService<ISlackFacade>(new StubSlackFacade(simulateFailOnSendMessage: false))
+                    .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
                 var nonExistingCapabilityId = Guid.NewGuid();
@@ -88,7 +88,7 @@ namespace Harald.Tests.Controllers
             {
                 var client = builder
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
-                    .WithService<ISlackFacade>(new StubSlackFacade(simulateFailOnSendMessage: true))
+                    .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: true))
                     .Build();
 
                 var message = "Route test";

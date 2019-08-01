@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Harald.WebApi.EventHandlers
@@ -12,15 +14,19 @@ namespace Harald.WebApi.EventHandlers
         private readonly ILogger<SlackMemberJoinedCapabilityDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
+        private readonly ISlackService _slackService;
+        private readonly SlackHelper _slackHelper;
 
         public SlackMemberJoinedCapabilityDomainEventHandler(
             ILogger<SlackMemberJoinedCapabilityDomainEventHandler> logger,
             ISlackFacade slackFacade,
-            ICapabilityRepository capabilityRepository)
+            ICapabilityRepository capabilityRepository,
+            ISlackService slackService)
         {
             _logger = logger;
             _slackFacade = slackFacade;
             _capabilityRepository = capabilityRepository;
+            _slackService = slackService;
         }
 
         public async Task HandleAsync(MemberJoinedCapabilityDomainEvent domainEvent)
@@ -48,10 +54,16 @@ namespace Harald.WebApi.EventHandlers
 
             try
             {
-                // Add user to Slack user group:
-                await _slackFacade.AddUserGroupUser(
-                    email: domainEvent.Payload.MemberEmail,
-                    userGroupId: capability.SlackUserGroupId);
+                if (string.IsNullOrEmpty(capability.SlackUserGroupId))
+                {
+                    var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
+                    // Update Capability with UserGroupId
+                    var updatedCapability = Capability.Create(capability.Id, capability.Name, capability.SlackChannelId,
+                        userGroup.Id);
+                    _capabilityRepository.Update(updatedCapability);
+                }
+                // Add user to Slack user group:    
+                await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,userGroupId: capability.SlackUserGroupId);
             }
             catch (SlackFacade.SlackFacadeException ex)
             {

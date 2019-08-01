@@ -28,5 +28,12 @@ namespace Harald.WebApi.Domain
             await _dbContext.Capabilities.AddAsync(capability);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task Update(Capability capability)
+        {
+            _dbContext.Capabilities.Update(capability);
+            await _dbContext.SaveChangesAsync();
+        }
+        
     }
 }

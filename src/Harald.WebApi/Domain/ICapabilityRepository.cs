@@ -7,5 +7,6 @@ namespace Harald.WebApi.Domain
     {
         Task<Capability> Get(Guid id);
         Task Add(Capability capability);
+        Task Update(Capability capability);
     }
 }

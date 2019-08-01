@@ -1,15 +1,17 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.WebApi.Infrastructure.Services;
 
 namespace Harald.Tests.TestDoubles
 {
-    public class StubSlackFacade : ISlackFacade
+    public class SlackFacadeStub : ISlackFacade
     {
         private readonly bool _simulateFailOnSendMessage;
 
         public bool SendNotificationToChannelCalled { get; private set; } = false;
 
-        public StubSlackFacade(bool simulateFailOnSendMessage)
+        public SlackFacadeStub(bool simulateFailOnSendMessage)
         {
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
         }
@@ -45,6 +47,11 @@ namespace Harald.Tests.TestDoubles
         }
 
         public Task RemoveUserGroupUser(string userGroupId, string email)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<List<UserGroup>> GetUserGroups()
         {
             throw new System.NotImplementedException();
         }

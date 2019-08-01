@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Harald.WebApi.Infrastructure.Facades.Slack
@@ -14,5 +15,6 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description);
         Task AddUserGroupUser(string userGroupId, string email);
         Task RemoveUserGroupUser(string userGroupId, string email);
+        Task<List<UserGroup>> GetUserGroups();
     }
 }
