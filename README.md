@@ -90,6 +90,12 @@ Domain events consumed is following:
 
 For information about these domain events refere to the [domain events in capability service](https://github.com/dfds/team-service/blob/master/docs/domain_events.md).
 
+## Integrations
+
+### Slack
+In order to integrate with Slack, there has to be an OAuth Access Token defined.
+This is constructed upon creation of _App_ in the [Admin-section](https://api.slack.com/apps) of Slack. If the key has to be rolled over, one need to reinstall the app in Slack.
+
 ## TODO
 * Improve resiliency.
 * Make sure all integrations are idempotent.
