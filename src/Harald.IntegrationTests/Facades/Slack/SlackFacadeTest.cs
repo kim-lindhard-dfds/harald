@@ -12,6 +12,22 @@ namespace Harald.IntegrationTests.Facades.Slack
     {
         
        [Fact]
+        public async Task CanLookupUser_AndSendNotification()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+
+            // Act
+            var sendNotificationResponse = await sut.SendNotificationToUser("jfhei@dfds.com", "Hi there");
+
+         
+            // Assert
+            Assert.True(sendNotificationResponse.Ok);
+        }
+        
+        
+        [Fact]
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
             // Arrange
