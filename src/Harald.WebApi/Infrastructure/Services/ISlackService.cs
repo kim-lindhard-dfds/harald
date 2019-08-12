@@ -47,7 +47,7 @@ namespace Harald.WebApi.Infrastructure.Services
             }
             catch (SlackFacade.SlackFacadeException ex)
             {
-                _logger.LogError($"Issue with Slack API during CreateUserGroup: {ex} : {ex.Message}");
+                _logger.LogError($"Issue with Slack API: {ex} : {ex.Message}");
             }
 
             return userGroup;
