@@ -14,7 +14,7 @@ namespace Harald.Tests.EventHandlers
         [Fact]
         public void can_handle_domain_event()
         {
-            var slackStub = new StubSlackFacade(false);
+            var slackStub = new SlackFacadeStub(false);
             var capabilityRepositoryStub = new StubCapabilityRepository(new List<Guid>());
             var sut = new SlackAWSContextAccountCreatedEventHandler(slackStub, capabilityRepositoryStub);
             var eventData = DomainEventBuilder.BuildAWSContextAccountCreatedEventData();

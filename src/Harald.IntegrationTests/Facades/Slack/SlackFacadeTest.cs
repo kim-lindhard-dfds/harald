@@ -10,7 +10,8 @@ namespace Harald.IntegrationTests.Facades.Slack
 {
     public class SlackFacadeTest
     {
-        [Fact]
+        
+       [Fact]
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
             // Arrange
@@ -104,7 +105,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
             var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
-
+            
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
             return httpClient;

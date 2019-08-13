@@ -1,8 +1,15 @@
+using System.Collections.Generic;
+
 namespace Harald.WebApi.Infrastructure.Facades.Slack
 {
     public class CreateUserGroupResponse : GeneralResponse
     {
         public UserGroup UserGroup { get; set; }
+    }
+    
+    public class ListUserGroupsResponse : GeneralResponse
+    {
+        public List<UserGroup> UserGroups { get; set; }
     }
 
     public class UserGroup

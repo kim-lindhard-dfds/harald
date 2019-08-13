@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.WebApi.Infrastructure.Serialization;
 using Xunit;
 
 namespace Harald.Tests.Infrastructure.Facades.Slack

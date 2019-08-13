@@ -179,9 +179,26 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             {
                 throw new SlackFacadeException($"API error: {generalResponse.Error}");
             }
-            
+
             var users = _serializer.GetTokenValue<List<string>>(content, "['users']");
             return users;
+        }
+        
+        public async Task<List<UserGroup>> GetUserGroups()
+        {
+            var response = await
+                _client.GetAsync($"/api/usergroups.list");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            
+            var userGroupsReponse = _serializer.Deserialize<ListUserGroupsResponse>(content);
+            if (!userGroupsReponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {userGroupsReponse.Error}");
+            }
+
+            return userGroupsReponse.UserGroups;
         }
 
         private async Task UpdateUserGroupUsers(string userGroupId, List<string> users)

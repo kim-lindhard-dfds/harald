@@ -10,4 +10,5 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         public string Id { get; set; }
         public string Name { get; set; }
     }
+    
 }

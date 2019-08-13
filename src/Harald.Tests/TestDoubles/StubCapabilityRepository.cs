@@ -21,6 +21,11 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult<object>(null);
         }
 
+        public Task Update(Capability capability)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<Capability> Get(Guid id)
         {
             var capabilityId = _capabilityIds.FirstOrDefault(capId => capId == id);
