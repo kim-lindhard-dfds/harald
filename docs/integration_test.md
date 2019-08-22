@@ -97,29 +97,29 @@ Run in following order:
 	
    * channels:write
    
-   1. InviteToChannel_Given_valid_input_Should_invite_to_channel
+    InviteToChannel_Given_valid_input_Should_invite_to_channel
         Requires following scope:
 
-       * channels:read
-       * groups:read
-       * im:read
-       * mpim:read
-       * channels:write
-       * users:read
-       * users:read.email
+    * channels:read
+    * groups:read
+    * im:read
+    * mpim:read
+    * channels:write
+    * users:read
+    * users:read.email
 2. SendNotificationToChannel_Given_valid_input_Should_send_notfication_to_channel
         Requires following scope:
-   
-       * chat:write:user
-       * chat:write:bot
+
+    * chat:write:user
+    * chat:write:bot
 3. PinMessageToChannel_Given_valid_input_Should_send_notfication_to_channel
         Requires following scope:
    
-       * chat:write:user
+    * chat:write:user
     * chat:write:bot
-	    * pins:write
+    * pins:write
 	
-1. CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user
+4. CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user
 	Requires following scope:
 	
 	* usergroups:write
