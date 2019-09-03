@@ -162,8 +162,15 @@ namespace Harald.IntegrationTests.Facades.Slack
             
             var httpClient = SlackFacadeTest.GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            sut.RenameUserGroup(UserGroupId, nameAndHandle, nameAndHandle + "Handle").Wait();
-            sut.RenameChannel(UserChannelId, nameAndHandle).Wait();
+            if (UserGroupId != null)
+            {
+                sut.RenameUserGroup(UserGroupId, nameAndHandle, nameAndHandle + "Handle").Wait();
+            }
+
+            if (UserChannelId != null)
+            {
+                sut.RenameChannel(UserChannelId, nameAndHandle).Wait();
+            }
         }
     }
 

@@ -35,8 +35,17 @@ run_tests() {
         /p:CoverletOutputFormat=cobertura \
         '/p:Include="[Harald.WebApi]*"'
 
+    MSYS_NO_PATHCONV=1 dotnet test \
+        --logger:"trx;LogFileName=testresults.trx" \
+        Harald.IntegrationTests/Harald.IntegrationTests.csproj \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        '/p:Include="[Harald.IntegrationTests]*"'        
+
     mv ./Harald.Tests/coverage.cobertura.xml "${BUILD_SOURCES_DIRECTORY}/output/"
     mv ./Harald.Tests/TestResults/testresults.trx "${BUILD_SOURCES_DIRECTORY}/output/"
+
+    mv ./Harald.IntegrationTests/TestResults/testresults.trx "${BUILD_SOURCES_DIRECTORY}/output/integrationtest.testresults.trx"    
 }
 
 publish_binaries() {
