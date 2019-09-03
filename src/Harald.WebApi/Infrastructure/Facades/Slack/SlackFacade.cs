@@ -41,6 +41,38 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             }
             return data;
         }
+
+        // This uses an undocumented API, tread carefully.
+        public async Task DeleteChannel(string channelId, string token)
+        {
+            var response = await _client.GetAsync($"/api/channels.delete?token={token}&channel={channelId}");
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
+        }
+
+        public async Task RenameChannel(string channelId, string name)
+        {
+            var payload = _serializer.GetPayload(new { channel = channelId, name = name });
+            var response = await _client.PostAsync("/api/channels.rename", payload);
+
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
+        }
+
         public async Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
         {
             var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
@@ -97,6 +129,22 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             var response = await _client.PostAsync("/api/usergroups.create", payload);
 
             return await Parse<CreateUserGroupResponse>(response);
+        }
+
+        public async Task RenameUserGroup(string id, string name, string handle)
+        {
+            var payload = _serializer.GetPayload(new { usergroup = id, name = name, handle = handle.ToLower() });
+            var response = await _client.PostAsync("/api/usergroups.update", payload);
+
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
         }
 
         public async Task AddUserGroupUser(string userGroupId, string email)

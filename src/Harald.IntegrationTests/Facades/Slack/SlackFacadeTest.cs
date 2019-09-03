@@ -10,8 +10,14 @@ using Xunit.Priority;
 namespace Harald.IntegrationTests.Facades.Slack
 {
     [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
-    public class SlackFacadeTest
+    public class SlackFacadeTest : IClassFixture<SlackFacadeTestFixture>
     {
+        private SlackFacadeTestFixture _data;
+        public SlackFacadeTest(SlackFacadeTestFixture data)
+        {
+            _data = data;
+        }
+
         [Fact, Priority(0)]
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
@@ -27,6 +33,9 @@ namespace Harald.IntegrationTests.Facades.Slack
             Assert.True(createChannelResponse.Ok);
             Assert.Equal(channelName, createChannelResponse.Channel.Name);
             Assert.NotEmpty(createChannelResponse.Channel.Id);
+            
+            // For eventual cleanup
+            _data.UserChannelId = createChannelResponse.Channel.Id;
         }
 
         [Fact]
@@ -52,7 +61,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
             const string groupName = "Harald Integration Test Group";
-            const string handle = "harald-int-test";
+            const string handle = "harald-int-a";
             const string description = "Group created through integration test.";
             var userEmail = GetUserEmail();
 
@@ -68,6 +77,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Assert
             Assert.True(createUserGroupResponse.Ok);
             Assert.Equal(groupName, createUserGroupResponse.UserGroup.Name);
+            // For eventual cleanup
+            _data.UserGroupId = createUserGroupResponse.UserGroup.Id;
         }
 
         [Fact]
@@ -110,7 +121,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         }
         
 
-        private HttpClient GetHttpClient()
+        static public HttpClient GetHttpClient()
         {
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
@@ -124,6 +135,54 @@ namespace Harald.IntegrationTests.Facades.Slack
         private string GetUserEmail()
         {
             return Environment.GetEnvironmentVariable("SLACK_TESTING_USER_EMAIL");
+        }
+    }
+
+    public class SlackFacadeTestFixture : IDisposable
+    {
+        public string UserChannelId { get; set; }
+        public string UserGroupId { get; set; }
+        public Config Configuration { get; set; }
+        
+        public SlackFacadeTestFixture()
+        {
+            Configuration = new Config();
+        }
+
+        public void Dispose()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[12];
+            var random = new Random();
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+            var nameAndHandle = new String(stringChars);
+            
+            var httpClient = SlackFacadeTest.GetHttpClient();
+            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            sut.RenameUserGroup(UserGroupId, nameAndHandle, nameAndHandle + "Handle").Wait();
+            sut.RenameChannel(UserChannelId, nameAndHandle).Wait();
+        }
+    }
+
+    public class Config
+    {
+        public string TestingUserEmail { get; set; }
+        public string TestingSlackApiAuthToken { get; set; }
+
+        public Config()
+        {
+            TestingUserEmail = GetString("SLACK_TESTING_USER_EMAIL", "hellopelle@dfds.com");
+            TestingSlackApiAuthToken = GetString("SLACK_API_AUTH_TOKEN", "replaceme");
+        }
+        
+        internal string GetString(string envVarName, string defaultValue)
+        {
+            return Environment.GetEnvironmentVariable(envVarName) != null
+                ? Environment.GetEnvironmentVariable(envVarName)
+                : defaultValue;
         }
     }
 }
