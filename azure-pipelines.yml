@@ -4,7 +4,7 @@ name: $(Build.BuildId)
 trigger:
   branches:
     include:
-    - master
+    - migrate
 
 # Disables triggering Pipeline run at creation of every Pull Request
 pr: none
