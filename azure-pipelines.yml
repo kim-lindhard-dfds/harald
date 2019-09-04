@@ -74,7 +74,7 @@ stages:
 #       displayName: 'Publish Artifact: manifests'
 
 # Continuous Deployment steps
-- stage: Continuous-Deployment
+- stage: CD
   # dependsOn: CI
   # condition: succeeded('CI')
 
