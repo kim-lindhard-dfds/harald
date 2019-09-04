@@ -12,8 +12,8 @@ pr: none
 # Variables and Variable Groups used in rest of pipeline
 variables:
   agent-pool: 'Docker-pool'
-  k8s-service-connection: 'Kubernetes-Service-Connection-Name'
-  kubernetes-namespace: 'capability-xxxx'
+  k8s-service-connection: 'Kubernetes-selfservice-herald'
+  kubernetes-namespace: 'selfservice-herald-vbqkr'
 
 resources:
    containers:
