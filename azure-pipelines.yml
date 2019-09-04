@@ -80,7 +80,7 @@ stages:
 
   jobs:
 
-  - job: "Deploy to AWS"
+  - job: "Deploy_AWS"
     pool: '$(agent-pool)'
     container: cd_runner
     steps:
