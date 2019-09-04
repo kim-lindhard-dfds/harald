@@ -10,7 +10,6 @@ namespace Harald.IntegrationTests.Facades.Slack
 {
     public class SlackFacadeTest
     {
-        
        [Fact]
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
