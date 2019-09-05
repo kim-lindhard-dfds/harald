@@ -40,6 +40,7 @@ stages:
       inputs:
         version: '2.2.104' # replace this value with the version that you need for your project
     - bash: |
+        apt install python3-pip
         pip install setuptools
         pip install awscli
         chmod +x ./pipeline.sh
