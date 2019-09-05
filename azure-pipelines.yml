@@ -24,59 +24,47 @@ resources:
         PGPASSWORD: $(PGPASSWORD)
 
 stages:
-# # Continuous Integration steps
-# - stage: Continuous-Integration
-#   # Validation jobs
-#   jobs:
-#   - job: Validate
-#     pool: '$(agent-pool)'
-   
-#    # Validate pipeline / group variables
-#     steps:   
+# Continuous Integration steps
+- stage: Continuous-Integration
+  # Validation jobs
+  jobs:
+  # Build jobs
+  - job: Build
+    pool: '$(agent-pool)'
 
-#     - bash:
-#         echo 'Checking for required variables...'
-#         bash -c '[[ -z $VARIABLE1 || -z $VARIABLE2 ]] && exit 1 || true'
-#       displayName: Testing environment variables
+    steps:
+    - bash: |
+        sudo pip install setuptools
+        sudo pip install awscli
+        chmod +x ./pipeline.sh
+        ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
+      env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+      displayName: Pipeline Bash Script
 
-#   # Build jobs
-#   - job: Build
-#     pool: '$(agent-pool)'
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: testresults.trx
+        searchFolder: '$(System.DefaultWorkingDirectory)/output'
+      condition: succeededOrFailed()
 
-#     steps:
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage'
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
 
-#     - bash: |
-#         sudo pip install setuptools
-#         sudo pip install awscli
-#         chmod +x ./pipeline.sh
-#         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
-#       env:
-#         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-#       displayName: Pipeline Bash Script
-
-#     - task: PublishTestResults@2
-#       displayName: Publish Test Results
-#       inputs:
-#         testRunner: VSTest
-#         testResultsFiles: testresults.trx
-#         searchFolder: '$(System.DefaultWorkingDirectory)/output'
-#       condition: succeededOrFailed()
-
-#     - task: PublishCodeCoverageResults@1
-#       displayName: 'Publish code coverage'
-#       inputs:
-#         codeCoverageTool: Cobertura
-#         summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
-
-#     # Upload Kubernetes manifests to current artifact Pipeline from folder /k8s
-#     - publish: $(System.DefaultWorkingDirectory)/k8s
-#       artifact: manifests
-#       displayName: 'Publish Artifact: manifests'
+    # Upload Kubernetes manifests to current artifact Pipeline from folder /k8s
+    - publish: $(System.DefaultWorkingDirectory)/k8s
+      artifact: manifests
+      displayName: 'Publish Artifact: manifests'
 
 # Continuous Deployment steps
 - stage: CD
-  # dependsOn: CI
-  # condition: succeeded('CI')
+  dependsOn: CI
+  condition: succeeded('CI')
 
   jobs:
 
