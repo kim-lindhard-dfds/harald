@@ -26,20 +26,9 @@ spec:
       initContainers:
       - name: dbmigrations
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/harald/dbmigrations:$(Build.BuildId)
-        env:
-        - name:  PGDATABASE
-          value: haralddb
-        - name:  PGHOST
-          value: $(PGHOST)
-        - name:  PGPORT
-          value: "1433"
-        - name:  PGUSER
-          value: $(PGUSER)
-        - name: PGPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: harald
-              key: password
+        envFrom:
+        - secretRef:
+            name: harald-postgres
       containers:
       - name: harald
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/harald:$(Build.BuildId)
@@ -55,29 +44,38 @@ spec:
           limits:
             memory: "400Mi"
             cpu: "200m"
+        envFrom:
+        - secretRef:
+            name: harald-postgres
+        - secretRef:
+            name: harald-kafka
+        - secretRef:
+            name: harald-slack
         env:
         - name: HARALD_DATABASE_CONNECTIONSTRING
           valueFrom:
             secretKeyRef:
-              name: harald
-              key: connection-string
-        - name: SLACK_API_BASE_URL
-          value: https://slack.com
-        - name: SLACK_API_AUTH_TOKEN
+              name: harald-postgres
+              key: PGCONNSTRING
+       - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
           valueFrom:
             secretKeyRef:
-              name: harald
-              key: slack-auth-token
-        - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
-          value: $(KAFKA_BOOTSTRAP_SERVERS)
+              name: harald-kafka
+              key: KAFKA_BOOTSTRAP_SERVERS
+        - name: HARALD_KAFKA_SASL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: harald-kafka
+              key: KAFKA_SASL_USERNAME
+        - name: HARALD_KAFKA_SASL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: harald-kafka
+              key: KAFKA_SASL_PASSWORD
         - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
           value: "0.10.0.0"
         - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
           value: "0"
-        - name: HARALD_KAFKA_SASL_USERNAME
-          value: $(KAFKA_SASL_USERNAME)
-        - name: HARALD_KAFKA_SASL_PASSWORD
-          value: $(KAFKA_SASL_PASSWORD)
         - name: HARALD_KAFKA_GROUP_ID
           value: "$(KAFKA_CONSUMER_GROUP_ID)"
         - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
@@ -86,7 +84,9 @@ spec:
           value: "PLAIN"
         - name: HARALD_KAFKA_SECURITY_PROTOCOL
           value: "SASL_SSL"
-        livenessProbe:
+        - name: SLACK_API_BASE_URL
+          value: https://slack.com
+         livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 5

@@ -13,7 +13,7 @@ pr: none
 variables:
   agent-pool: 'Docker-pool'
   k8s-service-connection: 'Kubernetes-selfservice-herald'
-  kubernetes-namespace: 'selfservice-herald-vbqkr'
+  KUBENAMESPACE: 'selfservice-herald-vbqkr'
 
 resources:
    containers:
@@ -84,26 +84,27 @@ stages:
     pool: '$(agent-pool)'
     container: cd_runner
     steps:
-    - bash:
+    - name: Terragrunt_Apply
+      bash:
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
 
-  # - job: 'Deploy to Kubernetes'
-  #   pool: '$(agent-pool)'
+  - job: 'Deploy to Kubernetes'
+    pool: '$(agent-pool)'
 
-  #   steps:
-  #   # Download manifest from current artifacts pipeline
-  #   - download: current
-  #     artifact: manifests
-  #     displayName: 'Download Artifact: manifests'
+    steps:
+    # Download manifest from current artifacts pipeline 
+    - download: current
+      artifact: manifests
+      displayName: 'Download Artifact: manifests'
     
-  #   # Replace token values in yaml files with pipeline variables
-  #   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  #     displayName: 'Replace tokens in yaml files'
-  #     inputs:
-  #       rootDirectory: '$(Pipeline.Workspace)/manifests/'
-  #       targetFiles: '*.yml'
-  #       tokenPrefix: '$('
-  #       tokenSuffix: ')'
+    # Replace token values in yaml files with pipeline variables
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens in yaml files'
+      inputs:
+        rootDirectory: '$(Pipeline.Workspace)/manifests/'
+        targetFiles: '*.yml'
+        tokenPrefix: '$('
+        tokenSuffix: ')'
     
   #   # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
   #   - publish: $(Pipeline.Workspace)/manifests/
