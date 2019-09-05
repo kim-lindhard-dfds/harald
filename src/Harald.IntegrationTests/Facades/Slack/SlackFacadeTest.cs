@@ -125,7 +125,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
-            var authToken = Environment.GetEnvironmentVariable("SLACK_API_AUTH_TOKEN");
+            var authToken = Environment.GetEnvironmentVariable("SLACK_TESTING_API_AUTH_TOKEN");
             
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
@@ -182,7 +182,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public Config()
         {
             TestingUserEmail = GetString("SLACK_TESTING_USER_EMAIL", "hellopelle@dfds.com");
-            TestingSlackApiAuthToken = GetString("SLACK_API_AUTH_TOKEN", "replaceme");
+            TestingSlackApiAuthToken = GetString("SLACK_TESTING_API_AUTH_TOKEN", "replaceme");
         }
         
         internal string GetString(string envVarName, string defaultValue)
