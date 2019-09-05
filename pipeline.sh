@@ -53,7 +53,7 @@ build_container_image() {
 
 login_to_docker() {
     echo "Login to docker..."
-    $(aws ecr get-login --no-include-email)
+    $(aws ecr get-login --no-include-email --region ${REGION})
 }
 
 push_container_image() {
