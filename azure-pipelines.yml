@@ -25,7 +25,7 @@ resources:
 
 stages:
 # Continuous Integration steps
-- stage: Continuous-Integration
+- stage: CI
   # Validation jobs
   jobs:
   # Build jobs
