@@ -22,8 +22,6 @@ resources:
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
-     - container: u16
-       image: ubuntu:16.04
 
 stages:
 # Continuous Integration steps
@@ -32,17 +30,15 @@ stages:
   jobs:
   # Build jobs
   - job: Build
-    pool: '$(agent-pool)'
-    container: u16
-
+    pool: 
+      vmImage: 'ubuntu-16.04'
     steps:
-    - task: DotNetCoreInstaller@0
-      inputs:
-        version: '2.2.104' # replace this value with the version that you need for your project
+    # - task: DotNetCoreInstaller@0
+    #   inputs:
+    #     version: '2.2.104' # replace this value with the version that you need for your project
     - bash: |
-        apt install python3-pip
-        pip install setuptools
-        pip install awscli
+        sudo pip install setuptools
+        sudo pip install awscli
         chmod +x ./pipeline.sh
         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
       env:
