@@ -41,6 +41,7 @@ Now, this app will require certain API "scopes" in order to function with the te
 - chat:write:bot
 - pins:write
 - usergroups:write
+- usergroups:read
 - users:read
 - users:read.email
 
