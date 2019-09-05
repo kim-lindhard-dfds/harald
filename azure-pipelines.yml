@@ -22,6 +22,8 @@ resources:
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
+     - container: u16
+       image: ubuntu:16.04
 
 stages:
 # Continuous Integration steps
@@ -31,6 +33,7 @@ stages:
   # Build jobs
   - job: Build
     pool: '$(agent-pool)'
+    container: u16
 
     steps:
     - bash: |
