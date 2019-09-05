@@ -67,12 +67,11 @@ stages:
   condition: succeeded('CI')
 
   jobs:
-
   - job: "Deploy_AWS"
     pool: '$(agent-pool)'
     container: cd_runner
     steps:
-    - name: Terragrunt_Apply
+    - displayName: Terragrunt Apply
       bash:
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
 
