@@ -24,7 +24,7 @@ namespace Harald.Tests.Infrastructure.Services
            sut.EnsureUserGroupExists(capabilityName);
             
             Assert.True(slackFacadeSpy.CreateUserGroupWasCalled);
-            Assert.Equal(capabilityName, slackFacadeSpy.CreateUserGroupHandle);
+            Assert.Equal(capabilityName + "-members", slackFacadeSpy.CreateUserGroupHandle);
 
         }
         

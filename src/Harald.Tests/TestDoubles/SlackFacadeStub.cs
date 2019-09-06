@@ -17,7 +17,7 @@ namespace Harald.Tests.TestDoubles
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
         }
 
-        public Task RenameUserGroup(string id, string name, string handle)
+        public Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle)
         {
             throw new System.NotImplementedException();
         }
@@ -62,7 +62,7 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
+        public Task<CreateUserGroupResponse> CreateUserGroup(string name, UserGroupHandle handle, string description)
         {
             throw new System.NotImplementedException();
         }

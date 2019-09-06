@@ -22,9 +22,9 @@ namespace Harald.WebApi.Infrastructure.Services
             try
             {
                 var existingUserGroups = await _slackFacade.GetUserGroups();
-                var defaultHandle = UserGroupHandle.Create(capabilityName);
+                var userGroupHandle = UserGroupHandle.Create(capabilityName);
 
-                var userGroupFromSlack = existingUserGroups?.SingleOrDefault(grp => grp.Handle == defaultHandle);
+                var userGroupFromSlack = existingUserGroups?.SingleOrDefault(grp => grp.Handle == userGroupHandle);
 
                 if (userGroupFromSlack != null)
                     return userGroupFromSlack;
@@ -32,7 +32,7 @@ namespace Harald.WebApi.Infrastructure.Services
                 
                 var response = await _slackFacade.CreateUserGroup(
                     name: $"{capabilityName} user group",
-                    handle: capabilityName,
+                    handle: userGroupHandle,
                     description: $"User group for capability {capabilityName}.");
 
                 userGroup = response.UserGroup;

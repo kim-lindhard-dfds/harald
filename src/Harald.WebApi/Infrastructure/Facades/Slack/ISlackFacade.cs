@@ -15,8 +15,8 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         Task RenameChannel(ChannelId channelId, ChannelName name);
         Task InviteToChannel(string email, ChannelId channelId);
         Task RemoveFromChannel(string email, ChannelId channelId);
-        Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description);
-        Task RenameUserGroup(string id, string name, string handle);
+        Task<CreateUserGroupResponse> CreateUserGroup(string name, UserGroupHandle handle, string description);
+        Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle);
         Task AddUserGroupUser(string userGroupId, string email);
         Task RemoveUserGroupUser(string userGroupId, string email);
         Task<List<UserGroup>> GetUserGroups();

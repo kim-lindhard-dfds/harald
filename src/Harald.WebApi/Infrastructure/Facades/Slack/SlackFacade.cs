@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -111,7 +109,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             await Parse<GeneralResponse>(response);
         }
 
-        public async Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
+        public async Task<CreateUserGroupResponse> CreateUserGroup(string name, UserGroupHandle handle, string description)
         {
             var validHandle = UserGroupHandle.Create(handle);
             var payload = _serializer.GetPayload(new { Name = name, Handle = validHandle, Description = description });
@@ -120,9 +118,9 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return await Parse<CreateUserGroupResponse>(response);
         }
 
-        public async Task RenameUserGroup(string id, string name, string handle)
+        public async Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle)
         {
-            var payload = _serializer.GetPayload(new { usergroup = id, name = name, handle = handle.ToLower() });
+            var payload = _serializer.GetPayload(new { usergroup = usergroupId, name = name, handle = handle.ToString().ToLower() });
             var response = await _client.PostAsync("/api/usergroups.update", payload);
 
             response.EnsureSuccessStatusCode();

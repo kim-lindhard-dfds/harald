@@ -62,7 +62,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer());
             const string groupName = "Harald Integration Test Group";
-            const string handle = "harald-int-a";
+            var handle = UserGroupHandle.Create("harald-int-a");
             const string description = "Group created through integration test.";
             var userEmail = GetUserEmail();
 
@@ -164,7 +164,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             if (UserGroupId != null)
             {
                 var newUserGroupId = new String(stringChars);
-                sut.RenameUserGroup(UserGroupId, newUserGroupId, newUserGroupId + "Handle").Wait();
+                var userGroupHandle = UserGroupHandle.Create(newUserGroupId);
+                sut.RenameUserGroup(UserGroupId, newUserGroupId, userGroupHandle).Wait();
             }
 
             if (UserChannelId != null)
