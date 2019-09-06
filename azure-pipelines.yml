@@ -114,16 +114,16 @@ stages:
               tokenSuffix: ')'
           
           # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
-          # - publish: $(Pipeline.Workspace)/manifests/
-          #   artifact: deployed-manifests
-          #   displayName: 'Publish Artifact: manifests'
+          - publish: $(Pipeline.Workspace)/manifests/
+            artifact: deployed-manifests
+            displayName: 'Publish Artifact: manifests'
 
           # Apply Kubernetes manifests
-          # - task: Kubernetes@1
-          #   displayName: 'Apply manifests'
-          #   inputs:
-          #     connectionType: Kubernetes Service Connection
-          #     kubernetesServiceEndpoint: '$(k8s-service-connection)'
-          #     namespace: '$(kubernetes-namespace)'
-          #     command: apply
-          #     arguments: '-f $(Pipeline.Workspace)/manifests/'
+          - task: Kubernetes@1
+            displayName: 'Apply manifests'
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: '$(k8s-service-connection)'
+              namespace: '$(kubernetes-namespace)'
+              command: apply
+              arguments: '-f $(Pipeline.Workspace)/manifests/'
