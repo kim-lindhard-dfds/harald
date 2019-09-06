@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Harald.Tests.Builders;
 using Harald.Tests.TestDoubles;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 using Xunit;
 
 namespace Harald.Tests.Application.EventHandlers

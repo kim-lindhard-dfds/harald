@@ -6,7 +6,6 @@ using Harald.WebApi.Application;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;

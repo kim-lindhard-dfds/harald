@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 
 namespace Harald.WebApi.Infrastructure.Messaging
 {
