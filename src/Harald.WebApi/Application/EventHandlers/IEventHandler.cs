@@ -1,7 +1,6 @@
-using System;
 using System.Threading.Tasks;
 
-namespace Harald.WebApi.EventHandlers
+namespace Harald.WebApi.Application.EventHandlers
 {
     public interface IEventHandler<in T>
     {

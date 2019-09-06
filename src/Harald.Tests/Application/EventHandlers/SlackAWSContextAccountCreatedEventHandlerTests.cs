@@ -6,7 +6,7 @@ using Harald.WebApi.Domain.Events;
 using Harald.WebApi.EventHandlers;
 using Xunit;
 
-namespace Harald.Tests.EventHandlers
+namespace Harald.Tests.Application.EventHandlers
 {
     public class SlackAWSContextAccountCreatedEventHandlerTests
     {
@@ -16,7 +16,7 @@ namespace Harald.Tests.EventHandlers
         {
             var slackStub = new SlackFacadeStub(false);
             var capabilityRepositoryStub = new StubCapabilityRepository(new List<Guid>());
-            var sut = new SlackAWSContextAccountCreatedEventHandler(slackStub, capabilityRepositoryStub);
+            var sut = new SlackAwsContextAccountCreatedEventHandler(slackStub, capabilityRepositoryStub);
             var eventData = DomainEventBuilder.BuildAWSContextAccountCreatedEventData();
             var @event = new AWSContextAccountCreatedDomainEvent(eventData);
 

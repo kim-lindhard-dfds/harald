@@ -1,11 +1,11 @@
 using System;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Harald.Tests.EventHandlers
+namespace Harald.Tests.Application.EventHandlers
 {
     public class SlackContextAddedToCapabilityDomainEventHandlerTests
     {

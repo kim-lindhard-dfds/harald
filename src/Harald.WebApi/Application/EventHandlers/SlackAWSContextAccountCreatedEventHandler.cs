@@ -1,17 +1,18 @@
 using System.Text;
 using System.Threading.Tasks;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 
 namespace Harald.WebApi.EventHandlers
 {
-    public class SlackAWSContextAccountCreatedEventHandler : IEventHandler<AWSContextAccountCreatedDomainEvent>
+    public class SlackAwsContextAccountCreatedEventHandler : IEventHandler<AWSContextAccountCreatedDomainEvent>
     {
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
 
-        public SlackAWSContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
+        public SlackAwsContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
         {
             _slackFacade = slackFacade;
             _capabilityRepository = capabilityRepository;

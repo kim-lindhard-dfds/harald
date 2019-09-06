@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
@@ -7,7 +5,7 @@ using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Harald.WebApi.EventHandlers
+namespace Harald.WebApi.Application.EventHandlers
 {
     public class SlackMemberJoinedCapabilityDomainEventHandler : IEventHandler<MemberJoinedCapabilityDomainEvent>
     {

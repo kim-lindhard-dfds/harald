@@ -3,7 +3,7 @@ using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 
-namespace Harald.WebApi.EventHandlers
+namespace Harald.WebApi.Application.EventHandlers
 {
     public class SlackContextAddedToCapabilityDomainEventHandler : IEventHandler<ContextAddedToCapabilityDomainEvent>
     {

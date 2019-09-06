@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.EventHandlers;
 using Microsoft.Extensions.DependencyInjection;
 

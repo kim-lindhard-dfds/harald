@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.EventHandlers;
 using Harald.WebApi.Infrastructure.Messaging;

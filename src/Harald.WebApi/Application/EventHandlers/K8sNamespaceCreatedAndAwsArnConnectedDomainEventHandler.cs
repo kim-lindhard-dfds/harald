@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
@@ -7,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Harald.WebApi.EventHandlers
 {
-    public class K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler : IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>
+    public class K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler : IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>
     {
-        private readonly ILogger<K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler> _logger;
+        private readonly ILogger<K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler> _logger;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
 
-        public K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler(
-            ILogger<K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler> logger,
+        public K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler(
+            ILogger<K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler> logger,
             ISlackFacade slackFacade,
             ICapabilityRepository capabilityRepository)
         {
