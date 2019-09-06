@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Harald.WebApi.Application;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
@@ -46,7 +47,7 @@ namespace Harald.WebApi
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
-            services.AddTransient<ICapabilityRepository, CapabilityRepository>();
+            services.AddTransient<ICapabilityRepository, CapabilityEntityFrameworkRepository>();
 
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {

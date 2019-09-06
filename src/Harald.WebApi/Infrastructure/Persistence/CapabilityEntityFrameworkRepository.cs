@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Harald.WebApi.Infrastructure.Persistence;
+using Harald.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Harald.WebApi.Domain
+namespace Harald.WebApi.Infrastructure.Persistence
 {
-    public class CapabilityRepository : ICapabilityRepository
+    public class CapabilityEntityFrameworkRepository : ICapabilityRepository
     {
         private readonly HaraldDbContext _dbContext;
 
-        public CapabilityRepository(HaraldDbContext dbContext)
+        public CapabilityEntityFrameworkRepository(HaraldDbContext dbContext)
         {
             _dbContext = dbContext;
         }
