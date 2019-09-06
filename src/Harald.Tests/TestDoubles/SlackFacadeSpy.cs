@@ -14,12 +14,13 @@ namespace Harald.Tests.TestDoubles
             UserGroups = new List<UserGroup>();
 
         }
-        public Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
+
+        public Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
+        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message, long delayTimeInEpoch)
         {
             throw new System.NotImplementedException();
         }
@@ -29,7 +30,7 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp)
+        public Task<GeneralResponse> PinMessageToChannel(ChannelId channelId, string messageTimeStamp)
         {
             throw new System.NotImplementedException();
         }
@@ -39,32 +40,22 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public Task<CreateChannelResponse> CreateChannel(string channelName)
+        public Task DeleteChannel(ChannelId channelId, string token)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task DeleteChannel(string channelId, string token)
+        public Task RenameChannel(ChannelId channelId, ChannelName name)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task RenameChannel(string channelId, ChannelName name)
+        public Task InviteToChannel(string email, ChannelId channelId)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task RenameChannel(string channelId, string name)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task InviteToChannel(string email, string channelId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task RemoveFromChannel(string email, string channelId)
+        public Task RemoveFromChannel(string email, ChannelId channelId)
         {
             throw new System.NotImplementedException();
         }

@@ -1,3 +1,5 @@
+using Harald.WebApi.Domain;
+
 namespace Harald.WebApi.Infrastructure.Facades.Slack
 {
     public class CreateChannelResponse : GeneralResponse
@@ -7,7 +9,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
     public class Channel
     {
-        public string Id { get; set; }
+        public ChannelId Id { get; set; }
         public string Name { get; set; }
     }
     

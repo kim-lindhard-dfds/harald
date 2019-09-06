@@ -35,7 +35,7 @@ namespace Harald.Tests.TestDoubles
                 return Task.FromResult<Capability>(null);
             }
 
-            return Task.FromResult(new Capability(
+            return Task.FromResult(Capability.Create(
                 id: id,
                 name: "FooCapability",
                 slackChannelId: "FooChannelId",

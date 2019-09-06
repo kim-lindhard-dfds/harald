@@ -43,15 +43,15 @@ namespace Harald.WebApi.Application.EventHandlers
             }
 
 
-            var channelId = createChannelResponse?.Channel?.Id;
             var channelName = createChannelResponse?.Channel?.Name;
 
-            var userGroupId = userGroup?.Id;
 
             if (createChannelResponse.Ok)
             {
+                var channelId = new ChannelId(createChannelResponse?.Channel?.Id);
                 _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Payload.CapabilityName}' created with ID: {channelId}");
 
+                var userGroupId = userGroup?.Id;
                 // Save even without user group.
                 var capability = Capability.Create(
                     id: domainEvent.Payload.CapabilityId,
@@ -63,7 +63,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
                 // Notify channel about handle.
                 var sendNotificationResponse = await _slackFacade.SendNotificationToChannel(
-                  channel: channelId, 
+                    channelId: channelId, 
                   message: 
                   $"Thank you for creating capability '{capability.Name}'.\n" +
                   $"This channel along with handle @{userGroup.Handle} has been created.\n" + 

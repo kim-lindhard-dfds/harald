@@ -33,7 +33,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Assert
             Assert.True(createChannelResponse.Ok);
             Assert.Equal(channelName, createChannelResponse.Channel.Name);
-            Assert.NotEmpty(createChannelResponse.Channel.Id);
+            Assert.NotEmpty(createChannelResponse.Channel.Id.ToString());
             
             // For eventual cleanup
             _data.UserChannelId = createChannelResponse.Channel.Id;
@@ -88,11 +88,11 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer());
-            const string channel = "ded-team-one";
+            var channelId = new ChannelId("ded-team-one");
             const string message = "Integration test message.";
 
             // Act
-            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channel: channel, message: message);
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId, message: message);
 
             // Assert
             Assert.True(sendNotificationToChannelResponse.Ok);
@@ -105,15 +105,15 @@ namespace Harald.IntegrationTests.Facades.Slack
             // Arrange
             var httpClient = GetHttpClient();
             var sut = new SlackFacade(httpClient, new JsonSerializer());
-            const string channel = "ded-team-one";
+            var channelId = new ChannelId("ded-team-one");
             const string message = "Integration test message.";
 
             var conversations = await sut.GetConversations();
-            var slackChannelObj = conversations.GetChannel(channel);
+            var slackChannelObj = conversations.GetChannel(channelId);
 
             // Act
-            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channel: channel, message: message);
-            var pinMessageToChannelResponse = await sut.PinMessageToChannel(channel: slackChannelObj.Id, messageTimeStamp: sendNotificationToChannelResponse.TimeStamp);
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId, message: message);
+            var pinMessageToChannelResponse = await sut.PinMessageToChannel(new ChannelId(slackChannelObj.Id), messageTimeStamp: sendNotificationToChannelResponse.TimeStamp);
 
             // Assert
             Assert.True(sendNotificationToChannelResponse.Ok);
@@ -141,7 +141,7 @@ namespace Harald.IntegrationTests.Facades.Slack
 
     public class SlackFacadeTestFixture : IDisposable
     {
-        public string UserChannelId { get; set; }
+        public ChannelId UserChannelId { get; set; }
         public string UserGroupId { get; set; }
         public Config Configuration { get; set; }
         

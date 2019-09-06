@@ -6,17 +6,17 @@ namespace Harald.WebApi.Domain
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
-        public string SlackChannelId { get; private set; }
+        public ChannelId ChannelId { get; private set; }
         public string SlackUserGroupId { get; private set; }
 
-        public Capability(Guid id, string name, string slackChannelId, string slackUserGroupId)
+        private Capability(Guid id, string name, string slackChannelId, string slackUserGroupId)
         {
             Id = id;
             Name = name;
-            SlackChannelId = slackChannelId;
+            ChannelId = new ChannelId(slackChannelId);
             SlackUserGroupId = slackUserGroupId;
         }
-        
+
         public static Capability Create(Guid id, string name, string slackChannelId, string slackUserGroupId)
         {
             var capability = new Capability(

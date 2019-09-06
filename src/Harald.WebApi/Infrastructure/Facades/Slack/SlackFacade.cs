@@ -29,20 +29,10 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return await Parse<CreateChannelResponse>(response);
         }
 
-        private async Task<T> Parse<T>(HttpResponseMessage response)  where T : GeneralResponse
-        {
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            var data = _serializer.Deserialize<T>(content);
-            if (!data.Ok)
-            {
-                throw new SlackFacadeException($"API error: {content}");
-            }
-            return data;
-        }
+     
 
         // This uses an undocumented API, tread carefully.
-        public async Task DeleteChannel(string channelId, string token)
+        public async Task DeleteChannel(ChannelId channelId, string token)
         {
             var response = await _client.GetAsync($"/api/channels.delete?token={token}&channel={channelId}");
             response.EnsureSuccessStatusCode();
@@ -56,7 +46,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             }
         }
 
-        public async Task RenameChannel(string channelId, ChannelName name)
+        public async Task RenameChannel(ChannelId channelId, ChannelName name)
         {
             var payload = _serializer.GetPayload(new { channel = channelId, name = name });
             var response = await _client.PostAsync("/api/channels.rename", payload);
@@ -72,17 +62,17 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             }
         }
 
-        public async Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
+        public async Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
         {
-            var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
+            var payload = _serializer.GetPayload(new { Channel = channelId, Text = message });
 
             var response = await _client.PostAsync("/api/chat.postMessage", payload);
             return await Parse<SendNotificationResponse>(response);
         }
 
-        public async Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
+        public async Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message, long delayTimeInEpoch)
         {
-            var payload = _serializer.GetPayload(new { Channel = channel, Text = message, post_at = delayTimeInEpoch });
+            var payload = _serializer.GetPayload(new { Channel = channelId, Text = message, post_at = delayTimeInEpoch });
             var response = await _client.PostAsync("/api/chat.scheduleMessage", payload);
             return await Parse<SendNotificationResponse>(response);
         }
@@ -96,14 +86,14 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return await Parse<SendNotificationResponse>(response);
         }
 
-        public async Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp)
+        public async Task<GeneralResponse> PinMessageToChannel(ChannelId channelId, string messageTimeStamp)
         {
-            var payload = _serializer.GetPayload(new { Channel = channel, Timestamp = messageTimeStamp });
+            var payload = _serializer.GetPayload(new { Channel = channelId, Timestamp = messageTimeStamp });
             var response = await _client.PostAsync("/api/pins.add", payload);
             return await Parse<GeneralResponse>(response);
         }
 
-        public async Task InviteToChannel(string email, string channelId)
+        public async Task InviteToChannel(string email, ChannelId channelId)
         {
             var userId = await GetUserId(email);
             var payload = _serializer.GetPayload(new { Channel = channelId, user = userId });
@@ -112,7 +102,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             await Parse<GeneralResponse>(response);
         }
 
-        public async Task RemoveFromChannel(string email, string channelId)
+        public async Task RemoveFromChannel(string email, ChannelId channelId)
         {
             var userId = await GetUserId(email);
             var payload = _serializer.GetPayload(new { Channel = channelId, user = userId });
@@ -215,6 +205,18 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             await Parse<GeneralResponse>(response);
         }
 
+        private async Task<T> Parse<T>(HttpResponseMessage response)  where T : GeneralResponse
+        {
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var data = _serializer.Deserialize<T>(content);
+            if (!data.Ok)
+            {
+                throw new SlackFacadeException($"API error: {content}");
+            }
+            return data;
+        }
+        
         public class SlackFacadeException : Exception
         {
             public SlackFacadeException() : base() {}

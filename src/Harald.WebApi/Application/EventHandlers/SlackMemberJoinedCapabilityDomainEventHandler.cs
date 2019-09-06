@@ -42,7 +42,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 // Invite user to Slack channel:
                 await _slackFacade.InviteToChannel(
                     email: domainEvent.Payload.MemberEmail,
-                    channelId: capability.SlackChannelId);
+                    channelId: capability.ChannelId);
             }
             catch (SlackFacade.SlackFacadeException ex)
             {
@@ -55,7 +55,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 {
                     var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
                     // Update Capability with UserGroupId
-                    var updatedCapability = Capability.Create(capability.Id, capability.Name, capability.SlackChannelId,
+                    var updatedCapability = Capability.Create(capability.Id, capability.Name, capability.ChannelId,
                         userGroup.Id);
                     _capabilityRepository.Update(updatedCapability);
                 }

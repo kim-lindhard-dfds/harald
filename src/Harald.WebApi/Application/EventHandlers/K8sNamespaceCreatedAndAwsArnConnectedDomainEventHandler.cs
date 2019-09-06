@@ -28,12 +28,12 @@ namespace Harald.WebApi.Application.EventHandlers
             var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
             
             // 1st Message, instant.
-            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Nearly there... time to grab a coffee?\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, false)}");
+            await _slackFacade.SendNotificationToChannel(capability.ChannelId, $"Nearly there... time to grab a coffee?\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, false)}");
 
             var timeToWait = (60 * 15); // 15 Minutes
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + timeToWait;
             // 2nd Message, delayed.
-            await _slackFacade.SendDelayedNotificationToChannel(capability.SlackChannelId, $"All done:\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, true)}", timestamp);
+            await _slackFacade.SendDelayedNotificationToChannel(capability.ChannelId, $"All done:\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, true, true)}", timestamp);
         }
     }
 }

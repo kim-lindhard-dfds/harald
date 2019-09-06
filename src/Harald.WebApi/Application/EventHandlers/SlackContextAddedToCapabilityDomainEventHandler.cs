@@ -23,11 +23,11 @@ namespace Harald.WebApi.Application.EventHandlers
 
             var message = CreateMessage(domainEvent, capability);
 
-            var hardCodedDedChannelId = "GFYE9B99Q";
+            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
             
             // Send message to Capability Slack channel
-            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId,
+            await _slackFacade.SendNotificationToChannel(capability.ChannelId,
                 $"We're working on setting up your environment. Currently the following resources are being provisioned and are awaiting status updates" +
                 $"\n" +
                 $"{CreateTaskTable(false, false, false)}");
