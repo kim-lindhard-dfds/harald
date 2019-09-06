@@ -90,7 +90,6 @@ stages:
     - bash:
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
 
-  jobs:
   - deployment: K8s
     displayName: 'Deploy to Kubernetes'
     pool: '$(agent-pool)'
