@@ -17,6 +17,10 @@ variables:
 
 resources:
    containers:
+     - container: ci_runner
+       image: dfdsdk/pre-prime-pipeline:0.1
+       env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
      - container: cd_runner
        image: dfdsdk/pre-prime-pipeline:0.1
        env:
@@ -29,6 +33,13 @@ stages:
   # Validation jobs
   jobs:
   # Build jobs
+  - job: "Create_ECR"
+    pool: '$(agent-pool)'
+    container: ci_runner
+    steps:
+    - bash:
+        terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve"
+
   - job: Build
     pool: 
       vmImage: 'ubuntu-16.04'
