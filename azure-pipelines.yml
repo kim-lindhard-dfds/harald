@@ -90,35 +90,41 @@ stages:
     - bash:
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
 
-  - job: "Deploy_to_Kubernetes"
+  jobs:
+  - deployment: K8s
+    displayName: 'Deploy to Kubernetes'
     pool: '$(agent-pool)'
+    environment: 'Hellman'
 
-    steps:
-    # Download manifest from current artifacts pipeline 
-    - download: current
-      artifact: manifests
-      displayName: 'Download Artifact: manifests'
-    
-    # Replace token values in yaml files with pipeline variables
-    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-      displayName: 'Replace tokens in yaml files'
-      inputs:
-        rootDirectory: '$(Pipeline.Workspace)/manifests/'
-        targetFiles: '*.yml'
-        tokenPrefix: '$('
-        tokenSuffix: ')'
-    
-  #   # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
-  #   - publish: $(Pipeline.Workspace)/manifests/
-  #     artifact: deployed-manifests
-  #     displayName: 'Publish Artifact: manifests'
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          # Download manifest from current artifacts pipeline
+          - download: current
+            artifact: manifests
+            displayName: 'Download Artifact: manifests'
+          
+          # Replace token values in yaml files with pipeline variables
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace tokens in yaml files'
+            inputs:
+              rootDirectory: '$(Pipeline.Workspace)/manifests/'
+              targetFiles: '*.yml'
+              tokenPrefix: '$('
+              tokenSuffix: ')'
+          
+          # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
+          # - publish: $(Pipeline.Workspace)/manifests/
+          #   artifact: deployed-manifests
+          #   displayName: 'Publish Artifact: manifests'
 
-  #   # Apply Kubernetes manifests
-  #   - task: Kubernetes@1
-  #     displayName: 'Apply manifests'
-  #     inputs:
-  #       connectionType: Kubernetes Service Connection
-  #       kubernetesServiceEndpoint: '$(k8s-service-connection)'
-  #       namespace: '$(kubernetes-namespace)'
-  #       command: apply
-  #       arguments: '-f $(Pipeline.Workspace)/manifests/'
+          # Apply Kubernetes manifests
+          # - task: Kubernetes@1
+          #   displayName: 'Apply manifests'
+          #   inputs:
+          #     connectionType: Kubernetes Service Connection
+          #     kubernetesServiceEndpoint: '$(k8s-service-connection)'
+          #     namespace: '$(kubernetes-namespace)'
+          #     command: apply
+          #     arguments: '-f $(Pipeline.Workspace)/manifests/'
