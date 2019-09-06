@@ -57,9 +57,6 @@ login_to_docker() {
 }
 
 push_container_image() {
-    # echo "Login to docker..."
-    # $(aws ecr get-login --no-include-email)
-
     account_id=$(aws sts get-caller-identity --output text --query 'Account')
     image_name="${account_id}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}:${BUILD_NUMBER}"
 
@@ -71,9 +68,6 @@ push_container_image() {
 }
 
 push_dbmigration_container_image() {
-    # echo "Login to docker..."
-    # $(aws ecr get-login --no-include-email)
-
     account_id=$(aws sts get-caller-identity --output text --query 'Account')
     image_name="${account_id}.dkr.ecr.${REGION}.amazonaws.com/${DB_IMAGE_NAME}:${BUILD_NUMBER}"
 
