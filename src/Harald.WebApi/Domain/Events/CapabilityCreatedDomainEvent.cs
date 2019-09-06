@@ -7,19 +7,11 @@ namespace Harald.WebApi.Domain.Events
     {
 
 
-        public CapabilityCreatedDomainEvent(GeneralDomainEvent domainEvent)
+        public CapabilityCreatedDomainEvent(ExternalEvent domainEvent)
         {
-            Version = domainEvent.Version;
-            EventName = domainEvent.EventName;
-            XCorrelationId = domainEvent.XCorrelationId;
-            XSender = domainEvent.XSender;
             Payload = (domainEvent.Payload as JObject)?.ToObject<CapabilityCreatedData>();
         }
 
-        public string Version { get; }
-        public string EventName { get; }
-        public string XCorrelationId { get; }
-        public string XSender { get; }
         public CapabilityCreatedData Payload { get; }
     }
     public class CapabilityCreatedData

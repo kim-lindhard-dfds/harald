@@ -119,6 +119,7 @@ namespace Harald.WebApi
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
+            services.AddTransient<ExternalEventMetaDataStore>();
             services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
             services.AddTransient<KafkaConsumerFactory>();
         }

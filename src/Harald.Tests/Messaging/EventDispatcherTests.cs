@@ -88,6 +88,7 @@ namespace Harald.Tests.Messaging
                 .AddTransient<EventHandlerFactory>()
                 .AddSingleton(domainEventRegistry)
                 .AddTransient<IEventDispatcher, EventDispatcher>()
+                .AddTransient<ExternalEventMetaDataStore>()
                 .BuildServiceProvider();
 
             return serviceProvider;

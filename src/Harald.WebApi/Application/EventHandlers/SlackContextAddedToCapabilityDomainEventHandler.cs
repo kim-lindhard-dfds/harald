@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.WebApi.Infrastructure.Messaging;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -9,19 +10,20 @@ namespace Harald.WebApi.Application.EventHandlers
     {
         private readonly ICapabilityRepository _capabilityRepository;
         private readonly ISlackFacade _slackFacade;
-
+        private readonly ExternalEventMetaDataStore _externalEventMetaDataStore;
         public SlackContextAddedToCapabilityDomainEventHandler(ICapabilityRepository capabilityRepository,
-            ISlackFacade slackFacade)
+            ISlackFacade slackFacade, ExternalEventMetaDataStore externalEventMetaDataStore)
         {
             _capabilityRepository = capabilityRepository;
             _slackFacade = slackFacade;
+            _externalEventMetaDataStore = externalEventMetaDataStore;
         }
 
         public async Task HandleAsync(ContextAddedToCapabilityDomainEvent domainEvent)
         {
             var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
 
-            var message = CreateMessage(domainEvent, capability);
+            var message = CreateMessage(domainEvent, _externalEventMetaDataStore.XCorrelationId);
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
@@ -33,16 +35,13 @@ namespace Harald.WebApi.Application.EventHandlers
                 $"{CreateTaskTable(false, false, false)}");
         }
 
-        public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, Capability capability)
+        public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, string xCorrelationId)
         {
-            var capabilityNameMessage = capability != null
-                ? $" capability : \"{capability.Name}\"."
-                : $" no capability matching the id could be found in Haralds database, this could be symptom of data being out of sync. The name from event is: {domainEvent.Payload.CapabilityName}";
-
+           
             var message = "Context added to capability\n" +
                           "run the following command from https://github.com/dfds/aws-account-manifests:\n" +
                           "---\n" +
-                          $"CORRELATION_ID=\"{domainEvent.XCorrelationId}\" \\\n" +
+                          $"CORRELATION_ID=\"{xCorrelationId}\" \\\n" +
                           $"CAPABILITY_NAME=\"{domainEvent.Payload.CapabilityName}\" \\\n" +
                           $"CAPABILITY_ID=\"{domainEvent.Payload.CapabilityId}\" \\\n" +
                           $"CAPABILITY_ROOT_ID=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" +
