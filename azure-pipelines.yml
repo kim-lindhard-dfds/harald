@@ -38,7 +38,7 @@ stages:
     container: ci_runner
     steps:
     - bash:
-        terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve"
+        terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
 
   - job: Build
     pool: 
