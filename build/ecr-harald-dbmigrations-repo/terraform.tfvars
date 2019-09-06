@@ -11,5 +11,5 @@ terragrunt {
   }
 }
 
-name = "harald/harald-dbmigrations"
+name = "harald/dbmigrations"
 pull_principals = ["arn:aws:iam::738063116313:root"] #dfds-oxygen

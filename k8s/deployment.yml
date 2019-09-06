@@ -25,13 +25,13 @@ spec:
     spec:
       initContainers:
       - name: dbmigrations
-        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/ded/harald/dbmigrations:$(Build.BuildId)
+        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/dbmigrations:$(Build.BuildId)
         envFrom:
         - secretRef:
             name: harald-postgres
       containers:
       - name: harald
-        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/ded/harald:$(Build.BuildId)
+        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/harald:$(Build.BuildId)
         ports:
         - containerPort: 80
           name: web
