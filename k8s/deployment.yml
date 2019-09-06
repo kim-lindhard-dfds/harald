@@ -79,7 +79,7 @@ spec:
           - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
             value: "0"
           - name: HARALD_KAFKA_GROUP_ID
-            value: "$(KAFKA_CONSUMER_GROUP_ID)"
+            value: "build.selfservice.harald-consumer"
           - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
             value: "false"
           - name: HARALD_KAFKA_SASL_MECHANISMS
