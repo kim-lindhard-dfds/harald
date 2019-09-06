@@ -41,6 +41,8 @@ stages:
         terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
 
   - job: Build
+    dependsOn: Create_ECR
+    condition: succeeded('Create_ECR')
     pool: 
       vmImage: 'ubuntu-16.04'
     steps:
