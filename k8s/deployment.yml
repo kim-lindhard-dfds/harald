@@ -25,13 +25,13 @@ spec:
     spec:
       initContainers:
       - name: dbmigrations
-        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/dbmigrations:$(Build.BuildId)
+        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/dbmigrations:185246
         envFrom:
         - secretRef:
             name: harald-postgres
       containers:
       - name: harald
-        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/harald:$(Build.BuildId)
+        image: 640590921355.dkr.ecr.eu-central-1.amazonaws.com/harald/harald:185246
         ports:
         - containerPort: 80
           name: web
@@ -52,41 +52,41 @@ spec:
         - secretRef:
             name: harald-slack
         env:
-        - name: HARALD_DATABASE_CONNECTIONSTRING
-          valueFrom:
-            secretKeyRef:
-              name: harald-postgres
-              key: PGCONNSTRING
-       - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
-          valueFrom:
-            secretKeyRef:
-              name: harald-kafka
-              key: KAFKA_BOOTSTRAP_SERVERS
-        - name: HARALD_KAFKA_SASL_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: harald-kafka
-              key: KAFKA_SASL_USERNAME
-        - name: HARALD_KAFKA_SASL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: harald-kafka
-              key: KAFKA_SASL_PASSWORD
-        - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
-          value: "0.10.0.0"
-        - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
-          value: "0"
-        - name: HARALD_KAFKA_GROUP_ID
-          value: "$(KAFKA_CONSUMER_GROUP_ID)"
-        - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
-          value: "false"
-        - name: HARALD_KAFKA_SASL_MECHANISMS
-          value: "PLAIN"
-        - name: HARALD_KAFKA_SECURITY_PROTOCOL
-          value: "SASL_SSL"
-        - name: SLACK_API_BASE_URL
-          value: https://slack.com
-         livenessProbe:
+          - name: SLACK_API_BASE_URL
+            value: "https://slack.com"
+          - name: HARALD_DATABASE_CONNECTIONSTRING
+            valueFrom:
+              secretKeyRef:
+                name: harald-postgres
+                key: PGCONNSTRING
+          - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
+            valueFrom:
+              secretKeyRef:
+                name: harald-kafka
+                key: KAFKA_BOOTSTRAP_SERVERS
+          - name: HARALD_KAFKA_SASL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: harald-kafka
+                key: KAFKA_SASL_USERNAME
+          - name: HARALD_KAFKA_SASL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: harald-kafka
+                key: KAFKA_SASL_PASSWORD
+          - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
+            value: "0.10.0.0"
+          - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
+            value: "0"
+          - name: HARALD_KAFKA_GROUP_ID
+            value: "$(KAFKA_CONSUMER_GROUP_ID)"
+          - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
+            value: "false"
+          - name: HARALD_KAFKA_SASL_MECHANISMS
+            value: "PLAIN"
+          - name: HARALD_KAFKA_SECURITY_PROTOCOL
+            value: "SASL_SSL"
+        livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 5
