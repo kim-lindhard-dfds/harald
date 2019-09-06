@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 
 namespace Harald.WebApi.Infrastructure.Facades.Slack
 {
@@ -9,9 +10,9 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch);
         Task<SendNotificationResponse> SendNotificationToUser(string email, string message);
         Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp);
-        Task<CreateChannelResponse> CreateChannel(string channelName);
+        Task<CreateChannelResponse> CreateChannel(ChannelName channelName);
         Task DeleteChannel(string channelId, string token);
-        Task RenameChannel(string channelId, string name);
+        Task RenameChannel(string channelId, ChannelName name);
         Task InviteToChannel(string email, string channelId);
         Task RemoveFromChannel(string email, string channelId);
         Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description);

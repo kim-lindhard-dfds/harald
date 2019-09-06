@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Microsoft.Extensions.Logging;
 
@@ -15,13 +16,11 @@ namespace Harald.WebApi.Infrastructure.Services
     public class SlackService : ISlackService
     {
         private readonly ISlackFacade _slackFacade;
-        private readonly SlackHelper _slackHelper;
         private readonly ILogger<SlackService> _logger;
 
-        public SlackService(ISlackFacade slackFacade, SlackHelper slackHelper, ILogger<SlackService> logger)
+        public SlackService(ISlackFacade slackFacade, ILogger<SlackService> logger)
         {
             _slackFacade = slackFacade;
-            _slackHelper = slackHelper;
             _logger = logger;
         }
         public async Task<UserGroup> EnsureUserGroupExists(string capabilityName)
@@ -30,7 +29,7 @@ namespace Harald.WebApi.Infrastructure.Services
             try
             {
                 var existingUserGroups = await _slackFacade.GetUserGroups();
-                var defaultHandle = _slackHelper.FixHandleNameForSlack(capabilityName);
+                var defaultHandle = UserGroupHandle.Create(capabilityName);
 
                 var userGroupFromSlack = existingUserGroups?.SingleOrDefault(grp => grp.Handle == defaultHandle);
 

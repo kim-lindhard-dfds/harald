@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Serialization;
 
 namespace Harald.WebApi.Infrastructure.Facades.Slack
@@ -12,18 +13,16 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
     {
         private readonly HttpClient _client;
         private readonly JsonSerializer _serializer;
-        private readonly SlackHelper _slackHelper;
 
-        public SlackFacade(HttpClient client, JsonSerializer serializer, SlackHelper slackHelper)
+        public SlackFacade(HttpClient client, JsonSerializer serializer)
         {
             _client = client;
             _serializer = serializer;
-            _slackHelper = slackHelper;
         }
 
-        public async Task<CreateChannelResponse> CreateChannel(string channelName)
+        public async Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
         {
-            var validChannelName = _slackHelper.FixChannelNameForSlack(channelName);
+            var validChannelName = ChannelName.Create(channelName);
             var payload = _serializer.GetPayload(new { Name = validChannelName, Validate = true });
             var response = await _client.PostAsync("/api/channels.create", payload);
 
@@ -57,7 +56,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             }
         }
 
-        public async Task RenameChannel(string channelId, string name)
+        public async Task RenameChannel(string channelId, ChannelName name)
         {
             var payload = _serializer.GetPayload(new { channel = channelId, name = name });
             var response = await _client.PostAsync("/api/channels.rename", payload);
@@ -124,7 +123,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
         public async Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
         {
-            var validHandle = _slackHelper.FixHandleNameForSlack(handle);
+            var validHandle = UserGroupHandle.Create(handle);
             var payload = _serializer.GetPayload(new { Name = name, Handle = validHandle, Description = description });
             var response = await _client.PostAsync("/api/usergroups.create", payload);
 

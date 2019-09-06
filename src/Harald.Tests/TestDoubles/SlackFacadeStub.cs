@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Services;
 
@@ -31,7 +32,17 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
+        public Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task DeleteChannel(string channelId, string token)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RenameChannel(string channelId, ChannelName name)
         {
             throw new System.NotImplementedException();
         }

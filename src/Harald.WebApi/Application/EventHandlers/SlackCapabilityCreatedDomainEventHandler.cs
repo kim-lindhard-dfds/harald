@@ -28,7 +28,9 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
+            var createChannelResponse = await _slackFacade.CreateChannel(
+                ChannelName.Create(domainEvent.Payload.CapabilityName)
+            );
 
             UserGroup userGroup = null;
             try

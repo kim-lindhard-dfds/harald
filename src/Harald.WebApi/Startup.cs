@@ -66,7 +66,6 @@ namespace Harald.WebApi
             });
 
             services.AddTransient<JsonSerializer>();
-            services.AddTransient<SlackHelper>();
 
             services.AddTransient<ISlackService, SlackService>();
 

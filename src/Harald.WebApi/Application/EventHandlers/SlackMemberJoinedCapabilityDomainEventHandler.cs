@@ -13,7 +13,6 @@ namespace Harald.WebApi.Application.EventHandlers
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
         private readonly ISlackService _slackService;
-        private readonly SlackHelper _slackHelper;
 
         public SlackMemberJoinedCapabilityDomainEventHandler(
             ILogger<SlackMemberJoinedCapabilityDomainEventHandler> logger,

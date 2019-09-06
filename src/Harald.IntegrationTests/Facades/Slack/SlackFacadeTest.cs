@@ -3,6 +3,7 @@ using System.Net.Http;
 using Xunit;
 using System.Net;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Serialization;
 using Xunit.Priority;
@@ -23,8 +24,8 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
-            const string channelName = "ded-team-one";
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var channelName = ChannelName.Create("ded-team-one");
 
             // Act
             var createChannelResponse = await sut.CreateChannel(channelName);
@@ -43,7 +44,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
             var conversations = await sut.GetConversations();
             var channelId = conversations.GetChannel("ded-team-one").Id;
             var userEmail = GetUserEmail();
@@ -59,7 +60,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
             const string groupName = "Harald Integration Test Group";
             const string handle = "harald-int-a";
             const string description = "Group created through integration test.";
@@ -86,7 +87,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
             const string channel = "ded-team-one";
             const string message = "Integration test message.";
 
@@ -103,7 +104,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
             const string channel = "ded-team-one";
             const string message = "Integration test message.";
 
@@ -158,18 +159,19 @@ namespace Harald.IntegrationTests.Facades.Slack
             {
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
-            var nameAndHandle = new String(stringChars);
-            
             var httpClient = SlackFacadeTest.GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer(), new SlackHelper());
+            var sut = new SlackFacade(httpClient, new JsonSerializer());
             if (UserGroupId != null)
             {
-                sut.RenameUserGroup(UserGroupId, nameAndHandle, nameAndHandle + "Handle").Wait();
+                var newUserGroupId = new String(stringChars);
+                sut.RenameUserGroup(UserGroupId, newUserGroupId, newUserGroupId + "Handle").Wait();
             }
 
             if (UserChannelId != null)
             {
-                sut.RenameChannel(UserChannelId, nameAndHandle).Wait();
+                var newChannelName = ChannelName.Create(new String(stringChars));
+
+                sut.RenameChannel(UserChannelId, newChannelName).Wait();
             }
         }
     }
