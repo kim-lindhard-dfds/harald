@@ -124,6 +124,6 @@ stages:
             inputs:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(k8s-service-connection)'
-              namespace: '$(kubernetes-namespace)'
+              namespace: 'selfservice-herald-vbqkr'
               command: apply
               arguments: '-f $(Pipeline.Workspace)/manifests/'

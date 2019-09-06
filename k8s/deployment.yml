@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: harald
-  namespace: $(kubernetes-namespace)
+  namespace: selfservice-herald-vbqkr
   labels:
     project: selfservice
     department: devex
