@@ -83,7 +83,7 @@ stages:
   condition: succeeded('CI')
 
   jobs:
-  - job: "Deploy_AWS"
+  - job: "Create_Infrastruture_On_AWS"
     pool: '$(agent-pool)'
     container: cd_runner
     steps:
@@ -94,6 +94,8 @@ stages:
     displayName: 'Deploy to Kubernetes'
     pool: '$(agent-pool)'
     environment: 'Hellman'
+    dependsOn: Create_Infrastruture_On_AWS
+    condition: succeeded('Create_Infrastruture_On_AWS')
 
     strategy: 
       runOnce:
