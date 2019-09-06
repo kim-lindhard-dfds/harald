@@ -16,12 +16,27 @@ namespace Harald.Tests.TestDoubles
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
         }
 
+        public Task RenameUserGroup(string id, string name, string handle)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task AddUserGroupUser(string userGroupId, string email)
         {
             throw new System.NotImplementedException();
         }
 
         public Task<CreateChannelResponse> CreateChannel(string channelName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task DeleteChannel(string channelId, string token)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RenameChannel(string channelId, string name)
         {
             throw new System.NotImplementedException();
         }
@@ -52,6 +67,11 @@ namespace Harald.Tests.TestDoubles
         }
 
         public Task<List<UserGroup>> GetUserGroups()
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        public Task<GetConversationsResponse> GetConversations()
         {
             throw new System.NotImplementedException();
         }

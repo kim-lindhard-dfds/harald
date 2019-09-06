@@ -96,6 +96,8 @@ For information about these domain events refere to the [domain events in capabi
 In order to integrate with Slack, there has to be an OAuth Access Token defined.
 This is constructed upon creation of _App_ in the [Admin-section](https://api.slack.com/apps) of Slack. If the key has to be rolled over, one need to reinstall the app in Slack.
 
+Ensure that the "user" installing the app is a dedicated user just for that purpose. Due to some funkiness with how the Slack API works, some actions will be seen as done by the "app" and some by the user who has "installed" the app.
+
 ## TODO
 * Improve resiliency.
 * Make sure all integrations are idempotent.

@@ -41,6 +41,38 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             }
             return data;
         }
+
+        // This uses an undocumented API, tread carefully.
+        public async Task DeleteChannel(string channelId, string token)
+        {
+            var response = await _client.GetAsync($"/api/channels.delete?token={token}&channel={channelId}");
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
+        }
+
+        public async Task RenameChannel(string channelId, string name)
+        {
+            var payload = _serializer.GetPayload(new { channel = channelId, name = name });
+            var response = await _client.PostAsync("/api/channels.rename", payload);
+
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
+        }
+
         public async Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
         {
             var payload = _serializer.GetPayload(new { Channel = channel, Text = message });
@@ -99,6 +131,22 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             return await Parse<CreateUserGroupResponse>(response);
         }
 
+        public async Task RenameUserGroup(string id, string name, string handle)
+        {
+            var payload = _serializer.GetPayload(new { usergroup = id, name = name, handle = handle.ToLower() });
+            var response = await _client.PostAsync("/api/usergroups.update", payload);
+
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"SlackApiError: {generalResponse.Error}");
+            }
+        }
+
         public async Task AddUserGroupUser(string userGroupId, string email)
         {
             var users = await GetUserGroupUsers(userGroupId);
@@ -115,6 +163,17 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             users.Remove(userId);
 
             await UpdateUserGroupUsers(userGroupId, users);
+        }
+
+        public async Task<GetConversationsResponse> GetConversations()
+        {
+            var response = await _client.GetAsync("/api/conversations.list");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var getConversationsResponse = _serializer.Deserialize<GetConversationsResponse>(content);
+            
+            return getConversationsResponse;
         }
 
         private async Task<string> GetUserId(string email)
@@ -163,5 +222,12 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             public SlackFacadeException(string message) : base(message) {}
             public SlackFacadeException(string message, Exception inner) : base(message, inner) {}
         }
+    }
+
+    public class SlackFacadeException : Exception
+    {
+        public SlackFacadeException() : base() {}
+        public SlackFacadeException(string message) : base(message) {}
+        public SlackFacadeException(string message, Exception inner) : base(message, inner) {}
     }
 }

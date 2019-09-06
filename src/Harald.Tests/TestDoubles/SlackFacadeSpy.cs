@@ -38,6 +38,16 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
+        public Task DeleteChannel(string channelId, string token)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RenameChannel(string channelId, string name)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task InviteToChannel(string email, string channelId)
         {
             throw new System.NotImplementedException();
@@ -56,6 +66,11 @@ namespace Harald.Tests.TestDoubles
             CreateUserGroupDescription = description;
 
             return Task.FromResult(new CreateUserGroupResponse());
+        }
+
+        public Task RenameUserGroup(string id, string name, string handle)
+        {
+            throw new System.NotImplementedException();
         }
 
         public string CreateUserGroupDescription { get; private set; }
@@ -77,6 +92,11 @@ namespace Harald.Tests.TestDoubles
         public Task<List<UserGroup>> GetUserGroups()
         {
             return Task.FromResult(UserGroups);
+        }
+
+        public Task<GetConversationsResponse> GetConversations()
+        {
+            throw new System.NotImplementedException();
         }
 
         public bool CreateUserGroupWasCalled { get; private set; }
