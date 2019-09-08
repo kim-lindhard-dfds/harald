@@ -29,6 +29,9 @@ spec:
         envFrom:
         - secretRef:
             name: harald-postgres
+        env:
+        - name:  PGPORT
+          value: "1433"
       containers:
       - name: harald
         image: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/harald:$(Build.BuildId)
