@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -19,7 +20,12 @@ namespace Harald.WebApi.Domain
 
             return new UserGroupHandle(fixedHandleName);
         }
-
+        
+        public static explicit operator UserGroupHandle(String input) 
+        {
+            return UserGroupHandle.Create(input);
+        }
+        
         private static string GetLowerCaseNameWithHypens(string name)
         {
             // Check for empty string.

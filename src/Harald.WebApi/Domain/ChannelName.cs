@@ -1,3 +1,5 @@
+using System;
+
 namespace Harald.WebApi.Domain
 {
     public class ChannelName : StringSubstitutable
@@ -19,6 +21,10 @@ namespace Harald.WebApi.Domain
             
 
             return new ChannelName(fixedChannelName);
+        }
+        public static explicit operator ChannelName(String input) 
+        {
+            return ChannelName.Create(input);
         }
     }
 }
