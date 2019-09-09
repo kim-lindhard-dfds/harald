@@ -6,9 +6,21 @@ namespace Harald.WebApi.Domain.Events
     public class MemberLeftCapabilityDomainEvent : IDomainEvent<MemberLeftCapabilityData>
     {
         public MemberLeftCapabilityData Payload { get; }
+        public MemberLeftCapabilityDomainEvent(MemberLeftCapabilityData payload)
+        {
+            Payload = payload;
+        }
+        
         public MemberLeftCapabilityDomainEvent(ExternalEvent domainEvent)
         {
             Payload = (domainEvent.Payload as JObject)?.ToObject<MemberLeftCapabilityData>();
+        }
+
+        public static MemberLeftCapabilityDomainEvent Create(Guid capabilityId, string memberEmail)
+        {
+            var payload = new MemberLeftCapabilityData(capabilityId, memberEmail);
+            
+            return new MemberLeftCapabilityDomainEvent(payload);
         }
     }
 

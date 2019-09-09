@@ -25,6 +25,7 @@ namespace Harald.Tests.Application.EventHandlers
             var slackService = new SlackService(slackFacadeSpy, null);
             var slackServiceSpy = new SlackServiceSpy(slackService);
             var nullLogger = new  Microsoft.Extensions.Logging.Abstractions.NullLogger<SlackCapabilityCreatedDomainEventHandler>();
+            
             var handler = new SlackCapabilityCreatedDomainEventHandler(
                 logger: nullLogger,
                 slackFacadeSpy,
