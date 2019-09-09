@@ -12,7 +12,6 @@ namespace Harald.Tests.TestDoubles
         public SlackFacadeSpy()
         {
             UserGroups = new List<UserGroup>();
-
         }
 
         public Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
@@ -20,7 +19,8 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message, long delayTimeInEpoch)
+        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message,
+            long delayTimeInEpoch)
         {
             throw new System.NotImplementedException();
         }
@@ -50,9 +50,18 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
+        public readonly Dictionary<ChannelId, List<string>> InvitedToChannel = new Dictionary<ChannelId, List<string>>();
+
         public Task InviteToChannel(string email, ChannelId channelId)
         {
-            throw new System.NotImplementedException();
+            if (InvitedToChannel.ContainsKey(channelId) == false)
+            {
+                InvitedToChannel.Add(channelId, new List<string>());
+            }
+
+            InvitedToChannel[channelId].Add(email);
+
+            return Task.CompletedTask;
         }
 
         public Task RemoveFromChannel(string email, ChannelId channelId)
@@ -80,10 +89,18 @@ namespace Harald.Tests.TestDoubles
         public string CreateUserGroupHandle { get; private set; }
 
         public string CreateUserGroupName { get; private set; }
+        public readonly Dictionary<string, List<string>> UserGroupsUsers = new Dictionary<string, List<string>>();
 
         public Task AddUserGroupUser(string userGroupId, string email)
         {
-            throw new System.NotImplementedException();
+            if (UserGroupsUsers.ContainsKey(userGroupId) == false)
+            {
+                UserGroupsUsers.Add(userGroupId, new List<string>());
+            }
+
+            UserGroupsUsers[userGroupId].Add(email);
+
+            return Task.CompletedTask;
         }
 
         public Task RemoveUserGroupUser(string userGroupId, string email)

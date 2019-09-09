@@ -55,9 +55,14 @@ namespace Harald.WebApi.Application.EventHandlers
                 {
                     var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
                     // Update Capability with UserGroupId
-                    var updatedCapability = Capability.Create(capability.Id, capability.Name, capability.ChannelId,
-                        userGroup.Id);
-                    _capabilityRepository.Update(updatedCapability);
+                    var updatedCapability = Capability.Create(
+                        capability.Id, 
+                        capability.Name, 
+                        capability.ChannelId,
+                        userGroup.Id
+                    );
+                    
+                    await _capabilityRepository.Update(updatedCapability);
                 }
                 // Add user to Slack user group:    
                 await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,userGroupId: capability.SlackUserGroupId);
@@ -66,17 +71,6 @@ namespace Harald.WebApi.Application.EventHandlers
             {
                 _logger.LogError($"Issue with Slack API during AddUserGroupUser: {ex} : {ex.Message}");
             }
-
-
-            /*
-            // Disabled for now due to redundant messages. Read commit where this line is introduced in order to find further information.
-             
-            // Notify user that it has been invited.
-            await _slackFacade.SendNotificationToUser(
-                email: domainEvent.Payload.MemberEmail, 
-                message: 
-                $"Thank you for joining capability {capability.Name}.\nYou have been invited to corresponding Slack channel and user group.");
-            */
         }
     }
 }

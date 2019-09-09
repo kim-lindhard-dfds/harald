@@ -9,16 +9,30 @@ namespace Harald.Tests.TestDoubles
 {
     public class StubCapabilityRepository : ICapabilityRepository
     {
-        private readonly List<Guid> _capabilityIds;
+        private readonly List<Capability> _capabilities = new List<Capability>();
+
         public StubCapabilityRepository(List<Guid> capabilityIds)
         {
-            _capabilityIds = capabilityIds;
+            foreach (var capabilityId in capabilityIds)
+            {
+                _capabilities.Add(
+                    Capability.Create(
+                        id: capabilityId,
+                        name: "FooCapability",
+                        slackChannelId: "FooChannelId",
+                        slackUserGroupId: "FooUserGroupId"
+                    ));
+            }
         }
 
+        public StubCapabilityRepository()
+        {
+        }
+        
         public Task Add(Capability capability)
         {
-            _capabilityIds.Add(capability.Id);
-            return Task.FromResult<object>(null);
+            _capabilities.Add(capability);
+            return Task.CompletedTask;
         }
 
         public Task Update(Capability capability)
@@ -26,21 +40,12 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
+
         public Task<Capability> Get(Guid id)
         {
-            var capabilityId = _capabilityIds.FirstOrDefault(capId => capId == id);
+            var capability = _capabilities.FirstOrDefault(c => c.Id == id);
 
-            if (capabilityId == default(Guid))
-            {
-                return Task.FromResult<Capability>(null);
-            }
-
-            return Task.FromResult(Capability.Create(
-                id: id,
-                name: "FooCapability",
-                slackChannelId: "FooChannelId",
-                slackUserGroupId: "FooUserGroupId"
-            ));
+            return Task.FromResult(capability);
         }
     }
 }
