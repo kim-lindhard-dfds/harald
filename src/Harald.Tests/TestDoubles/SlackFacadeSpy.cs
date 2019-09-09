@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
@@ -14,9 +15,23 @@ namespace Harald.Tests.TestDoubles
             UserGroups = new List<UserGroup>();
         }
 
+        public Dictionary<ChannelId, List<string>> ChannelsMessages = new Dictionary<ChannelId, List<string>>();
         public Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
         {
-            throw new System.NotImplementedException();
+            if (ChannelsMessages.ContainsKey(channelId) == false)
+            {
+                ChannelsMessages.Add(channelId, new List<string>());
+            }
+
+            ChannelsMessages[channelId].Add(message);
+            
+            var sendNotificationResponse = new SendNotificationResponse
+            {
+                Ok = true,
+                TimeStamp =  "1355517523.000005"
+            };
+            
+            return Task.FromResult(sendNotificationResponse);
         }
 
         public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message,
@@ -29,15 +44,38 @@ namespace Harald.Tests.TestDoubles
         {
             throw new System.NotImplementedException();
         }
+        public readonly Dictionary<ChannelId, List<string>> ChannelsPinnedMessageTimeStamps = new Dictionary<ChannelId, List<string>>();
 
         public Task<GeneralResponse> PinMessageToChannel(ChannelId channelId, string messageTimeStamp)
         {
-            throw new System.NotImplementedException();
+            if (ChannelsPinnedMessageTimeStamps.ContainsKey(channelId) == false)
+            {
+                ChannelsPinnedMessageTimeStamps.Add(channelId, new List<string>());
+            }
+
+            ChannelsPinnedMessageTimeStamps[channelId].Add(messageTimeStamp);
+            
+            return Task.FromResult(new GeneralResponse{Ok = true});
         }
 
+        public ChannelName CreatedChannelName { get; private set; }
         public Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
         {
-            throw new System.NotImplementedException();
+            CreatedChannelName = channelName;
+            
+            var channel = new Channel{
+                Id = new ChannelId(Guid.NewGuid().ToString()), 
+                Name = channelName
+            };
+
+            var createChannelResponse = new CreateChannelResponse
+            {
+                Ok = true,
+                Channel = channel
+            };
+
+            
+            return Task.FromResult(createChannelResponse);
         }
 
         public Task DeleteChannel(ChannelId channelId, string token)
@@ -76,7 +114,14 @@ namespace Harald.Tests.TestDoubles
             CreateUserGroupHandle = handle;
             CreateUserGroupDescription = description;
 
-            return Task.FromResult(new CreateUserGroupResponse());
+            var usergroup = new UserGroup
+            {
+                Handle = handle,
+                Id = Guid.NewGuid().ToString(),
+                Name = name
+            };
+            
+            return Task.FromResult(new CreateUserGroupResponse{Ok = true, UserGroup = usergroup});
         }
 
         public Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle)
