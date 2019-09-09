@@ -11,7 +11,35 @@ namespace Harald.WebApi.Domain.Events
         {
             Payload = (domainEvent.Payload as JObject)?.ToObject<ContextAddedToCapabilityData>();
         }
+
+        public ContextAddedToCapabilityDomainEvent(ContextAddedToCapabilityData payload)
+        {
+            Payload = payload;
+        }
+
+        public static ContextAddedToCapabilityDomainEvent Create(
+            Guid capabilityId,
+            string capabilityName,
+            string capabilityRootId,
+            Guid contextId,
+            string contextName
+        )
+        {
+            var payload = new ContextAddedToCapabilityData(
+                capabilityId,
+                capabilityName,
+                capabilityRootId,
+                contextId,
+                capabilityName
+            );
+
+            var contextAddedToCapabilityDomainEvent = new ContextAddedToCapabilityDomainEvent(payload);
+
+            
+            return contextAddedToCapabilityDomainEvent;
+        }
     }
+
 
     public class ContextAddedToCapabilityData
     {

@@ -11,8 +11,12 @@ namespace Harald.WebApi.Application.EventHandlers
         private readonly ICapabilityRepository _capabilityRepository;
         private readonly ISlackFacade _slackFacade;
         private readonly ExternalEventMetaDataStore _externalEventMetaDataStore;
-        public SlackContextAddedToCapabilityDomainEventHandler(ICapabilityRepository capabilityRepository,
-            ISlackFacade slackFacade, ExternalEventMetaDataStore externalEventMetaDataStore)
+
+        public SlackContextAddedToCapabilityDomainEventHandler(
+            ICapabilityRepository capabilityRepository,
+            ISlackFacade slackFacade,
+            ExternalEventMetaDataStore externalEventMetaDataStore
+        )
         {
             _capabilityRepository = capabilityRepository;
             _slackFacade = slackFacade;
@@ -27,9 +31,10 @@ namespace Harald.WebApi.Application.EventHandlers
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
-            
+
             // Send message to Capability Slack channel
-            await _slackFacade.SendNotificationToChannel(capability.ChannelId,
+            await _slackFacade.SendNotificationToChannel(
+                capability.ChannelId,
                 $"We're working on setting up your environment. Currently the following resources are being provisioned and are awaiting status updates" +
                 $"\n" +
                 $"{CreateTaskTable(false, false, false)}");
@@ -37,7 +42,6 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, string xCorrelationId)
         {
-           
             var message = "Context added to capability\n" +
                           "run the following command from https://github.com/dfds/aws-account-manifests:\n" +
                           "---\n" +
@@ -55,9 +59,15 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public static string CreateTaskTable(bool awsAccDone, bool k8sCreatedDone, bool adsyncDone)
         {
-            var awsMessage = awsAccDone ? $":heavy_check_mark: AWS account provisioned\n" : $":white_check_mark: AWS account provisioned\n";
-            var k8sMessage = k8sCreatedDone ? $":heavy_check_mark: Kubernetes namespace created\n" : $":white_check_mark: Kubernetes namespace created\n";
-            var adsyncMessage = adsyncDone ? $":heavy_check_mark: AWS and Kubernetes account enrollment\n" : $":white_check_mark: AWS and Kubernetes account enrollment\n";
+            var awsMessage = awsAccDone
+                ? $":heavy_check_mark: AWS account provisioned\n"
+                : $":white_check_mark: AWS account provisioned\n";
+            var k8sMessage = k8sCreatedDone
+                ? $":heavy_check_mark: Kubernetes namespace created\n"
+                : $":white_check_mark: Kubernetes namespace created\n";
+            var adsyncMessage = adsyncDone
+                ? $":heavy_check_mark: AWS and Kubernetes account enrollment\n"
+                : $":white_check_mark: AWS and Kubernetes account enrollment\n";
 
             return $"{awsMessage}{k8sMessage}{adsyncMessage}";
         }
