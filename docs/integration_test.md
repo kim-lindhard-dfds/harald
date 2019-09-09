@@ -66,7 +66,7 @@ Now, depending on how you run your tests, how this is done may differ. The **key
 #### Running from bash with dotnet CLI
 
 ```bash
-SLACK_API_AUTH_TOKEN=TokenGoesHere \
+SLACK_TESTING_API_AUTH_TOKEN=TokenGoesHere \
 SLACK_TESTING_USER_EMAIL=YourEmailGoesHere \
 dotnet test
 ```
