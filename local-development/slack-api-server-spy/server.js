@@ -26,6 +26,25 @@ app.post("/api/usergroups.create", async (req, res) => {
     });
 });
 
+app.post("/api/chat.postMessage", async (req, res) => {
+    const raw_req = req.body;
+    
+    console.log(raw_req);    
+    return res.json({
+        "Ok": true,
+        "ts": "1355517523.000005"
+    });
+});
+
+app.post("/api/pins.add", async (req, res) => {
+    const raw_req = req.body;
+    
+    console.log(raw_req);    
+    return res.json({
+        "Ok": true
+    });
+});
+
 app.post("*", async (req, res) => {
     const raw_req = req.body;
     
