@@ -39,7 +39,7 @@ namespace Harald.WebApi.Controllers
             }
 
             var sendNotificationToChannelResponse =
-             await _slackFacade.SendNotificationToChannel(capability.ChannelId, input.Message);
+             await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, input.Message);
          
             if (!sendNotificationToChannelResponse.Ok)
             {

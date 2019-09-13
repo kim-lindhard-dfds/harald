@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Harald.IntegrationTests.Features.Infrastructure;
 using Xunit;
@@ -22,7 +23,7 @@ namespace Harald.IntegrationTests.Features.ChannelManagement
 
             var message = new
             {
-                CapabilityId = "bc3f3bbe-eeee-4230-8b2f-d0e1c327c59d",
+                CapabilityId = Guid.NewGuid().ToString(),
                 CapabilityName = "VerbNoun",
             };
             await kafkaClient.SendMessageAsync(message);

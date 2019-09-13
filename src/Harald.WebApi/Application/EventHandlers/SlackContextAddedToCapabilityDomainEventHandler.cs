@@ -34,7 +34,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
             // Send message to Capability Slack channel
             await _slackFacade.SendNotificationToChannel(
-                capability.ChannelId,
+                capability.SlackChannelId,
                 $"We're working on setting up your environment. Currently the following resources are being provisioned and are awaiting status updates" +
                 $"\n" +
                 $"{CreateTaskTable(false, false, false)}");
