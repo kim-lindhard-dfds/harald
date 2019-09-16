@@ -7,10 +7,10 @@
 set -eu -o pipefail
 
 # build parameters
-readonly REGION=${AWS_DEFAULT_REGION:-"eu-central-1"}
-readonly TEAM_NAME='ded'
-readonly IMAGE_NAME="${TEAM_NAME}/harald"
-readonly DB_IMAGE_NAME="${IMAGE_NAME}/dbmigrations"
+readonly REGION=${AWS_DEFAULT_REGION:-"eu-west-1"}
+readonly APP_NAME='harald'
+readonly IMAGE_NAME="${APP_NAME}/harald"
+readonly DB_IMAGE_NAME="${APP_NAME}/dbmigrations"
 readonly BUILD_NUMBER=${1:-"N/A"}
 readonly BUILD_SOURCES_DIRECTORY=${2:-${PWD}}
 
@@ -62,13 +62,10 @@ build_container_image() {
 
 login_to_docker() {
     echo "Login to docker..."
-    $(aws ecr get-login --no-include-email)
+    $(aws ecr get-login --no-include-email --region ${REGION})
 }
 
 push_container_image() {
-    # echo "Login to docker..."
-    # $(aws ecr get-login --no-include-email)
-
     account_id=$(aws sts get-caller-identity --output text --query 'Account')
     image_name="${account_id}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}:${BUILD_NUMBER}"
 
@@ -80,9 +77,6 @@ push_container_image() {
 }
 
 push_dbmigration_container_image() {
-    # echo "Login to docker..."
-    # $(aws ecr get-login --no-include-email)
-
     account_id=$(aws sts get-caller-identity --output text --query 'Account')
     image_name="${account_id}.dkr.ecr.${REGION}.amazonaws.com/${DB_IMAGE_NAME}:${BUILD_NUMBER}"
 

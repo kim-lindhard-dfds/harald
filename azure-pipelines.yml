@@ -1,0 +1,131 @@
+name: $(Build.BuildId)
+
+# Triggers Pipeline only on Master
+trigger:
+  branches:
+    include:
+    - master
+
+# Disables triggering Pipeline run at creation of every Pull Request
+pr: none
+
+# Variables and Variable Groups used in rest of pipeline
+variables:
+  agent-pool: 'Docker-pool'
+  k8s-service-connection: 'Kubernetes-selfservice-herald'
+  KUBENAMESPACE: 'selfservice-herald-vbqkr'
+
+resources:
+   containers:
+     - container: ci_runner
+       image: dfdsdk/pipeline:0.0.1
+       env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+     - container: cd_runner
+       image: dfdsdk/pipeline:0.0.1
+       env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        PGPASSWORD: $(PGPASSWORD)
+
+stages:
+# Continuous Integration steps
+- stage: CI
+  # Validation jobs
+  jobs:
+  # Build jobs
+  - job: "Create_ECR"
+    pool: '$(agent-pool)'
+    container: ci_runner
+    steps:
+    - bash:
+        terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
+
+  - job: Build
+    dependsOn: Create_ECR
+    condition: succeeded('Create_ECR')
+    pool: 
+      vmImage: 'ubuntu-16.04'
+    steps:
+    # - task: DotNetCoreInstaller@0
+    #   inputs:
+    #     version: '2.2.104' # replace this value with the version that you need for your project
+    - bash: |
+        sudo pip install setuptools
+        sudo pip install awscli
+        chmod +x ./pipeline.sh
+        ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
+      env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+      displayName: Pipeline Bash Script
+
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: testresults.trx
+        searchFolder: '$(System.DefaultWorkingDirectory)/output'
+      condition: succeededOrFailed()
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage'
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
+
+    # Upload Kubernetes manifests to current artifact Pipeline from folder /k8s
+    - publish: $(System.DefaultWorkingDirectory)/k8s
+      artifact: manifests
+      displayName: 'Publish Artifact: manifests'
+
+# Continuous Deployment steps
+- stage: CD
+  dependsOn: CI
+  condition: succeeded('CI')
+
+  jobs:
+  - job: "Create_Infrastruture_On_AWS"
+    pool: '$(agent-pool)'
+    container: cd_runner
+    steps:
+    - bash:
+        terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
+
+  - deployment: K8s
+    displayName: 'Deploy to Kubernetes'
+    pool: '$(agent-pool)'
+    environment: 'Hellman'
+    dependsOn: Create_Infrastruture_On_AWS
+    condition: succeeded('Create_Infrastruture_On_AWS')
+
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          # Download manifest from current artifacts pipeline
+          - download: current
+            artifact: manifests
+            displayName: 'Download Artifact: manifests'
+          
+          # Replace token values in yaml files with pipeline variables
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace tokens in yaml files'
+            inputs:
+              rootDirectory: '$(Pipeline.Workspace)/manifests/'
+              targetFiles: '*.yml'
+              tokenPrefix: '$('
+              tokenSuffix: ')'
+          
+          # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
+          - publish: $(Pipeline.Workspace)/manifests/
+            artifact: deployed-manifests
+            displayName: 'Publish Artifact: manifests'
+
+          # Apply Kubernetes manifests
+          - task: Kubernetes@1
+            displayName: 'Apply manifests'
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: '$(k8s-service-connection)'
+              namespace: 'selfservice-herald-vbqkr'
+              command: apply
+              arguments: '-f $(Pipeline.Workspace)/manifests/'
