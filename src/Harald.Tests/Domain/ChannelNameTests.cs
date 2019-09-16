@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Serialization;
 using Xunit;
 
 namespace Harald.Tests.Infrastructure.Facades.Slack
 {
-    public class SlackHelperTests
+    public class ChannelNameTests
     {
         [Fact]
         public void FixChannelNameForSlack_PascalCasing_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "PascalCasing";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName = ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -26,11 +26,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_CamelCasing_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "camelCasing";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -40,11 +39,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_LowerCasing_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "lowercase";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -54,11 +52,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_DashSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "dash-separated";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -68,11 +65,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_CharAndNumbers_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "Numbers123";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -82,11 +78,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_CharsAndNumbersDashSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "Num123-MoreNumbers456";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -96,11 +91,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_NumbersAndCharsDashSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "123Numbers-456MoreNumbers";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -110,11 +104,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_LowerCaseAndNumbers_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "numbers123";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -124,11 +117,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_LowerCaseAndNumbersDashSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "numbers123-moreNumbers456";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -138,12 +130,11 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_NumbersAndLowerCaseDashSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "123numbers-456moreNumbers";
             
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -153,11 +144,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_Numbers_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "123";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -167,11 +157,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_NumbersAndLowerCaseUnderscoreSeparated_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "123numbers_456moreNumbers";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName =  ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);
@@ -182,11 +171,10 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         public void FixChannelNameForSlack_NameWithMultipleUpperCaseLetters_ReturnsValidSlackChannelName()
         {
             // Arrange
-            var sut = new SlackHelper();
             var channelName = "TestNoDoubleNSCreation";
 
             // Act
-            var fixedChannelName = sut.FixChannelNameForSlack(channelName);
+            var fixedChannelName = ChannelName.Create(channelName);
 
             // Assert
             AssertValidSlackChannelName(fixedChannelName);

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 
 namespace Harald.Tests.TestDoubles
@@ -11,64 +13,151 @@ namespace Harald.Tests.TestDoubles
         public SlackFacadeSpy()
         {
             UserGroups = new List<UserGroup>();
-
         }
-        public Task<SendNotificationResponse> SendNotificationToChannel(string channel, string message)
+
+        public Dictionary<ChannelId, List<string>> ChannelsMessages = new Dictionary<ChannelId, List<string>>();
+
+        public Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
+        {
+            if (ChannelsMessages.ContainsKey(channelId) == false)
+            {
+                ChannelsMessages.Add(channelId, new List<string>());
+            }
+
+            ChannelsMessages[channelId].Add(message);
+
+            var sendNotificationResponse = new SendNotificationResponse
+            {
+                Ok = true,
+                TimeStamp = "1355517523.000005"
+            };
+
+            return Task.FromResult(sendNotificationResponse);
+        }
+
+        
+        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message,
+            long delayTimeInEpoch)
         {
             throw new System.NotImplementedException();
         }
-
-        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
-        {
-            throw new System.NotImplementedException();
-        }
+        public readonly Dictionary<string, List<string>> UsersToNotifications = new Dictionary<string, List<string>>();
 
         public Task<SendNotificationResponse> SendNotificationToUser(string email, string message)
         {
-            throw new System.NotImplementedException();
+            if (UsersToNotifications.ContainsKey(email) == false)
+            {
+                UsersToNotifications.Add(email, new List<string>());
+            }
+
+            UsersToNotifications[email].Add(message);
+
+            
+            var sendNotificationResponse = new SendNotificationResponse
+            {
+                Ok = true,
+                TimeStamp = "1355517523.000005"
+            };
+
+            return Task.FromResult(sendNotificationResponse);
         }
 
-        public Task<GeneralResponse> PinMessageToChannel(string channel, string messageTimeStamp)
+        
+        public readonly Dictionary<ChannelId, List<string>> ChannelsPinnedMessageTimeStamps =
+            new Dictionary<ChannelId, List<string>>();
+
+        public Task<GeneralResponse> PinMessageToChannel(ChannelId channelId, string messageTimeStamp)
+        {
+            if (ChannelsPinnedMessageTimeStamps.ContainsKey(channelId) == false)
+            {
+                ChannelsPinnedMessageTimeStamps.Add(channelId, new List<string>());
+            }
+
+            ChannelsPinnedMessageTimeStamps[channelId].Add(messageTimeStamp);
+
+            return Task.FromResult(new GeneralResponse {Ok = true});
+        }
+
+        public ChannelName CreatedChannelName { get; private set; }
+
+        public Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
+        {
+            CreatedChannelName = channelName;
+
+            var channel = new Channel
+            {
+                Id = new ChannelId(Guid.NewGuid().ToString()),
+                Name = channelName
+            };
+
+            var createChannelResponse = new CreateChannelResponse
+            {
+                Ok = true,
+                Channel = channel
+            };
+
+
+            return Task.FromResult(createChannelResponse);
+        }
+
+        public Task DeleteChannel(ChannelId channelId, string token)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<CreateChannelResponse> CreateChannel(string channelName)
+        public Task RenameChannel(ChannelId channelId, ChannelName name)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task DeleteChannel(string channelId, string token)
+        public readonly Dictionary<ChannelId, List<string>>
+            InvitedToChannel = new Dictionary<ChannelId, List<string>>();
+
+        public Task InviteToChannel(string email, ChannelId channelId)
         {
-            throw new System.NotImplementedException();
+            if (InvitedToChannel.ContainsKey(channelId) == false)
+            {
+                InvitedToChannel.Add(channelId, new List<string>());
+            }
+
+            InvitedToChannel[channelId].Add(email);
+
+            return Task.CompletedTask;
         }
 
-        public Task RenameChannel(string channelId, string name)
+        public readonly Dictionary<ChannelId, List<string>> RemovedFromChannel =
+            new Dictionary<ChannelId, List<string>>();
+
+        public Task RemoveFromChannel(string email, ChannelId channelId)
         {
-            throw new System.NotImplementedException();
+            if (RemovedFromChannel.ContainsKey(channelId) == false)
+            {
+                RemovedFromChannel.Add(channelId, new List<string>());
+            }
+
+            RemovedFromChannel[channelId].Add(email);
+
+            return Task.CompletedTask;
         }
 
-        public Task InviteToChannel(string email, string channelId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task RemoveFromChannel(string email, string channelId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
+        public Task<CreateUserGroupResponse> CreateUserGroup(string name, UserGroupHandle handle, string description)
         {
             CreateUserGroupWasCalled = true;
             CreateUserGroupName = name;
             CreateUserGroupHandle = handle;
             CreateUserGroupDescription = description;
 
-            return Task.FromResult(new CreateUserGroupResponse());
+            var usergroup = new UserGroup
+            {
+                Handle = handle,
+                Id = Guid.NewGuid().ToString(),
+                Name = name
+            };
+
+            return Task.FromResult(new CreateUserGroupResponse {Ok = true, UserGroup = usergroup});
         }
 
-        public Task RenameUserGroup(string id, string name, string handle)
+        public Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle)
         {
             throw new System.NotImplementedException();
         }
@@ -78,15 +167,31 @@ namespace Harald.Tests.TestDoubles
         public string CreateUserGroupHandle { get; private set; }
 
         public string CreateUserGroupName { get; private set; }
+        public readonly Dictionary<string, List<string>> UserGroupsUsers = new Dictionary<string, List<string>>();
 
         public Task AddUserGroupUser(string userGroupId, string email)
         {
-            throw new System.NotImplementedException();
+            if (UserGroupsUsers.ContainsKey(userGroupId) == false)
+            {
+                UserGroupsUsers.Add(userGroupId, new List<string>());
+            }
+
+            UserGroupsUsers[userGroupId].Add(email);
+
+            return Task.CompletedTask;
         }
 
+        public readonly Dictionary<string, List<string>> RemovedFromUsergroup = new Dictionary<string, List<string>>();
         public Task RemoveUserGroupUser(string userGroupId, string email)
         {
-            throw new System.NotImplementedException();
+            if (RemovedFromUsergroup.ContainsKey(userGroupId) == false)
+            {
+                RemovedFromUsergroup.Add(userGroupId, new List<string>());
+            }
+
+            RemovedFromUsergroup[userGroupId].Add(email);
+
+            return Task.CompletedTask;
         }
 
         public Task<List<UserGroup>> GetUserGroups()

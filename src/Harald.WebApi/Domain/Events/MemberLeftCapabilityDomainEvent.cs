@@ -5,18 +5,22 @@ namespace Harald.WebApi.Domain.Events
 {
     public class MemberLeftCapabilityDomainEvent : IDomainEvent<MemberLeftCapabilityData>
     {
-        public string Version { get; }
-        public string EventName { get; }
-        public string XCorrelationId { get; }
-        public string XSender { get; }
         public MemberLeftCapabilityData Payload { get; }
-        public MemberLeftCapabilityDomainEvent(GeneralDomainEvent domainEvent)
+        public MemberLeftCapabilityDomainEvent(MemberLeftCapabilityData payload)
         {
-            Version = domainEvent.Version;
-            EventName = domainEvent.EventName;
-            XCorrelationId = domainEvent.XCorrelationId;
-            XSender = domainEvent.XSender;
+            Payload = payload;
+        }
+        
+        public MemberLeftCapabilityDomainEvent(ExternalEvent domainEvent)
+        {
             Payload = (domainEvent.Payload as JObject)?.ToObject<MemberLeftCapabilityData>();
+        }
+
+        public static MemberLeftCapabilityDomainEvent Create(Guid capabilityId, string memberEmail)
+        {
+            var payload = new MemberLeftCapabilityData(capabilityId, memberEmail);
+            
+            return new MemberLeftCapabilityDomainEvent(payload);
         }
     }
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Harald.WebApi.EventHandlers;
+using Harald.WebApi.Application.EventHandlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Harald.WebApi.Infrastructure.Messaging

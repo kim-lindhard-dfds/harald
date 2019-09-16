@@ -4,14 +4,14 @@ using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 
-namespace Harald.WebApi.EventHandlers
+namespace Harald.WebApi.Application.EventHandlers
 {
-    public class SlackAWSContextAccountCreatedEventHandler : IEventHandler<AWSContextAccountCreatedDomainEvent>
+    public class SlackAwsContextAccountCreatedEventHandler : IEventHandler<AWSContextAccountCreatedDomainEvent>
     {
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
 
-        public SlackAWSContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
+        public SlackAwsContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
         {
             _slackFacade = slackFacade;
             _capabilityRepository = capabilityRepository;
@@ -37,7 +37,7 @@ namespace Harald.WebApi.EventHandlers
             sb.AppendLine($"\tTax registration number: DK14194711");
             sb.AppendLine($"\tBusiness Legal Name: DFDS A/S");
 
-            var hardCodedDedChannelId = "GFYE9B99Q";
+            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, sb.ToString());
             
             // Send message to Capability Slack channel

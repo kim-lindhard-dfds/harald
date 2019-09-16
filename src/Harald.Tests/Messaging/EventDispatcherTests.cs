@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 using Harald.WebApi.Infrastructure.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -88,6 +88,7 @@ namespace Harald.Tests.Messaging
                 .AddTransient<EventHandlerFactory>()
                 .AddSingleton(domainEventRegistry)
                 .AddTransient<IEventDispatcher, EventDispatcher>()
+                .AddTransient<ExternalEventMetaDataStore>()
                 .BuildServiceProvider();
 
             return serviceProvider;

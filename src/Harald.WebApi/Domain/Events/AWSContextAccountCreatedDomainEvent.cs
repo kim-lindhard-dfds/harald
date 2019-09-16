@@ -5,19 +5,11 @@ namespace Harald.WebApi.Domain.Events
 {
     public class AWSContextAccountCreatedDomainEvent : IDomainEvent<AWSContextAccountCreatedData>
     {
-        public AWSContextAccountCreatedDomainEvent(GeneralDomainEvent domainEvent)
+        public AWSContextAccountCreatedDomainEvent(ExternalEvent domainEvent)
         {
-            Version = domainEvent.Version;
-            EventName = domainEvent.EventName;
-            XCorrelationId = domainEvent.XCorrelationId;
-            XSender = domainEvent.XSender;
             Payload = (domainEvent.Payload as JObject)?.ToObject<AWSContextAccountCreatedData>();
         }
 
-        public string Version { get; }
-        public string EventName { get; }
-        public string XCorrelationId { get; }
-        public string XSender { get; }
         public AWSContextAccountCreatedData Payload { get; }
     }
 

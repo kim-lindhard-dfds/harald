@@ -82,7 +82,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.LogError($"Error consuming event. Exception message: {ex.Message}", ex);
+                                    _logger.LogError(ex, "Error consuming event.");
                                 }
                             }
                             

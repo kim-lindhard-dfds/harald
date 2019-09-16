@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
@@ -6,7 +5,7 @@ using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Harald.WebApi.EventHandlers
+namespace Harald.WebApi.Application.EventHandlers
 {
     public class SlackCapabilityCreatedDomainEventHandler : IEventHandler<CapabilityCreatedDomainEvent>
     {
@@ -29,7 +28,9 @@ namespace Harald.WebApi.EventHandlers
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
+            var createChannelResponse = await _slackFacade.CreateChannel(
+                ChannelName.Create(domainEvent.Payload.CapabilityName)
+            );
 
             UserGroup userGroup = null;
             try
@@ -42,27 +43,28 @@ namespace Harald.WebApi.EventHandlers
             }
 
 
-            var channelId = createChannelResponse?.Channel?.Id;
             var channelName = createChannelResponse?.Channel?.Name;
 
-            var userGroupId = userGroup?.Id;
 
             if (createChannelResponse.Ok)
             {
+                var channelId = new ChannelId(createChannelResponse?.Channel?.Id);
                 _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Payload.CapabilityName}' created with ID: {channelId}");
 
+                var userGroupId = userGroup?.Id;
                 // Save even without user group.
                 var capability = Capability.Create(
                     id: domainEvent.Payload.CapabilityId,
                     name: domainEvent.Payload.CapabilityName,
                     slackChannelId: channelId,
                     slackUserGroupId: userGroupId);
+                _logger.LogInformation($"Capability id: '{capability.Id}'  name: '{capability.Name}' slackChannelId: '{capability.SlackChannelId}', userGroupId: '{capability.SlackUserGroupId}'");
 
                 await _capabilityRepository.Add(capability);
 
                 // Notify channel about handle.
                 var sendNotificationResponse = await _slackFacade.SendNotificationToChannel(
-                  channel: channelId, 
+                    channelId: channelId, 
                   message: 
                   $"Thank you for creating capability '{capability.Name}'.\n" +
                   $"This channel along with handle @{userGroup.Handle} has been created.\n" + 

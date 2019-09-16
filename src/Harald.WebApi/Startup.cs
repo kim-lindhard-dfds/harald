@@ -2,9 +2,10 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Harald.WebApi.Application;
+using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.EventHandlers;
 using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
@@ -45,7 +46,7 @@ namespace Harald.WebApi
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
-            services.AddTransient<ICapabilityRepository, CapabilityRepository>();
+            services.AddTransient<ICapabilityRepository, CapabilityEntityFrameworkRepository>();
 
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {
@@ -64,7 +65,6 @@ namespace Harald.WebApi
             });
 
             services.AddTransient<JsonSerializer>();
-            services.AddTransient<SlackHelper>();
 
             services.AddTransient<ISlackService, SlackService>();
 
@@ -86,8 +86,8 @@ namespace Harald.WebApi
             services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();
-            services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAWSContextAccountCreatedEventHandler>();
-            services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
+            services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAwsContextAccountCreatedEventHandler>();
+            services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
             services.AddTransient<EventHandlerFactory>();
 
             var topic = "build.selfservice.events.capabilities";
@@ -119,6 +119,7 @@ namespace Harald.WebApi
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
+            services.AddTransient<ExternalEventMetaDataStore>();
             services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
             services.AddTransient<KafkaConsumerFactory>();
         }

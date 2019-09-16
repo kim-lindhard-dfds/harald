@@ -17,15 +17,14 @@ namespace Harald.Tests.Infrastructure.Services
         {
             var slackFacadeSpy = new SlackFacadeSpy();
             var logger = new LoggerFactory().CreateLogger<SlackService>();
-            var slackHelper = new SlackHelper();
-            var sut = new SlackService(slackFacadeSpy, slackHelper, logger);
+            var sut = new SlackService(slackFacadeSpy, logger);
 
             var capabilityName = "foo";
 
            sut.EnsureUserGroupExists(capabilityName);
             
             Assert.True(slackFacadeSpy.CreateUserGroupWasCalled);
-            Assert.Equal(capabilityName, slackFacadeSpy.CreateUserGroupHandle);
+            Assert.Equal(capabilityName + "-members", slackFacadeSpy.CreateUserGroupHandle);
 
         }
         
@@ -35,8 +34,7 @@ namespace Harald.Tests.Infrastructure.Services
         {
             var slackFacadeSpy = new SlackFacadeSpy();
             var logger = new LoggerFactory().CreateLogger<SlackService>();
-            var slackHelper = new SlackHelper();
-            var sut = new SlackService(slackFacadeSpy, slackHelper, logger);
+            var sut = new SlackService(slackFacadeSpy, logger);
             
             slackFacadeSpy.UserGroups.Add(new UserGroup
             {

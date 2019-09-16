@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Harald.WebApi.Domain.Events
 {
-    public class GeneralDomainEvent : IDomainEvent<object>
+    public class ExternalEvent : IDomainEvent<object>
     {
 
         public string Version { get; private set; }
@@ -15,7 +15,7 @@ namespace Harald.WebApi.Domain.Events
 
         public object Payload { get; private set; }
 
-        public GeneralDomainEvent(
+        public ExternalEvent(
             string version, string eventName, string xCorrelationId, string xSender, object payload)
         {
             Version = version;

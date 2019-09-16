@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application" />
     <Folder Include="Domain\Events" />
+    <Folder Include="Infrastructure\Facades\Slack" />
   </ItemGroup>
 
 </Project>
