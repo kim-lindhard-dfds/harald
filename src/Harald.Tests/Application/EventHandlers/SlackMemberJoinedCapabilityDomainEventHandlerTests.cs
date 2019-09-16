@@ -43,7 +43,7 @@ namespace Harald.Tests.Application.EventHandlers
             
             
             // Assert
-            Assert.Equal(memberEmail,slackFacadeSpy.InvitedToChannel[new ChannelId(capability.ChannelId)].Single());
+            Assert.Equal(memberEmail,slackFacadeSpy.InvitedToChannel[new ChannelId(capability.SlackChannelId)].Single());
             Assert.Equal(memberEmail,slackFacadeSpy.UserGroupsUsers[capability.SlackUserGroupId].Single());
 
         }

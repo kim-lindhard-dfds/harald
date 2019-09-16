@@ -31,7 +31,7 @@ namespace Harald.WebApi.Application.EventHandlers
             );
             
             await _slackFacade.SendNotificationToChannel(
-                capability.ChannelId, 
+                capability.SlackChannelId, 
                 $"Nearly there... time to grab a coffee?\n{missingAdsyncTaskTable}"
                 );
 
@@ -45,7 +45,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 adsyncDone:true
             );
             await _slackFacade.SendDelayedNotificationToChannel(
-                capability.ChannelId, 
+                capability.SlackChannelId, 
                 $"All done:\n{allDoneTaskTable}", 
                 timestamp
             );

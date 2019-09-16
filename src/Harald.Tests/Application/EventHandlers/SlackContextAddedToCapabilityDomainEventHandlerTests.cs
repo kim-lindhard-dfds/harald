@@ -50,7 +50,7 @@ namespace Harald.Tests.Application.EventHandlers
             // Assert
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[hardCodedDedChannelId]);
-            Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[capability.ChannelId]);
+            Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[capability.SlackChannelId]);
             
         }
     }

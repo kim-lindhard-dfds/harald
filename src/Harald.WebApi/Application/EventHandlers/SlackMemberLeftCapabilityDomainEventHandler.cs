@@ -38,7 +38,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 // Remove user from Slack channel:
                 await _slackFacade.RemoveFromChannel(
                     email: domainEvent.Payload.MemberEmail,
-                    channelId: capability.ChannelId);
+                    channelId: capability.SlackChannelId);
             }
             catch (SlackFacade.SlackFacadeException ex)
             {

@@ -58,6 +58,7 @@ namespace Harald.WebApi.Application.EventHandlers
                     name: domainEvent.Payload.CapabilityName,
                     slackChannelId: channelId,
                     slackUserGroupId: userGroupId);
+                _logger.LogInformation($"Capability id: '{capability.Id}'  name: '{capability.Name}' slackChannelId: '{capability.SlackChannelId}', userGroupId: '{capability.SlackUserGroupId}'");
 
                 await _capabilityRepository.Add(capability);
 

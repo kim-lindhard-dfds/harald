@@ -42,7 +42,7 @@ namespace Harald.WebApi.Application.EventHandlers
             
             // Send message to Capability Slack channel
             var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
-            await _slackFacade.SendNotificationToChannel(capability.ChannelId, $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
             
         }
     }

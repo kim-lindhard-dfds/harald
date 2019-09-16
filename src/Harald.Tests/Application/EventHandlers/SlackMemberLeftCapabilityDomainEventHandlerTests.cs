@@ -46,7 +46,7 @@ namespace Harald.Tests.Application.EventHandlers
             await slackMemberLeftCapabilityDomainEventHandler.HandleAsync(memberLeftCapabilityDomainEvent);
 
             // Assert 
-            Assert.Equal(userEmail, slackFacadeSpy.RemovedFromChannel[capability.ChannelId].First());
+            Assert.Equal(userEmail, slackFacadeSpy.RemovedFromChannel[capability.SlackChannelId].First());
             Assert.Equal(userEmail, slackFacadeSpy.RemovedFromUsergroup[capability.SlackUserGroupId].First());
             Assert.NotEmpty(slackFacadeSpy.UsersToNotifications[userEmail]);
         }
