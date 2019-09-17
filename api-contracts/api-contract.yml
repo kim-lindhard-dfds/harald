@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 1
+  version: "1"
   title: Harald
   description: The one notification
 consumes:
@@ -14,6 +14,7 @@ paths:
       summary: Queue a message for dispatching
       parameters:
         - in: body
+          name: message
           required: true
           schema:
             $ref: "#/definitions/message"
@@ -26,6 +27,25 @@ paths:
           description: Unprocessable entity - capability ID can't be processed.
         503:
           description: Service unavailable - error trying to send the message.
+  /channels:
+    get:
+      summary: A queryble collection of existing communication channels
+      parameters:
+        - in: query
+          name: capabilityId
+          type: string
+          required: false
+        - in: query
+          name: type
+          type: string
+          enum: [slack]
+          description: channel type could
+          required: false
+      responses:
+        200:
+          description: Returns a collection of channels
+          schema:
+            $ref: "#/definitions/channels"
 definitions:
   message:
     type: object
@@ -34,3 +54,23 @@ definitions:
         type: string
       message:
         type: string
+  channel:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [slack]
+      name:
+        type: string
+      id:
+        type: string
+      capabilityId:
+        type: string
+  channels:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/channel"
+        
