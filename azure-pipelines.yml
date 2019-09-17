@@ -56,6 +56,8 @@ stages:
         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
       env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        SLACK_TESTING_API_AUTH_TOKEN: $(SLACK_TESTING_API_AUTH_TOKEN)
+        SLACK_TESTING_USER_EMAIL: $(SLACK_TESTING_USER_EMAIL)
       displayName: Pipeline Bash Script
 
     - task: PublishTestResults@2
