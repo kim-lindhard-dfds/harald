@@ -27,14 +27,23 @@ paths:
           description: Unprocessable entity - capability ID can't be processed.
         503:
           description: Service unavailable - error trying to send the message.
+  /capabilities/{capabilityId}/connections:
+    get:
+      parameters:
+      - in: path
+        name: capabilityId
+        required: true
+        type: string
+      responses:
+        200:
+          description: Returns a collection of channels
+          schema:
+            $ref: "#/definitions/channels"
+    
   /channels:
     get:
       summary: A queryble collection of existing communication channels
       parameters:
-        - in: query
-          name: capabilityId
-          type: string
-          required: false
         - in: query
           name: type
           type: string
@@ -63,8 +72,6 @@ definitions:
       name:
         type: string
       id:
-        type: string
-      capabilityId:
         type: string
   channels:
     type: object
