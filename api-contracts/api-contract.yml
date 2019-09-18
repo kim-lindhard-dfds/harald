@@ -28,14 +28,14 @@ paths:
         communication channels
       parameters:
         - in: query
-          name: publisherType
+          name: senderType
           required: false
           schema:
             type: string
             enum:
               - capability
         - in: query
-          name: publisherId
+          name: senderId
           required: false
           schema:
             type: string
@@ -108,13 +108,13 @@ components:
     connection:
       type: object
       properties:
-        publisherType:
+        senderType:
           type: string
           enum:
-            - slack
-        publisherName:
+            - capability
+        senderName:
           type: string
-        publisherId:
+        senderId:
           type: string
         channelType:
           type: string
