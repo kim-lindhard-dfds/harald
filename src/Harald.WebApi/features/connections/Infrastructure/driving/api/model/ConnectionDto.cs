@@ -1,4 +1,5 @@
 using Harald.WebApi.features.connections.Domain;
+using Harald.WebApi.features.connections.Domain.Model;
 
 namespace Harald.WebApi.features.connections.Infrastructure.driving.api.model
 {
