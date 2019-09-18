@@ -27,28 +27,41 @@ paths:
           description: Unprocessable entity - capability ID can't be processed.
         503:
           description: Service unavailable - error trying to send the message.
-  /capabilities/{capabilityId}/connections:
+  /connections:
     get:
+      summary: A queryable collection of connections between publishers and communication channels
       parameters:
-      - in: path
-        name: capabilityId
-        required: true
+      - in: query
+        name: publisherType
         type: string
+        enum: [capability]
+        required: false
+      - in: query
+        name: publisherId 
+        type: string
+        required: false
+      - in: query
+        name: channelType
+        type: string
+        enum: [slack]
+        required: false
+      - in: query
+        name: channelId
+        type: string
+        required: false
       responses:
         200:
           description: Returns a collection of channels
           schema:
-            $ref: "#/definitions/channels"
-    
+            $ref: "#/definitions/connections"
   /channels:
     get:
-      summary: A queryble collection of existing communication channels
+      summary: A queryable collection of existing communication channels
       parameters:
         - in: query
           name: type
           type: string
           enum: [slack]
-          description: channel type could
           required: false
       responses:
         200:
@@ -80,4 +93,27 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/channel"
-        
+  connection:
+    type: object
+    properties:
+      publisherType:
+        type: string
+        enum: [slack]
+      publisherName:
+        type: string
+      publisherId:
+        type: string
+      channelType:
+        type: string
+        enum: [slack]
+      channelName:
+        type: string
+      channelId:
+        type: string
+  connections:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/connection"
