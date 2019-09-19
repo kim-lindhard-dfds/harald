@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Harald.IntegrationTests.Features.Infrastructure.Model;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
@@ -10,7 +11,7 @@ namespace Harald.IntegrationTests.Features.Infrastructure
     {
         public static class Connections
         {
-            public static async Task<dynamic> GetAsync(
+            public static async Task<IEnumerable<ConnectionDto>> GetAsync(
                 string senderType = null,
                 string senderId = null,
                 string channelType = null,
@@ -45,7 +46,11 @@ namespace Harald.IntegrationTests.Features.Infrastructure
                 var httpClient = new HttpClient();
                 var responseMessage = await httpClient.SendAsync(httpRequestMessage);
 
-                return await ResponseMessageToDynamicAsync(responseMessage);
+                var contentString = await responseMessage.Content.ReadAsStringAsync();
+
+                var deserializeObject = JsonConvert.DeserializeObject<IEnumerable<ConnectionDto>>(contentString);
+
+                return deserializeObject;
             }
         }
 
