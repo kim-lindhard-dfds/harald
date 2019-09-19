@@ -13,5 +13,10 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         {
             return new SenderId(input);
         }
+
+        public static SenderId CreateFromString(string senderId)
+        {
+            return new SenderId(senderId);
+        }
     }
 }

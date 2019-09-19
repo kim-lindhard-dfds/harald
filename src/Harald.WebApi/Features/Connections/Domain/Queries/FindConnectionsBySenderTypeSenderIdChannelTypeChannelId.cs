@@ -7,11 +7,12 @@ namespace Harald.WebApi.Features.Connections.Domain.Queries
 {
     public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelId : IQuery<IEnumerable<Connection>>
     {
-        public SenderType SenderType { get; }
-        public SenderId SenderId { get; }
-        public ChannelType ChannelType { get; }
-        public ChannelId ChannelId { get; }
-        
+        public SenderType SenderType { get; set; }
+        public SenderId SenderId { get; set; }
+        public ChannelType ChannelType { get; set; }
+        public ChannelId ChannelId { get; set; }
+
+        public FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(){}
         public FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
             SenderType senderType, 
             SenderId senderId, 

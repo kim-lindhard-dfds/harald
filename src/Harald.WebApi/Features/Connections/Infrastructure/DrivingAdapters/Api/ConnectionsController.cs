@@ -1,7 +1,10 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
+using Harald.WebApi.Domain.Queries;
 using Harald.WebApi.Features.Connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Domain.Queries;
 using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +14,14 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
     [ApiController]
     public class ConnectionsController : ControllerBase
     {
+
+        private readonly IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>> _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
+
+        public ConnectionsController(IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>> findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler)
+        {
+            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler = findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetConnections(
             [FromQuery] string senderType,
@@ -19,30 +30,36 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             [FromQuery] string channelId
         )
         {
-            var connections = new[]
+            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
+              
+            );
+            if (senderType != null)
             {
-                 ConnectionDto.CreateFromConnection(new Connection(
-                    new SenderTypeCapability(),
-                    new SenderId(senderId ?? Guid.NewGuid().ToString().Substring(0,5)),
-                    new ChannelTypeSlack(),
-                    new ChannelId(channelId ?? Guid.NewGuid().ToString().Substring(0,5))
-                )),
-                 ConnectionDto.CreateFromConnection(new Connection(
-                     new SenderTypeCapability(),
-                     new SenderId(senderId ?? Guid.NewGuid().ToString().Substring(0,5)),
-                     new ChannelTypeSlack(),
-                     new ChannelId(channelId ?? Guid.NewGuid().ToString().Substring(0,5))
-                 )),
-                 ConnectionDto.CreateFromConnection(new Connection(
-                     new SenderTypeCapability(),
-                     new SenderId(senderId ?? Guid.NewGuid().ToString().Substring(0,5)),
-                     new ChannelTypeSlack(),
-                     new ChannelId(channelId ?? Guid.NewGuid().ToString().Substring(0,5))
-                 ))
-            };
+                SenderType.CreateFromString(senderType);
+            }
+
+            if (senderId != null)
+            {
+                SenderId.CreateFromString(senderId);
+            }
+            if(channelType != null)
+            {
+                ChannelType.CreateFromString(channelType);
+            }
+
+            if (channelId != null)
+            {
+                ChannelId.CreateFromString(channelId);
+            }
+            
+            var connections =
+                await _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
 
 
-            return Ok(connections);
+            var connectionDtos = connections.Select(ConnectionDto.CreateFromConnection);
+
+
+            return Ok(connectionDtos);
         }
     }
 }
