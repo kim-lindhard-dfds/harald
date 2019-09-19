@@ -14,12 +14,15 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
     [ApiController]
     public class ConnectionsController : ControllerBase
     {
+        private readonly IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>
+            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
 
-        private readonly IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>> _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
-
-        public ConnectionsController(IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>> findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler)
+        public ConnectionsController(
+            IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>
+                findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler)
         {
-            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler = findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
+            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler =
+                findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
         }
 
         [HttpGet]
@@ -31,27 +34,27 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
         )
         {
             var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
-              
             );
             if (senderType != null)
             {
-                SenderType.CreateFromString(senderType);
+                query.SenderType = SenderType.CreateFromString(senderType);
             }
 
             if (senderId != null)
             {
-                SenderId.CreateFromString(senderId);
+                query.SenderId = SenderId.CreateFromString(senderId);
             }
-            if(channelType != null)
+
+            if (channelType != null)
             {
-                ChannelType.CreateFromString(channelType);
+                query.ChannelType = ChannelType.CreateFromString(channelType);
             }
 
             if (channelId != null)
             {
-                ChannelId.CreateFromString(channelId);
+                query.ChannelId = ChannelId.CreateFromString(channelId);
             }
-            
+
             var connections =
                 await _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
 
