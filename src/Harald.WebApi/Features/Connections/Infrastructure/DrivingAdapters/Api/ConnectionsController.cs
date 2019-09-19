@@ -61,8 +61,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 
             var connectionDtos = connections.Select(ConnectionDto.CreateFromConnection);
 
-
-            return Ok(connectionDtos);
+            return Ok(new ItemsEnvelope<ConnectionDto>(connectionDtos));
         }
     }
 }
