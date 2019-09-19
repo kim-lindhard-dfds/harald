@@ -1,3 +1,5 @@
+using Harald.WebApi.Domain;
+
 namespace Harald.WebApi.features.connections.Domain.Model
 {
     public class Connection

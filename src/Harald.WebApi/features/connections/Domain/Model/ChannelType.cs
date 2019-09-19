@@ -5,7 +5,7 @@ namespace Harald.WebApi.features.connections.Domain.Model
 {
     public class ChannelType : StringSubstitutable
     {
-        private protected ChannelType(string value) : base(value)
+        protected internal ChannelType(string value) : base(value)
         {
         }
 
@@ -30,7 +30,7 @@ namespace Harald.WebApi.features.connections.Domain.Model
 
     public class ChannelTypeSlack : ChannelType
     {
-        protected internal ChannelTypeSlack() : base("slack")
+        public ChannelTypeSlack() : base("slack")
         {
         }
     }

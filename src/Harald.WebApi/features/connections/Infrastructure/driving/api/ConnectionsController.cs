@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Harald.WebApi.features.connections.Domain;
+using Harald.WebApi.Domain;
 using Harald.WebApi.features.connections.Domain.Model;
 using Harald.WebApi.features.connections.Infrastructure.driving.api.model;
 using Microsoft.AspNetCore.Mvc;
