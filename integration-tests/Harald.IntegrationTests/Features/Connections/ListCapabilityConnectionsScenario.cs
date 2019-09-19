@@ -7,7 +7,7 @@ using Harald.IntegrationTests.Features.Infrastructure;
 using Harald.IntegrationTests.Features.Infrastructure.Model;
 using Xunit;
 
-namespace Harald.IntegrationTests.Features.Channels
+namespace Harald.IntegrationTests.Features.Connections
 {
     public class ListCapabilityConnectionsScenario
     {
@@ -16,7 +16,7 @@ namespace Harald.IntegrationTests.Features.Channels
         {
             var capabilityId = await Given_a_capability();
             var connections = await When_capability_connections_are_requested(capabilityId);
-            await Then_given_capability_slack_channels_are_returned(capabilityId, connections);
+            Then_given_capability_slack_channels_are_returned(capabilityId, connections);
         }
 
         private async Task<Guid> Given_a_capability()
@@ -46,7 +46,7 @@ namespace Harald.IntegrationTests.Features.Channels
             return connections;
         }
 
-        private async Task Then_given_capability_slack_channels_are_returned(
+        private void Then_given_capability_slack_channels_are_returned(
             Guid capabilityId,
             IEnumerable<ConnectionDto> connections
         )
