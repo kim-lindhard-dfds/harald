@@ -1,7 +1,7 @@
 using System;
 using Harald.WebApi.Domain;
 
-namespace Harald.WebApi.features.connections.Domain.Model
+namespace Harald.WebApi.Features.Connections.Domain.Model
 {
     public class SenderId :StringSubstitutable
     {

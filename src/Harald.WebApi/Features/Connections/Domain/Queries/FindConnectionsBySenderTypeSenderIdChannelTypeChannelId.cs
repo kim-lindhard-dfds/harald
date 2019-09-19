@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Queries;
-using Harald.WebApi.features.connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Domain.Model;
 
-namespace Harald.WebApi.features.connections.Domain.Queries
+namespace Harald.WebApi.Features.Connections.Domain.Queries
 {
     public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelId : IQuery<IEnumerable<Connection>>
     {

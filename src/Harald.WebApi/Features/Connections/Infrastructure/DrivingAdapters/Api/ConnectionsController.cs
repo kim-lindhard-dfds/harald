@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.features.connections.Domain.Model;
-using Harald.WebApi.features.connections.Infrastructure.driving.api.model;
+using Harald.WebApi.Features.Connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Harald.WebApi.features.connections.Infrastructure.driving.api
+namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 {
     [Route("api/v1/connections")]
     [ApiController]

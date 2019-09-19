@@ -1,7 +1,6 @@
-using Harald.WebApi.features.connections.Domain;
-using Harald.WebApi.features.connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Domain.Model;
 
-namespace Harald.WebApi.features.connections.Infrastructure.driving.api.model
+namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model
 {
     public class ConnectionDto
     {

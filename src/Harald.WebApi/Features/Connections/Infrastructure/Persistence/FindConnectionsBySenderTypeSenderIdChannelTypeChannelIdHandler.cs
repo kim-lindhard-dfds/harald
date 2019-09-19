@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Queries;
-using Harald.WebApi.features.connections.Domain.Model;
-using Harald.WebApi.features.connections.Domain.Queries;
+using Harald.WebApi.Features.Connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Domain.Queries;
 
-namespace Harald.WebApi.features.connections.Infrastructure.Persistence
+namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
 {
     public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler : IQueryHandler<
         FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>

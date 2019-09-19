@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Domain;
-using Harald.WebApi.features.connections.Domain.Model;
-using Harald.WebApi.features.connections.Domain.Queries;
-using Harald.WebApi.features.connections.Infrastructure.Persistence;
+using Harald.WebApi.Features.Connections.Domain.Model;
+using Harald.WebApi.Features.Connections.Domain.Queries;
+using Harald.WebApi.Features.Connections.Infrastructure.Persistence;
 using Xunit;
 
 namespace Harald.Tests.features.Connections.Infrastructure.Persistence
