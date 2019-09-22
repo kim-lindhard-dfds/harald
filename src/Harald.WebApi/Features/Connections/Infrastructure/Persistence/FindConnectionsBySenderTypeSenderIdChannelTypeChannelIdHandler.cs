@@ -59,8 +59,10 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         {
             return new Connection(
                 new SenderTypeCapability(),
+                new SenderName(capability.Name), 
                 new SenderId(capability.Id.ToString()),
                 new ChannelTypeSlack(),
+                ChannelName.Create(capability.Name),
                 new ChannelId(capability.SlackChannelId)
             );
         }
