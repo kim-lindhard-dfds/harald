@@ -2,22 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
+using Harald.Infrastructure.Slack.Dto;
+using Harald.Infrastructure.Slack.Http.Response.Notification;
+using Harald.Infrastructure.Slack.Http.Response;
+using Harald.Infrastructure.Slack.Response.Channel;
+using Harald.Infrastructure.Slack.Http.Response.UserGroup;
+using Harald.Infrastructure.Slack.Http.Response.Conversation;
+using Harald.Infrastructure.Slack.Model;
 
 namespace Harald.Tests.TestDoubles
 {
     public class SlackFacadeSpy : ISlackFacade
     {
-        public List<UserGroup> UserGroups;
+        public List<UserGroupDto> UserGroups;
 
         public SlackFacadeSpy()
         {
-            UserGroups = new List<UserGroup>();
+            UserGroups = new List<UserGroupDto>();
         }
 
-        public Dictionary<ChannelId, List<string>> ChannelsMessages = new Dictionary<ChannelId, List<string>>();
+        public Dictionary<SlackChannelIdentifier, List<string>> ChannelsMessages = new Dictionary<SlackChannelIdentifier, List<string>>();
 
-        public Task<SendNotificationResponse> SendNotificationToChannel(ChannelId channelId, string message)
+        public Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelId, string message)
         {
             if (ChannelsMessages.ContainsKey(channelId) == false)
             {
@@ -36,7 +43,7 @@ namespace Harald.Tests.TestDoubles
         }
 
         
-        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(ChannelId channelId, string message,
+        public Task<SendNotificationResponse> SendDelayedNotificationToChannel(SlackChannelIdentifier channelId, string message,
             long delayTimeInEpoch)
         {
             throw new System.NotImplementedException();
@@ -63,10 +70,10 @@ namespace Harald.Tests.TestDoubles
         }
 
         
-        public readonly Dictionary<ChannelId, List<string>> ChannelsPinnedMessageTimeStamps =
-            new Dictionary<ChannelId, List<string>>();
+        public readonly Dictionary<SlackChannelIdentifier, List<string>> ChannelsPinnedMessageTimeStamps =
+            new Dictionary<SlackChannelIdentifier, List<string>>();
 
-        public Task<GeneralResponse> PinMessageToChannel(ChannelId channelId, string messageTimeStamp)
+        public Task<SlackResponse> PinMessageToChannel(SlackChannelIdentifier channelId, string messageTimeStamp)
         {
             if (ChannelsPinnedMessageTimeStamps.ContainsKey(channelId) == false)
             {
@@ -75,16 +82,16 @@ namespace Harald.Tests.TestDoubles
 
             ChannelsPinnedMessageTimeStamps[channelId].Add(messageTimeStamp);
 
-            return Task.FromResult(new GeneralResponse {Ok = true});
+            return Task.FromResult(new SlackResponse { Ok = true});
         }
 
-        public ChannelName CreatedChannelName { get; private set; }
+        public SlackChannelName CreatedChannelName { get; private set; }
 
-        public Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
+        public Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
             CreatedChannelName = channelName;
 
-            var channel = new Channel
+            var channel = new ChannelDto
             {
                 Id = new ChannelId(Guid.NewGuid().ToString()),
                 Name = channelName
@@ -100,20 +107,20 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult(createChannelResponse);
         }
 
-        public Task DeleteChannel(ChannelId channelId, string token)
+        public Task DeleteChannel(SlackChannelIdentifier channelId, string token)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task RenameChannel(ChannelId channelId, ChannelName name)
+        public Task RenameChannel(SlackChannelIdentifier channelId, SlackChannelName name)
         {
             throw new System.NotImplementedException();
         }
 
-        public readonly Dictionary<ChannelId, List<string>>
-            InvitedToChannel = new Dictionary<ChannelId, List<string>>();
+        public readonly Dictionary<SlackChannelIdentifier, List<string>>
+            InvitedToChannel = new Dictionary<SlackChannelIdentifier, List<string>>();
 
-        public Task InviteToChannel(string email, ChannelId channelId)
+        public Task InviteToChannel(string email, SlackChannelIdentifier channelId)
         {
             if (InvitedToChannel.ContainsKey(channelId) == false)
             {
@@ -125,10 +132,10 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
-        public readonly Dictionary<ChannelId, List<string>> RemovedFromChannel =
-            new Dictionary<ChannelId, List<string>>();
+        public readonly Dictionary<SlackChannelIdentifier, List<string>> RemovedFromChannel =
+            new Dictionary<SlackChannelIdentifier, List<string>>();
 
-        public Task RemoveFromChannel(string email, ChannelId channelId)
+        public Task RemoveFromChannel(string email, SlackChannelIdentifier channelId)
         {
             if (RemovedFromChannel.ContainsKey(channelId) == false)
             {
@@ -140,14 +147,14 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
-        public Task<CreateUserGroupResponse> CreateUserGroup(string name, UserGroupHandle handle, string description)
+        public Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
         {
             CreateUserGroupWasCalled = true;
             CreateUserGroupName = name;
             CreateUserGroupHandle = handle;
             CreateUserGroupDescription = description;
 
-            var usergroup = new UserGroup
+            var usergroup = new UserGroupDto
             {
                 Handle = handle,
                 Id = Guid.NewGuid().ToString(),
@@ -157,7 +164,7 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult(new CreateUserGroupResponse {Ok = true, UserGroup = usergroup});
         }
 
-        public Task RenameUserGroup(string usergroupId, string name, UserGroupHandle handle)
+        public Task RenameUserGroup(string usergroupId, string name, string handle)
         {
             throw new System.NotImplementedException();
         }
@@ -194,7 +201,7 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
-        public Task<List<UserGroup>> GetUserGroups()
+        public Task<List<UserGroupDto>> GetUserGroups()
         {
             return Task.FromResult(UserGroups);
         }
@@ -202,6 +209,21 @@ namespace Harald.Tests.TestDoubles
         public Task<GetConversationsResponse> GetConversations()
         {
             throw new System.NotImplementedException();
+        }
+
+        public Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ArchiveChannel(SlackChannelIdentifier channelIdentifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        {
+            throw new NotImplementedException();
         }
 
         public bool CreateUserGroupWasCalled { get; private set; }

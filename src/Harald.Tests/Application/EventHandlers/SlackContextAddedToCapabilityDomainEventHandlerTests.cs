@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack.Model;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
@@ -48,9 +49,9 @@ namespace Harald.Tests.Application.EventHandlers
                 .HandleAsync(contextAddedToCapabilityDomainEvent);
             
             // Assert
-            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
+            var hardCodedDedChannelId = new SlackChannelIdentifier("GFYE9B99Q");
             Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[hardCodedDedChannelId]);
-            Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[capability.SlackChannelId]);
+            Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[capability.SlackChannelId.ToString()]);
             
         }
     }

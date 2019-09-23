@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -42,9 +43,9 @@ namespace Harald.WebApi.Application.EventHandlers
                 // Invite user to Slack channel:
                 await _slackFacade.InviteToChannel(
                     email: domainEvent.Payload.MemberEmail,
-                    channelId: capability.SlackChannelId);
+                    channelIdentifier: capability.SlackChannelId.ToString());
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API during InviteToChannel: {ex} : {ex.Message}");
             }
@@ -67,7 +68,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 // Add user to Slack user group:    
                 await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,userGroupId: capability.SlackUserGroupId);
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API during AddUserGroupUser: {ex} : {ex.Message}");
             }

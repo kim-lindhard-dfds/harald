@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack.Model;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
@@ -43,7 +44,7 @@ namespace Harald.Tests.Application.EventHandlers
             
             
             // Assert
-            Assert.Equal(memberEmail,slackFacadeSpy.InvitedToChannel[new ChannelId(capability.SlackChannelId)].Single());
+            Assert.Equal(memberEmail,slackFacadeSpy.InvitedToChannel[new SlackChannelIdentifier(capability.SlackChannelId)].Single());
             Assert.Equal(memberEmail,slackFacadeSpy.UserGroupsUsers[capability.SlackUserGroupId].Single());
 
         }

@@ -4,9 +4,10 @@ using Xunit;
 using System.Net;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Serialization;
 using Xunit.Priority;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.IntegrationTests.Facades.Slack
 {
@@ -24,11 +25,11 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             var channelName = ChannelName.Create("ded-team-one");
 
             // Act
-            var createChannelResponse = await sut.CreateChannel(channelName);
+            var createChannelResponse = await sut.CreateChannel(channelName.ToString());
 
             // Assert
             Assert.True(createChannelResponse.Ok);
@@ -36,7 +37,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             Assert.NotEmpty(createChannelResponse.Channel.Id.ToString());
             
             // For eventual cleanup
-            _data.UserChannelId = createChannelResponse.Channel.Id;
+            _data.UserChannelId = new ChannelId(createChannelResponse.Channel.Id);
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             var conversations = await sut.GetConversations();
             var channelId = conversations.GetChannel("ded-team-one").Id;
             var userEmail = GetUserEmail();
@@ -60,7 +61,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             const string groupName = "Harald Integration Test Group";
             var handle = UserGroupHandle.Create("harald-int-a");
             const string description = "Group created through integration test.";
@@ -70,7 +71,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             var createUserGroupResponse = await sut.CreateUserGroup(name: groupName, handle: handle, description: description);
             if (!createUserGroupResponse.Ok)
             {
-                throw new SlackFacade.SlackFacadeException($"API error: {createUserGroupResponse.Error}");
+                throw new SlackFacadeException($"API error: {createUserGroupResponse.Error}");
             }
             
             await sut.AddUserGroupUser(userGroupId: createUserGroupResponse.UserGroup.Id, email: userEmail);
@@ -87,12 +88,12 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             var channelId = new ChannelId("ded-team-one");
             const string message = "Integration test message.";
 
             // Act
-            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId, message: message);
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId.ToString(), message: message);
 
             // Assert
             Assert.True(sendNotificationToChannelResponse.Ok);
@@ -104,7 +105,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var httpClient = GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             var channelId = new ChannelId("ded-team-one");
             const string message = "Integration test message.";
 
@@ -112,8 +113,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             var slackChannelObj = conversations.GetChannel(channelId);
 
             // Act
-            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId, message: message);
-            var pinMessageToChannelResponse = await sut.PinMessageToChannel(new ChannelId(slackChannelObj.Id), messageTimeStamp: sendNotificationToChannelResponse.TimeStamp);
+            var sendNotificationToChannelResponse = await sut.SendNotificationToChannel(channelId.ToString(), message: message);
+            var pinMessageToChannelResponse = await sut.PinMessageToChannel(new ChannelId(slackChannelObj.Id).ToString(), messageTimeStamp: sendNotificationToChannelResponse.TimeStamp);
 
             // Assert
             Assert.True(sendNotificationToChannelResponse.Ok);
@@ -160,7 +161,7 @@ namespace Harald.IntegrationTests.Facades.Slack
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
             var httpClient = SlackFacadeTest.GetHttpClient();
-            var sut = new SlackFacade(httpClient, new JsonSerializer());
+            var sut = new SlackFacade(httpClient);
             if (UserGroupId != null)
             {
                 var newUserGroupId = new String(stringChars);
@@ -172,7 +173,7 @@ namespace Harald.IntegrationTests.Facades.Slack
             {
                 var newChannelName = ChannelName.Create(new String(stringChars));
 
-                sut.RenameChannel(UserChannelId, newChannelName).Wait();
+                sut.RenameChannel(UserChannelId.ToString(), newChannelName.ToString()).Wait();
             }
         }
     }

@@ -21,4 +21,8 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Harald.Infrastructure.Slack\Harald.Infrastructure.Slack.csproj" />
+  </ItemGroup>
+
 </Project>

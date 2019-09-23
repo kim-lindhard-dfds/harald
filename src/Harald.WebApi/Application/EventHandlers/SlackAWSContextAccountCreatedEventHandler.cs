@@ -2,7 +2,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -38,11 +38,11 @@ namespace Harald.WebApi.Application.EventHandlers
             sb.AppendLine($"\tBusiness Legal Name: DFDS A/S");
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
-            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, sb.ToString());
+            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());
             
             // Send message to Capability Slack channel
             var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
-            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
+            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
             
         }
     }

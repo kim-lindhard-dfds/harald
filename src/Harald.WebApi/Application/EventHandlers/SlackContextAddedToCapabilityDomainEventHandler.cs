@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 
 namespace Harald.WebApi.Application.EventHandlers
@@ -30,11 +30,11 @@ namespace Harald.WebApi.Application.EventHandlers
             var message = CreateMessage(domainEvent, _externalEventMetaDataStore.XCorrelationId);
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
-            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId, message);
+            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), message);
 
             // Send message to Capability Slack channel
             await _slackFacade.SendNotificationToChannel(
-                capability.SlackChannelId,
+                capability.SlackChannelId.ToString(),
                 $"We're working on setting up your environment. Currently the following resources are being provisioned and are awaiting status updates" +
                 $"\n" +
                 $"{CreateTaskTable(false, false, false)}");

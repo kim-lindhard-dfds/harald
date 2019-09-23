@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Microsoft.Extensions.Logging;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -38,9 +39,9 @@ namespace Harald.WebApi.Application.EventHandlers
                 // Remove user from Slack channel:
                 await _slackFacade.RemoveFromChannel(
                     email: domainEvent.Payload.MemberEmail,
-                    channelId: capability.SlackChannelId);
+                    channelIdentifier: capability.SlackChannelId.ToString());
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API during RemoveFromChannel: {ex} : {ex.Message}");
             }
@@ -52,7 +53,7 @@ namespace Harald.WebApi.Application.EventHandlers
                     email: domainEvent.Payload.MemberEmail,
                     userGroupId: capability.SlackUserGroupId);
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API during RemoveUserGroupUser: {ex} : {ex.Message}");
             }

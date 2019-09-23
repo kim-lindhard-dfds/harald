@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -31,7 +31,7 @@ namespace Harald.WebApi.Application.EventHandlers
             );
             
             await _slackFacade.SendNotificationToChannel(
-                capability.SlackChannelId, 
+                capability.SlackChannelId.ToString(), 
                 $"Nearly there... time to grab a coffee?\n{missingAdsyncTaskTable}"
                 );
 
@@ -45,7 +45,7 @@ namespace Harald.WebApi.Application.EventHandlers
                 adsyncDone:true
             );
             await _slackFacade.SendDelayedNotificationToChannel(
-                capability.SlackChannelId, 
+                capability.SlackChannelId.ToString(), 
                 $"All done:\n{allDoneTaskTable}", 
                 timestamp
             );

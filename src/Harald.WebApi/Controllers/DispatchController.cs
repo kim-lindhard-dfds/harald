@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +39,7 @@ namespace Harald.WebApi.Controllers
             }
 
             var sendNotificationToChannelResponse =
-             await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, input.Message);
+             await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), input.Message);
          
             if (!sendNotificationToChannelResponse.Ok)
             {

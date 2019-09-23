@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harald.WebApi", "Harald.WebApi\Harald.WebApi.csproj", "{231F061F-D5BE-4E9B-AE03-BC3D689AB931}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.WebApi", "Harald.WebApi\Harald.WebApi.csproj", "{231F061F-D5BE-4E9B-AE03-BC3D689AB931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harald.Tests", "Harald.Tests\Harald.Tests.csproj", "{48F8198C-33C9-4F73-B5D7-C23FD15F0052}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.Tests", "Harald.Tests\Harald.Tests.csproj", "{48F8198C-33C9-4F73-B5D7-C23FD15F0052}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harald.IntegrationTests", "Harald.IntegrationTests\Harald.IntegrationTests.csproj", "{CB29D7BB-302E-4032-924F-9EC947E0BB3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.IntegrationTests", "Harald.IntegrationTests\Harald.IntegrationTests.csproj", "{CB29D7BB-302E-4032-924F-9EC947E0BB3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.Infrastructure.Slack", "Harald.Infrastructure.Slack\Harald.Infrastructure.Slack.csproj", "{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{231F061F-D5BE-4E9B-AE03-BC3D689AB931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +57,23 @@ Global
 		{CB29D7BB-302E-4032-924F-9EC947E0BB3A}.Release|x64.Build.0 = Release|Any CPU
 		{CB29D7BB-302E-4032-924F-9EC947E0BB3A}.Release|x86.ActiveCfg = Release|Any CPU
 		{CB29D7BB-302E-4032-924F-9EC947E0BB3A}.Release|x86.Build.0 = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|x64.Build.0 = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DD4D0573-6FDF-474A-877F-527AD93147EF}
 	EndGlobalSection
 EndGlobal
