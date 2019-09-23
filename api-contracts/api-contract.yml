@@ -58,6 +58,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/connections"
+        "422":
+          description: Unprocessable entity - SenderId or ChannelId failed validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
   /channels:
     get:
       summary: A queryable collection of existing communication channels
@@ -131,3 +137,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/connection"
+    errorObject:
+      type: object
+      properties:
+        message:
+          type: string

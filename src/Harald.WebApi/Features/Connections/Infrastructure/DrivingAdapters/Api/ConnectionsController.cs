@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Queries;
@@ -55,8 +57,19 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 query.ChannelId = ChannelId.CreateFromString(channelId);
             }
 
-            var connections =
-                await _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
+            IEnumerable<Connection> connections;
+            try
+            {
+                connections =
+                    await _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
+            }
+            catch (ValidationException validationException)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.UnprocessableEntity, 
+                    new {message = validationException.MessageToUser}
+                );
+            }
 
 
             var connectionDtos = connections.Select(ConnectionDto.CreateFromConnection);

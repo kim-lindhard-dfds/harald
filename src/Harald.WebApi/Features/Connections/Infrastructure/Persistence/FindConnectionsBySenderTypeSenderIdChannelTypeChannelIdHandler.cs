@@ -23,6 +23,9 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         public async Task<IEnumerable<Connection>> HandleAsync(
             FindConnectionsBySenderTypeSenderIdChannelTypeChannelId query)
         {
+         
+            
+            
             if (query.ChannelType != null && query.ChannelType.GetType() != typeof(ChannelTypeSlack) )
             {
                 return Enumerable.Empty<Connection>();
@@ -45,9 +48,16 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
 
             if (query.SenderId != null)
             {
+                Guid capabilityId;
+                var capabilityIdIsValid = Guid.TryParse(query.SenderId, out capabilityId);
+                if(capabilityIdIsValid == false)
+                {
+                    throw new ValidationException($"The given capability id: '{query.SenderId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
+                }
+                
                 capabilities = capabilities
                     .Where(c =>
-                        c.Id.Equals(new Guid(query.SenderId)));
+                        c.Id.Equals(capabilityId));
             }
 
             var connections = capabilities.Select(ConvertCapabilityToConnection);
