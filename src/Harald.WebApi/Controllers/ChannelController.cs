@@ -1,9 +1,10 @@
-using System.Threading.Tasks;
 using Harald.Infrastructure.Slack;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
+using Guid = System.Guid;
 
 namespace Harald.WebApi.Controllers
 {
@@ -26,9 +27,14 @@ namespace Harald.WebApi.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Leave(LeaveChannelInput input)
         {
-            if (input == null)
+            if (input.CapabilityId.Equals(Guid.Empty))
             {
-                return BadRequest("LeaveChannelInput is required.");
+                return BadRequest("Capability ID is required.");
+            }
+
+            if (string.IsNullOrEmpty((input.ChannelId)))
+            {
+                return BadRequest("Channel ID is required.");
             }
 
             var capability = await _capabilityRepository.Get(input.CapabilityId);
@@ -42,7 +48,7 @@ namespace Harald.WebApi.Controllers
 
             var capabilities = await _capabilityRepository.GetAll();
 
-            if (!capabilities.Any(c => c.SlackChannelId == capability.SlackChannelId && c.Id != capability.Id))
+            if (!capabilities.Any(c => c.SlackChannelId.Equals(capability.SlackChannelId) && !c.Id.Equals(capability.Id)))
             {
                 await _slackFacade.ArchiveChannel(capability.SlackChannelId.ToString());
             }
@@ -54,9 +60,19 @@ namespace Harald.WebApi.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Join(JoinChannelInput input)
         {
-            if (input == null)
+            if (input.CapabilityId.Equals(Guid.Empty))
             {
-                return BadRequest("LeaveChannelInput is required.");
+                return BadRequest("Capability ID is required.");
+            }
+
+            if (string.IsNullOrEmpty((input.ChannelId)))
+            {
+                return BadRequest("Channel ID is required.");
+            }
+
+            if (string.IsNullOrEmpty((input.ChannelName)))
+            {
+                return BadRequest("Channel name is required.");
             }
 
             var capability = await _capabilityRepository.Get(input.CapabilityId);
@@ -66,7 +82,7 @@ namespace Harald.WebApi.Controllers
                 return UnprocessableEntity($"Capability ID '{input.CapabilityId}' doesn't exist.");
             }
 
-            //TODO: Check if connection already exists or return UnprocessableEntity. :) (Cannot finish this logic before Kims PR is done)
+            //TODO: Check if connection already exists or return UnprocessableEntity.
 
             var response = await _slackFacade.JoinChannel(input.ChannelName);
 
