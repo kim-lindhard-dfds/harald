@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Harald.Infrastructure.Slack\Harald.Infrastructure.Slack.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
