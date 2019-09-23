@@ -133,12 +133,12 @@ namespace Harald.Tests.TestDoubles
 
         public Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task ArchiveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)

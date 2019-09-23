@@ -7,7 +7,7 @@ using Harald.WebApi.Models;
 
 namespace Harald.WebApi.Controllers
 {
-    [Route("api/v1/channel")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ChannelController : ControllerBase
     {
@@ -22,7 +22,8 @@ namespace Harald.WebApi.Controllers
             _capabilityRepository = capabilityRepository;
         }
 
-        [HttpPost]
+        [HttpPost()]
+        [Route("[action]")]
         public async Task<IActionResult> Leave(LeaveChannelInput input)
         {
             if (input == null)
@@ -50,6 +51,7 @@ namespace Harald.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("[action]")]
         public async Task<IActionResult> Join(JoinChannelInput input)
         {
             if (input == null)
