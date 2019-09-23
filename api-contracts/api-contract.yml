@@ -73,6 +73,8 @@ definitions:
     properties:
       capabilityId:
         type: string
+      channelId:
+        type: string
       channelName:
         type: string
   message:

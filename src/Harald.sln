@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.IntegrationTests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.Infrastructure.Slack", "Harald.Infrastructure.Slack\Harald.Infrastructure.Slack.csproj", "{CA9A7ACA-D5B9-43EE-9803-82CC978913C0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{5363531D-242B-425C-99E9-78E044B13946}"
+	ProjectSection(SolutionItems) = preProject
+		..\api-contracts\api-contract.yml = ..\api-contracts\api-contract.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -64,9 +64,11 @@ namespace Harald.WebApi.Controllers
                 return UnprocessableEntity($"Capability ID '{input.CapabilityId}' doesn't exist.");
             }
 
+            //TODO: Check if connection already exists or return UnprocessableEntity. :) (Cannot finish this logic before Kims PR is done)
+
             var response = await _slackFacade.JoinChannel(input.ChannelName);
-            
-            //TODO: Cannot finish this logic before Kims PR is ready. :) (add new slack channel id (connection) to capability)
+
+            //TODO: Add new slack channel id (connection) to capability and update.
 
             return Accepted(response.Channel);
         }
