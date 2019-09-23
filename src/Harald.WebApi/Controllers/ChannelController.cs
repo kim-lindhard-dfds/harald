@@ -66,7 +66,7 @@ namespace Harald.WebApi.Controllers
 
             var response = await _slackFacade.JoinChannel(input.ChannelName);
             
-            //TODO: Add to capability.
+            //TODO: Cannot finish this logic before Kims PR is ready. :) (add new slack channel id (connection) to capability)
 
             return Accepted(response.Channel);
         }
