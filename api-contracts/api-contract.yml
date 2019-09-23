@@ -9,6 +9,40 @@ produces:
   - application/json
 basePath: /api/v1/
 paths:
+  /channel/leave:
+    post:
+      summary: Removes a capability from a channel.
+      parameters:
+        - in: body
+        - required: true
+        schema:
+          $ref: "#/definitions/leaveChannel"
+      responses:
+        200:
+          description: Success.
+        400:
+          description: Bad request - required input is missing.
+        422:
+          description: Unprocessable entity - capability ID can't be processed.
+        500:
+          description: Internal error
+  /channel/join:
+    post:
+      summary: Join a capability to a channel or creates a new channel if it doesnt exist.
+      parameters:
+        - in: body
+        - required: true
+        schema:
+          $ref: "#/definitions/joinChannel"
+      responses:
+        200:
+          description: Success.
+        400:
+          description: Bad request - required input is missing.
+        422:
+          description: Unprocessable entity - capability ID can't be processed.
+        500:
+          description: Internal error
   /messages:
     post:
       summary: Queue a message for dispatching
@@ -27,6 +61,20 @@ paths:
         503:
           description: Service unavailable - error trying to send the message.
 definitions:
+  leaveChannel:
+    type: object
+    properties:
+      capabilityId:
+        type: string
+      channelId:
+        type: string
+  joinChannel:
+    type: object
+    properties:
+      capabilityId:
+        type: string
+      channelName:
+        type: string
   message:
     type: object
     properties:
