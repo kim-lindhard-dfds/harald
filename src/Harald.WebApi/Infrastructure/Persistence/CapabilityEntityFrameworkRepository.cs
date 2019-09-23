@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,11 @@ namespace Harald.WebApi.Infrastructure.Persistence
         public CapabilityEntityFrameworkRepository(HaraldDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<IEnumerable<Capability>> GetAll()
+        {
+            return await _dbContext.Capabilities.AsNoTracking().ToListAsync();
         }
 
         public async Task<Capability> Get(Guid id)

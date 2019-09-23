@@ -47,5 +47,10 @@ namespace Harald.Tests.TestDoubles
 
             return Task.FromResult(capability);
         }
+
+        public Task<IEnumerable<Capability>> GetAll()
+        {
+            return Task.FromResult(_capabilities.AsEnumerable());
+        }
     }
 }
