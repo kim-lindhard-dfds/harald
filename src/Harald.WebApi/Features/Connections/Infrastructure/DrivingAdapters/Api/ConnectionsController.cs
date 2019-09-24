@@ -39,22 +39,22 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             );
             if (senderType != null)
             {
-                query.SenderType = SenderType.CreateFromString(senderType);
+                query.SenderType = SenderType.Create(senderType);
             }
 
             if (senderId != null)
             {
-                query.SenderId = SenderId.CreateFromString(senderId);
+                query.SenderId = SenderId.Create(senderId);
             }
 
             if (channelType != null)
             {
-                query.ChannelType = ChannelType.CreateFromString(channelType);
+                query.ChannelType = ChannelType.Create(channelType);
             }
 
             if (channelId != null)
             {
-                query.ChannelId = ChannelId.CreateFromString(channelId);
+                query.ChannelId = ChannelId.Create(channelId);
             }
 
             IEnumerable<Connection> connections;

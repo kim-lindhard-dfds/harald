@@ -14,7 +14,7 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
             return new SenderType(input);
         }
 
-        public static SenderType CreateFromString(string channelType)
+        public static SenderType Create(string channelType)
         {
             channelType = channelType.ToLower();
 
