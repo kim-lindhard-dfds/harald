@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
@@ -143,7 +144,11 @@ namespace Harald.Tests.TestDoubles
 
         public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new JoinChannelResponse
+            {
+                Ok = true,
+                Channel = new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = channelName }
+            });
         }
     }
 }
