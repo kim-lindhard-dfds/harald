@@ -5,11 +5,11 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
 {
     public class ClientName :StringSubstitutable
     {
-        public ClientName(String value) : base(value)
+        public ClientName(string value) : base(value)
         {
         }
         
-        public static explicit operator ClientName(String input) 
+        public static explicit operator ClientName(string input) 
         {
             return new ClientName(input);
         }

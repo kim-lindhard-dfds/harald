@@ -165,8 +165,8 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 var getAllChannelConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                                             null,
                                             null,
-                                            (ChannelType)channelType,
-                                            (ChannelId)channelId);
+                                            connection.ChannelType,
+                                            connection.ChannelId);
 
                 var allChannelConnections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(getAllChannelConnectionsQuery);
 

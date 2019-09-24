@@ -14,16 +14,15 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
             return Create(input);
         }
 
-        public static ClientType Create(string channelType)
+        public static ClientType Create(string clientType)
         {
-            channelType = channelType?.ToLower() ?? string.Empty;
-
-            if (channelType.Equals(new ClientTypeCapability()))
+            switch (clientType)
             {
-                return new ClientTypeCapability();
+                case string str when str.Equals(new ClientTypeCapability(), StringComparison.OrdinalIgnoreCase):
+                    return new ClientTypeCapability();
+                default:
+                    return null;
             }
-
-            throw new ArgumentException($"a ClientType could not be created from the string: '{channelType}'");
         }
     }
 

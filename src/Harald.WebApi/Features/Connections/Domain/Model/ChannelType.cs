@@ -17,14 +17,13 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         
         public static ChannelType Create(string channelType)
         {
-            channelType = channelType?.ToLower() ?? string.Empty;
-
-            if (channelType.Equals(new ChannelTypeSlack()))
+            switch (channelType)
             {
-                return new ChannelTypeSlack();
+                case string str when str.Equals(new ChannelTypeSlack(), StringComparison.OrdinalIgnoreCase):
+                    return new ChannelTypeSlack();
+                default:
+                    return null;
             }
-
-            throw new ArgumentException($"a channelType could not be created from the string: '{channelType}'");
         }
     }
 

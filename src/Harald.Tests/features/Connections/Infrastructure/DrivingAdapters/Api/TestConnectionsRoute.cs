@@ -16,9 +16,8 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         [Fact]
         public async Task delete_connection_returns_expected_status_code()
         {
-            //TODO: Debug tests and fix QueryHandler issue with empty value objects.
             var clientId = Guid.NewGuid();
-            var clientType = "capability";
+            const string clientType = "capability";
 
             using (var builder = new HttpClientBuilder())
             {
@@ -37,6 +36,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         public async Task delete_connection_given_empty_clientId_returns_expected_status_code()
         {
             var serializer = new JsonSerializer();
+            const string channelId = "123FooBar";
 
             using (var builder = new HttpClientBuilder())
             {
@@ -44,8 +44,6 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
-
-                var channelId = "123FooBar";
 
                 var payload = serializer.GetPayload(new { ChannelId = channelId });
                 var response = await client.PostAsync("api/v1/connections", payload);
@@ -59,6 +57,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         {
             var serializer = new JsonSerializer();
             var capabilityId = Guid.NewGuid();
+            var channelId = string.Empty;
 
             using (var builder = new HttpClientBuilder())
             {
@@ -66,8 +65,6 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
-
-                var channelId = string.Empty;
 
                 var payload = serializer.GetPayload(new { CapabilityId = capabilityId, ChannelId = channelId });
                 var response = await client.PostAsync("api/v1/channel/leave", payload);
