@@ -11,7 +11,7 @@ namespace Harald.IntegrationTests.Features.Infrastructure
     {
         public static class Connections
         {
-            public static async Task<IEnumerable<ConnectionDto>> GetAsync(
+            public static async Task<ItemsEnvelope<ConnectionDto>> GetAsync(
                 string senderType = null,
                 string senderId = null,
                 string channelType = null,
@@ -21,12 +21,12 @@ namespace Harald.IntegrationTests.Features.Infrastructure
                 var parametersToAdd = new Dictionary<string, string>();
                 if (string.IsNullOrWhiteSpace(senderType) == false)
                 {
-                    parametersToAdd.Add("senderType", senderType);
+                    parametersToAdd.Add("clientType", senderType);
                 }
                 
                 if (string.IsNullOrWhiteSpace(senderId) == false)
                 {
-                    parametersToAdd.Add("senderId", senderId);
+                    parametersToAdd.Add("clientId", senderId);
                 }
 
                 if (string.IsNullOrWhiteSpace(channelType) == false)
@@ -48,7 +48,7 @@ namespace Harald.IntegrationTests.Features.Infrastructure
 
                 var contentString = await responseMessage.Content.ReadAsStringAsync();
 
-                var deserializeObject = JsonConvert.DeserializeObject<IEnumerable<ConnectionDto>>(contentString);
+                var deserializeObject = JsonConvert.DeserializeObject<ItemsEnvelope<ConnectionDto>>(contentString);
 
                 return deserializeObject;
             }

@@ -43,7 +43,7 @@ namespace Harald.IntegrationTests.Features.Connections
                 senderId: capabilityId.ToString()
             );
 
-            return connections;
+            return connections.Items;
         }
 
         private void Then_given_capability_slack_channels_are_returned(
@@ -52,7 +52,7 @@ namespace Harald.IntegrationTests.Features.Connections
         )
         {
             Assert.True(connections.Any());
-            Assert.All(connections, dto => { Assert.Equal(capabilityId.ToString(), dto.SenderId); });
+            Assert.All(connections, dto => { Assert.Equal(capabilityId.ToString(), dto.ClientId); });
             // TODO Ensure the connections point to the correct channels
         }
     }
