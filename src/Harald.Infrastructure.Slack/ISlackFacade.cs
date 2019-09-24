@@ -4,7 +4,7 @@ using Harald.Infrastructure.Slack.Http.Response.Conversation;
 using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Model;
-using Harald.Infrastructure.Slack.Response.Channel;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,6 +32,8 @@ namespace Harald.Infrastructure.Slack
 
         Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false);
 
+        Task<IEnumerable<ChannelDto>> GetChannels(string token);
+
         Task InviteToChannel(string email, SlackChannelIdentifier channelIdentifier);
 
         Task RemoveFromChannel(string email, SlackChannelIdentifier channelIdentifier);
@@ -44,7 +46,7 @@ namespace Harald.Infrastructure.Slack
 
         Task RemoveUserGroupUser(string userGroupId, string email);
 
-        Task<List<UserGroupDto>> GetUserGroups();
+        Task<IEnumerable<UserGroupDto>> GetUserGroups();
 
         Task<GetConversationsResponse> GetConversations();
     }

@@ -1,7 +1,6 @@
 using Harald.Infrastructure.Slack.Dto;
-using Harald.Infrastructure.Slack.Http.Response;
 
-namespace Harald.Infrastructure.Slack.Response.Channel
+namespace Harald.Infrastructure.Slack.Http.Response.Channel
 {
     public class JoinChannelResponse : SlackResponse
     {

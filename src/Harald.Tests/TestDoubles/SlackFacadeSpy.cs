@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.Infrastructure.Slack;
 using Harald.Infrastructure.Slack.Dto;
 using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response;
-using Harald.Infrastructure.Slack.Response.Channel;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Http.Response.Conversation;
 using Harald.Infrastructure.Slack.Model;
@@ -201,9 +202,9 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
-        public Task<List<UserGroupDto>> GetUserGroups()
+        public Task<IEnumerable<UserGroupDto>> GetUserGroups()
         {
-            return Task.FromResult(UserGroups);
+            return Task.FromResult(UserGroups.AsEnumerable());
         }
 
         public Task<GetConversationsResponse> GetConversations()
@@ -222,6 +223,11 @@ namespace Harald.Tests.TestDoubles
         }
 
         public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<ChannelDto>> GetChannels(string token)
         {
             throw new NotImplementedException();
         }

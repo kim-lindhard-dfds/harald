@@ -8,7 +8,7 @@ using Harald.Infrastructure.Slack.Dto;
 using Harald.Infrastructure.Slack.Http.Response.Conversation;
 using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
-using Harald.Infrastructure.Slack.Response.Channel;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Harald.Infrastructure.Slack.Http.Response;
 using Harald.Infrastructure.Slack.Model;
 
@@ -80,7 +80,7 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
-        public Task<List<UserGroupDto>> GetUserGroups()
+        public Task<IEnumerable<UserGroupDto>> GetUserGroups()
         {
             throw new System.NotImplementedException();
         }
@@ -149,6 +149,11 @@ namespace Harald.Tests.TestDoubles
                 Ok = true,
                 Channel = new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = channelName }
             });
+        }
+
+        public Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        {
+            throw new NotImplementedException();
         }
     }
 }

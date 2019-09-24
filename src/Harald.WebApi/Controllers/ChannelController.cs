@@ -1,4 +1,3 @@
-using System;
 using Harald.Infrastructure.Slack;
 using Harald.WebApi.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +20,13 @@ namespace Harald.WebApi.Controllers
             _capabilityRepository = capabilityRepository;
         }
 
-        [HttpPost]
-        [Route("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetChannels()
         {
-            //TODO:
-            throw new NotImplementedException();
+            //TODO: Finish this.
+            await _slackFacade.GetChannels(string.Empty);
+
+            return Accepted();
         }
     }
 }

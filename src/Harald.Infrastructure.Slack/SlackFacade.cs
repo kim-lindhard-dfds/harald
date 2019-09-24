@@ -11,7 +11,7 @@ using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response.User;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Model;
-using Harald.Infrastructure.Slack.Response.Channel;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -77,6 +77,16 @@ namespace Harald.Infrastructure.Slack
             using (var response = await _client.SendAsync(new JoinChannelRequest(channelName, validate)))
             {
                 return await Parse<JoinChannelResponse>(response);
+            }
+        }
+
+        public async Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        {
+            using (var response = await _client.SendAsync(new ListChannelsRequest(token)))
+            {
+                var result = await Parse<ListChannelsResponse>(response);
+
+                return result.Channels;
             }
         }
 
@@ -183,7 +193,7 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
-        public async Task<List<UserGroupDto>> GetUserGroups()
+        public async Task<IEnumerable<UserGroupDto>> GetUserGroups()
         {
             using (var response = await _client.SendAsync(new GetUserGroupsRequest()))
             {
