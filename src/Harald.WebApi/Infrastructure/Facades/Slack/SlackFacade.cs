@@ -20,8 +20,7 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
         public async Task<CreateChannelResponse> CreateChannel(ChannelName channelName)
         {
-            var validChannelName = ChannelName.Create(channelName);
-            var payload = _serializer.GetPayload(new {Name = validChannelName.ToString(), Validate = true});
+            var payload = _serializer.GetPayload(new {Name = channelName.ToString(), Validate = true});
             var response = await _client.PostAsync("/api/channels.create", payload);
 
             return await Parse<CreateChannelResponse>(response);
