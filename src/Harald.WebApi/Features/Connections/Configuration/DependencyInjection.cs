@@ -12,8 +12,8 @@ namespace Harald.WebApi.Features.Connections.Configuration
         public static void AddConnectionDependencies(this IServiceCollection services)
         {
             services.AddTransient<
-                IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>,
-                FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler
+                IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>,
+                FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler
             >();
             
             

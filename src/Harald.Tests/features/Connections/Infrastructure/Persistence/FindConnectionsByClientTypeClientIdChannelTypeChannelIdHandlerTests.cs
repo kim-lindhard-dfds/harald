@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Harald.Tests.features.Connections.Infrastructure.Persistence
 {
-    public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandlerTests
+    public class FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandlerTests
     {
         // GIVEN query with ChannelType not equal to ChannelTypeSlack
         // EXPECT empty result
@@ -18,8 +18,8 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
         public async Task GIVEN_query_with_ChannelType_not_equal_to_ChannelTypeSlack_EXPECT_empty_result()
         {
             // Arrange
-            var sut = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(null);
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null);
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                 null,
                 null,
                 new ChannelTypeTest(),
@@ -40,9 +40,9 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
         public async Task GIVEN_query_with_SenderType_not_equal_to_SenderTypeCapability_EXPECT_empty_result()
         {
             // Arrange
-            var sut = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(null);
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
-                new SenderTypeTest(),
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null);
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
+                new ClientTypeTest(),
                 null,
                 null,
                 null
@@ -83,11 +83,11 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "slackUserGroupId"
             ));
 
-            var sut = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(capabilityRepository);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
 
             var channelIdOfWantedChannel = new ChannelId(idOfWantedChannels);
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
-                new SenderTypeCapability(),
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
+                new ClientTypeCapability(),
                 null,
                 new ChannelTypeSlack(),
                 channelIdOfWantedChannel
@@ -104,10 +104,10 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
             );
         }
 
-        // GIVEN query with SenderId set
+        // GIVEN query with ClientId set
         // EXPECT only capabilities with given id
         [Fact]
-        public async Task GIVEN_query_with_SenderId_set_EXPECT_only_capabilities_with_given_id()
+        public async Task GIVEN_query_with_ClientId_set_EXPECT_only_capabilities_with_given_id()
         {
             // Arrange
             var idOfWantedSender = Guid.NewGuid();
@@ -131,12 +131,12 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "slackUserGroupId"
             ));
 
-            var sut = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(capabilityRepository);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
 
-            var senderIdOfWantedSender = new SenderId(idOfWantedSender.ToString());
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
-                new SenderTypeCapability(),
-                senderIdOfWantedSender,
+            var clientIdOfWantedSender = new ClientId(idOfWantedSender.ToString());
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
+                new ClientTypeCapability(),
+                clientIdOfWantedSender,
                 new ChannelTypeSlack(),
                 null
             );
@@ -149,7 +149,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
             Assert.All(
                 results,
                 connection =>
-                    Assert.Equal(senderIdOfWantedSender, connection.SenderId)
+                    Assert.Equal(clientIdOfWantedSender, connection.ClientId)
             );
         }
 
@@ -174,9 +174,9 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
             ));
 
 
-            var sut = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(capabilityRepository);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
 
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                 null,
                 null,
                 null,
@@ -189,7 +189,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 capabilityRepository.GetAll().Result,
                 capability =>
                     results.Single(r =>
-                        r.SenderId.ToString() == capability.Id.ToString()
+                        r.ClientId.ToString() == capability.Id.ToString()
                     )
             );
         }

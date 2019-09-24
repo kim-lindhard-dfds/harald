@@ -4,10 +4,10 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.
 {
     public class ConnectionDto
     {
-        public string SenderType { get; set; }
+        public string ClientType { get; set; }
         
-        public string SenderName { get; set; }
-        public string SenderId { get; set; }
+        public string ClientName { get; set; }
+        public string ClientId { get; set; }
         public string ChannelType { get; set; }
         
         public string ChannelName { get; set; }
@@ -17,9 +17,9 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.
         {
             return new ConnectionDto
             {
-                SenderType = connection.SenderType,
-                SenderName =  connection.SenderName,
-                SenderId = connection.SenderId,
+                ClientType = connection.ClientType,
+                ClientName =  connection.ClientName,
+                ClientId = connection.ClientId,
                 ChannelType = connection.ChannelType,
                 ChannelName = connection.ChannelName,
                 ChannelId = connection.ChannelId

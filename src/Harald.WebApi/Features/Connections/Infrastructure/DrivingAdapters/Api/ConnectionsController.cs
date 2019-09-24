@@ -16,35 +16,35 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
     [ApiController]
     public class ConnectionsController : ControllerBase
     {
-        private readonly IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>
-            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
+        private readonly IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
+            _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
 
         public ConnectionsController(
-            IQueryHandler<FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>
-                findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler)
+            IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
+                findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler)
         {
-            _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler =
-                findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler;
+            _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler =
+                findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetConnections(
-            [FromQuery] string senderType,
-            [FromQuery] string senderId,
+            [FromQuery] string clientType,
+            [FromQuery] string clientId,
             [FromQuery] string channelType,
             [FromQuery] string channelId
         )
         {
-            var query = new FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
             );
-            if (senderType != null)
+            if (clientType != null)
             {
-                query.SenderType = SenderType.Create(senderType);
+                query.ClientType = ClientType.Create(clientType);
             }
 
-            if (senderId != null)
+            if (clientId != null)
             {
-                query.SenderId = SenderId.Create(senderId);
+                query.ClientId = ClientId.Create(clientId);
             }
 
             if (channelType != null)
@@ -61,7 +61,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             try
             {
                 connections =
-                    await _findConnectionsBySenderTypeSenderIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
+                    await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
             }
             catch (ValidationException validationException)
             {

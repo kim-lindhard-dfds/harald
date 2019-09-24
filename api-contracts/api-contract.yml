@@ -28,14 +28,14 @@ paths:
         communication channels
       parameters:
         - in: query
-          name: senderType
+          name: clientType
           required: false
           schema:
             type: string
             enum:
               - capability
         - in: query
-          name: senderId
+          name: clientId
           required: false
           schema:
             type: string
@@ -59,7 +59,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/connections"
         "422":
-          description: Unprocessable entity - SenderId or ChannelId failed validation.
+          description: Unprocessable entity - clientId or ChannelId failed validation.
           content:
             application/json:
               schema:
@@ -114,13 +114,13 @@ components:
     connection:
       type: object
       properties:
-        senderType:
+        clientType:
           type: string
           enum:
             - capability
-        senderName:
+        clientName:
           type: string
-        senderId:
+        clientId:
           type: string
         channelType:
           type: string

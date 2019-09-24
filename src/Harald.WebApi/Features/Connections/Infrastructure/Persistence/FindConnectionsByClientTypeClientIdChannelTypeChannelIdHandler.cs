@@ -9,19 +9,19 @@ using Harald.WebApi.Features.Connections.Domain.Queries;
 
 namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
 {
-    public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler : IQueryHandler<
-        FindConnectionsBySenderTypeSenderIdChannelTypeChannelId, IEnumerable<Connection>>
+    public class FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler : IQueryHandler<
+        FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
     {
         private readonly ICapabilityRepository _capabilityRepository;
 
-        public FindConnectionsBySenderTypeSenderIdChannelTypeChannelIdHandler(
+        public FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(
             ICapabilityRepository capabilityRepository)
         {
             _capabilityRepository = capabilityRepository;
         }
 
         public async Task<IEnumerable<Connection>> HandleAsync(
-            FindConnectionsBySenderTypeSenderIdChannelTypeChannelId query)
+            FindConnectionsByClientTypeClientIdChannelTypeChannelId query)
         {
          
             
@@ -31,7 +31,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                 return Enumerable.Empty<Connection>();
             }
 
-            if (query.SenderType != null && query.SenderType.GetType() != typeof(SenderTypeCapability))
+            if (query.ClientType != null && query.ClientType.GetType() != typeof(ClientTypeCapability))
             {
                 return Enumerable.Empty<Connection>();
             }
@@ -46,13 +46,13 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                     );
             }
 
-            if (query.SenderId != null)
+            if (query.ClientId != null)
             {
                 Guid capabilityId;
-                var capabilityIdIsValid = Guid.TryParse(query.SenderId, out capabilityId);
+                var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
                 if(capabilityIdIsValid == false)
                 {
-                    throw new ValidationException($"The given capability id: '{query.SenderId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
+                    throw new ValidationException($"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
                 }
                 
                 capabilities = capabilities
@@ -68,9 +68,9 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         private Connection ConvertCapabilityToConnection(Capability capability)
         {
             return new Connection(
-                new SenderTypeCapability(),
-                new SenderName(capability.Name), 
-                new SenderId(capability.Id.ToString()),
+                new ClientTypeCapability(),
+                new ClientName(capability.Name), 
+                new ClientId(capability.Id.ToString()),
                 new ChannelTypeSlack(),
                 ChannelName.Create(capability.Name),
                 new ChannelId(capability.SlackChannelId)

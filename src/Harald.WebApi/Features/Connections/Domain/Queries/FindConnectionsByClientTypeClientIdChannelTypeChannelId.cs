@@ -5,23 +5,23 @@ using Harald.WebApi.Features.Connections.Domain.Model;
 
 namespace Harald.WebApi.Features.Connections.Domain.Queries
 {
-    public class FindConnectionsBySenderTypeSenderIdChannelTypeChannelId : IQuery<IEnumerable<Connection>>
+    public class FindConnectionsByClientTypeClientIdChannelTypeChannelId : IQuery<IEnumerable<Connection>>
     {
-        public SenderType SenderType { get; set; }
-        public SenderId SenderId { get; set; }
+        public ClientType ClientType { get; set; }
+        public ClientId ClientId { get; set; }
         public ChannelType ChannelType { get; set; }
         public ChannelId ChannelId { get; set; }
 
-        public FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(){}
-        public FindConnectionsBySenderTypeSenderIdChannelTypeChannelId(
-            SenderType senderType, 
-            SenderId senderId, 
+        public FindConnectionsByClientTypeClientIdChannelTypeChannelId(){}
+        public FindConnectionsByClientTypeClientIdChannelTypeChannelId(
+            ClientType clientType, 
+            ClientId clientId, 
             ChannelType channelType, 
             ChannelId channelId
         )
         {
-            SenderType = senderType;
-            SenderId = senderId;
+            ClientType = clientType;
+            ClientId = clientId;
             ChannelType = channelType;
             ChannelId = channelId;
         }
