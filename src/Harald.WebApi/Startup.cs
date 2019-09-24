@@ -2,12 +2,12 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Application;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Features.Connections.Configuration;
-using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -23,7 +23,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Harald.WebApi
 {
@@ -128,7 +127,7 @@ namespace Harald.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

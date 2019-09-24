@@ -16,11 +16,6 @@ namespace Harald.WebApi.Infrastructure.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Capability>> GetAll()
-        {
-            return await _dbContext.Capabilities.AsNoTracking().ToListAsync();
-        }
-
         public async Task<Capability> Get(Guid id)
         {
             var capability = await _dbContext

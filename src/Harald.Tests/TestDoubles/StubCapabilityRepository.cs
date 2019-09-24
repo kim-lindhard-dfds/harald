@@ -45,17 +45,11 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult(_capabilities.AsEnumerable());
         }
 
-
         public Task<Capability> Get(Guid id)
         {
             var capability = _capabilities.FirstOrDefault(c => c.Id == id);
 
             return Task.FromResult(capability);
-        }
-
-        public Task<IEnumerable<Capability>> GetAll()
-        {
-            return Task.FromResult(_capabilities.AsEnumerable());
         }
     }
 }

@@ -4,40 +4,6 @@ info:
   title: Harald
   description: The one notification
 paths:
-  /channel/leave:
-    post:
-      summary: Removes a capability from a channel.
-      parameters:
-        - in: body
-        - required: true
-        schema:
-          $ref: "#/definitions/leaveChannel"
-      responses:
-        200:
-          description: Success.
-        400:
-          description: Bad request - required input is missing.
-        422:
-          description: Unprocessable entity - capability ID can't be processed.
-        500:
-          description: Internal error
-  /channel/join:
-    post:
-      summary: Join a capability to a channel or creates a new channel if it doesnt exist.
-      parameters:
-        - in: body
-        - required: true
-        schema:
-          $ref: "#/definitions/joinChannel"
-      responses:
-        200:
-          description: Success.
-        400:
-          description: Bad request - required input is missing.
-        422:
-          description: Unprocessable entity - capability ID can't be processed.
-        500:
-          description: Internal error
   /messages:
     post:
       summary: Queue a message for dispatching
@@ -58,8 +24,7 @@ paths:
           description: Service unavailable - error trying to send the message.
   /connections:
     get:
-      summary: A queryable collection of connections between publishers and
-        communication channels
+      summary: A queryable collection of connections between publishers and communication channels
       parameters:
         - in: query
           name: clientType
@@ -98,6 +63,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorObject'
+    post:
+      summary: Creates a connection to a channel and creates a new channel if it doesnt already exist.
+        parameters:
+        - in: body
+        - required: true
+        schema:
+            $ref: "#/components/schemas/connection"
+        responses:
+        200:
+            description: Success.
+        400:
+            description: Bad request - required input is missing.
+        422:
+            description: Unprocessable entity - capability ID can't be processed.
+        500:
+            description: Internal error
+    delete:
+        summary: Deletes a connection.
+        parameters:
+          - in: query
+            name: clientType
+            required: true
+            schema:
+            type: string
+            enum:
+                - capability
+          - in: query
+            name: clientId
+            required: true
+            schema:
+            type: string
+          - in: query
+            name: channelType
+            required: false
+            schema:
+            type: string
+            enum:
+                - slack
+          - in: query
+            name: channelId
+            required: false
+            schema:
+            type: string
+          responses:
+            200:
+              description: Success.
+            400:
+              description: Bad request - required input is missing.
+            422:
+              description: Unprocessable entity - capability ID can't be processed.
+            500:
+              description: Internal error
   /channels:
     get:
       summary: A queryable collection of existing communication channels
@@ -176,27 +193,3 @@ components:
       properties:
         message:
           type: string
-definitions:
-  leaveChannel:
-    type: object
-    properties:
-      capabilityId:
-        type: string
-      channelId:
-        type: string
-  joinChannel:
-    type: object
-    properties:
-      capabilityId:
-        type: string
-      channelId:
-        type: string
-      channelName:
-        type: string
-  message:
-    type: object
-    properties:
-      capabilityId:
-        type: string
-      message:
-        type: string
