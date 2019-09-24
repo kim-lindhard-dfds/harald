@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,14 @@ namespace Harald.WebApi.Infrastructure.Persistence
             _dbContext.Capabilities.Update(capability);
             await _dbContext.SaveChangesAsync();
         }
-        
+
+        public async Task<IEnumerable<Capability>> GetAll()
+        {
+            return await _dbContext
+                .Capabilities
+                .AsNoTracking()
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
     }
 }

@@ -6,7 +6,8 @@ using Harald.WebApi.Application;
 using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.Infrastructure.Slack;
+using Harald.WebApi.Features.Connections.Configuration;
+using Harald.WebApi.Infrastructure.Facades.Slack;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -70,6 +71,8 @@ namespace Harald.WebApi
 
             ConfigureDomainEvents(services);
 
+            services.AddConnectionDependencies();
+            
             services.AddHostedService<MetricHostedService>();
             services.AddHostedService<ConsumerHostedService>();
 

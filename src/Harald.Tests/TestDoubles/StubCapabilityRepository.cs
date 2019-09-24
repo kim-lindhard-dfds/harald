@@ -40,6 +40,11 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
+        public Task<IEnumerable<Capability>> GetAll()
+        {
+            return Task.FromResult(_capabilities.AsEnumerable());
+        }
+
 
         public Task<Capability> Get(Guid id)
         {
