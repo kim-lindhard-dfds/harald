@@ -12,5 +12,11 @@ namespace Harald.WebApi.Domain
         {
             return new ChannelId(input);
         }
+
+        public static ChannelId Create(string channelId)
+        {
+            return new ChannelId(channelId);
+        }
+        
     }
 }

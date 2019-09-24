@@ -1,36 +1,144 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
-  version: 1
+  version: "1"
   title: Harald
   description: The one notification
-consumes:
-  - application/json
-produces:
-  - application/json
-basePath: /api/v1/
 paths:
   /messages:
     post:
       summary: Queue a message for dispatching
-      parameters:
-        - in: body
-          required: true
-          schema:
-            $ref: "#/definitions/message"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/message"
+        required: true
       responses:
-        202:
+        "202":
           description: Accepted - message is queued for dispatching.
-        400:
+        "400":
           description: Bad request - required input is missing.
-        422:
+        "422":
           description: Unprocessable entity - capability ID can't be processed.
-        503:
+        "503":
           description: Service unavailable - error trying to send the message.
-definitions:
-  message:
-    type: object
-    properties:
-      capabilityId:
-        type: string
-      message:
-        type: string
+  /connections:
+    get:
+      summary: A queryable collection of connections between publishers and
+        communication channels
+      parameters:
+        - in: query
+          name: clientType
+          required: false
+          schema:
+            type: string
+            enum:
+              - capability
+        - in: query
+          name: clientId
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: channelType
+          required: false
+          schema:
+            type: string
+            enum:
+              - slack
+        - in: query
+          name: channelId
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns a collection of channels
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connections"
+        "422":
+          description: Unprocessable entity - clientId or ChannelId failed validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+  /channels:
+    get:
+      summary: A queryable collection of existing communication channels
+      parameters:
+        - in: query
+          name: type
+          required: false
+          schema:
+            type: string
+            enum:
+              - slack
+      responses:
+        "200":
+          description: Returns a collection of channels
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/channels"
+servers:
+  - url: /api/v1/
+components:
+  schemas:
+    message:
+      type: object
+      properties:
+        capabilityId:
+          type: string
+        message:
+          type: string
+    channel:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - slack
+        name:
+          type: string
+        id:
+          type: string
+    channels:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/channel"
+    connection:
+      type: object
+      properties:
+        clientType:
+          type: string
+          enum:
+            - capability
+        clientName:
+          type: string
+        clientId:
+          type: string
+        channelType:
+          type: string
+          enum:
+            - slack
+        channelName:
+          type: string
+        channelId:
+          type: string
+    connections:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/connection"
+    errorObject:
+      type: object
+      properties:
+        message:
+          type: string
