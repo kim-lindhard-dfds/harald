@@ -18,18 +18,21 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
     public class ConnectionsController : ControllerBase
     {
         private readonly ISlackFacade _slackFacade;
+        private readonly ICapabilityRepository _capabilityRepository;
         private readonly IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
             _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
 
         public ConnectionsController(
             IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler,
-                ISlackFacade slackFacade)
+                ISlackFacade slackFacade,
+                ICapabilityRepository capabilityRepository)
         {
             _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler =
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
 
             _slackFacade = slackFacade;
+            _capabilityRepository = capabilityRepository;
         }
 
         [HttpGet]
@@ -84,9 +87,14 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
         [HttpPost]
         public async Task<IActionResult> AddConnection(ConnectionDto connection)
         {
-            if (connection.ClientId.Equals(Guid.Empty))
+            if (string.IsNullOrEmpty(connection.ClientId))
             {
                 return BadRequest("ClientId ID is required.");
+            }
+            
+            if (!Guid.TryParse(connection.ClientId, out var clientIdAsGuid))
+            {
+                return BadRequest("ClientId ID must be a Guid.");
             }
 
             if (string.IsNullOrEmpty(connection.ClientType))
@@ -108,8 +116,11 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             {
                 return BadRequest("ChannelName is required.");
             }
-            
-            //TODO: Create connection (should we do this via repo or alternative?)
+
+            //TODO: Talk with Kim about how to get the user group name. Should we use the slack service or can we safely use the channelname?
+            var capability = Capability.Create(clientIdAsGuid, connection.ClientName, connection.ChannelId, connection.ChannelName);
+
+            await _capabilityRepository.Add(capability);
 
             var response = await _slackFacade.JoinChannel(connection.ChannelName);
             
@@ -123,9 +134,15 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             [FromQuery] string channelType,
             [FromQuery] string channelId)
         {
-            if (clientId.Equals(Guid.Empty))
+            if (string.IsNullOrEmpty(clientId))
             {
                 return BadRequest("ClientId ID is required.");
+            }
+
+            //TODO: Talk with Kim about this. If the id isnt a Guid our capability repo will fail. maybe we should just make it a guid :)
+            if (!Guid.TryParse(clientId, out var clientIdAsGuid))
+            {
+                return BadRequest("ClientId ID must be a Guid.");
             }
 
             if (string.IsNullOrEmpty(clientType))
@@ -153,7 +170,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 
                 var allChannelConnections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(getAllChannelConnectionsQuery);
 
-                if (!allChannelConnections.Where(c => !c.ClientId.Equals(clientId)).Any())
+                if (allChannelConnections.All(c => c.ClientId.ToString().Equals(clientId)))
                 {
                     await _slackFacade.ArchiveChannel(connection.ChannelId.ToString());
                 }

@@ -16,6 +16,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         [Fact]
         public async Task delete_connection_returns_expected_status_code()
         {
+            //TODO: Debug tests and fix QueryHandler issue with empty value objects.
             var clientId = Guid.NewGuid();
             var clientType = "capability";
 
