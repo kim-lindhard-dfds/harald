@@ -1,16 +1,15 @@
+using Harald.Infrastructure.Slack;
+using Harald.Tests.Builders;
+using Harald.Tests.TestDoubles;
+using Harald.WebApi.Domain;
+using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
-using Harald.Tests.Builders;
-using Harald.Tests.TestDoubles;
-using Harald.WebApi.Domain;
-using Harald.Infrastructure.Slack;
-using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
 using Xunit;
-using Harald.WebApi.Infrastructure.Serialization;
 
 namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
 {

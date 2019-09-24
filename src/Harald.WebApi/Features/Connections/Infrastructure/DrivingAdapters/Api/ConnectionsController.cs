@@ -91,11 +91,6 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             {
                 return BadRequest("ClientId ID is required.");
             }
-            
-            if (!Guid.TryParse(connection.ClientId, out var clientIdAsGuid))
-            {
-                return BadRequest("ClientId ID must be a Guid.");
-            }
 
             if (string.IsNullOrEmpty(connection.ClientType))
             {
@@ -118,7 +113,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             }
 
             //TODO: Talk with Kim about how to infer the user group name. Should we use the slack service or can we safely use the channelname?
-            var capability = Capability.Create(clientIdAsGuid, connection.ClientName, connection.ChannelId, connection.ChannelName);
+            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName, connection.ChannelId, connection.ChannelName);
 
             await _capabilityRepository.Add(capability);
 
@@ -137,12 +132,6 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             if (string.IsNullOrEmpty(clientId))
             {
                 return BadRequest("ClientId ID is required.");
-            }
-
-            //TODO: Discuss this Kim. Argument: If the id isnt a Guid our capability repo will fail, maybe we should just make it a guid? :)
-            if (!Guid.TryParse(clientId, out var clientIdAsGuid))
-            {
-                return BadRequest("ClientId ID must be a Guid.");
             }
 
             var getMatchedConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
