@@ -145,11 +145,6 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 return BadRequest("ClientId ID must be a Guid.");
             }
 
-            if (string.IsNullOrEmpty(clientType))
-            {
-                return BadRequest("ClientType is required.");
-            }
-
             var getMatchedConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                                             (ClientType)clientType,
                                             (ClientId)clientId,
