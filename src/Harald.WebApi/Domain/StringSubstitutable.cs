@@ -1,8 +1,12 @@
+using Microsoft.EntityFrameworkCore.Query.ExpressionTranslators.Internal;
+
 namespace Harald.WebApi.Domain
 {
     public abstract class StringSubstitutable
     {
         private readonly string _value;
+
+        public bool IsEmpty => string.IsNullOrEmpty(_value);
 
         protected StringSubstitutable(string value)
         {

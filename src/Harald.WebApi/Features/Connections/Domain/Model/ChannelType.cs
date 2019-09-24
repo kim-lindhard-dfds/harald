@@ -10,14 +10,14 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         }
 
               
-        public static explicit operator ChannelType(String input) 
+        public static explicit operator ChannelType(string input) 
         {
-            return new ChannelType(input);
+            return Create(input);
         }
         
         public static ChannelType Create(string channelType)
         {
-            channelType = channelType.ToLower();
+            channelType = channelType?.ToLower() ?? string.Empty;
 
             if (channelType.Equals(new ChannelTypeSlack()))
             {

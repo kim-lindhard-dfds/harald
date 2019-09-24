@@ -9,14 +9,14 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         {
         }
 
-        public static explicit operator ClientType(String input)
+        public static explicit operator ClientType(string input)
         {
-            return new ClientType(input);
+            return Create(input);
         }
 
         public static ClientType Create(string channelType)
         {
-            channelType = channelType.ToLower();
+            channelType = channelType?.ToLower() ?? string.Empty;
 
             if (channelType.Equals(new ClientTypeCapability()))
             {

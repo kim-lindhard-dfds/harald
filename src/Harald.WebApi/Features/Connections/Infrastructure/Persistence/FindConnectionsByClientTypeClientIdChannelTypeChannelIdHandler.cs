@@ -23,22 +23,19 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         public async Task<IEnumerable<Connection>> HandleAsync(
             FindConnectionsByClientTypeClientIdChannelTypeChannelId query)
         {
-         
-            
-            
-            if (query.ChannelType != null && query.ChannelType.GetType() != typeof(ChannelTypeSlack) )
+            if (!query.ChannelType.IsEmpty && query.ChannelType.GetType() != typeof(ChannelTypeSlack) )
             {
                 return Enumerable.Empty<Connection>();
             }
 
-            if (query.ClientType != null && query.ClientType.GetType() != typeof(ClientTypeCapability))
+            if (!query.ClientType.IsEmpty && query.ClientType.GetType() != typeof(ClientTypeCapability))
             {
                 return Enumerable.Empty<Connection>();
             }
 
             var capabilities = await _capabilityRepository.GetAll();
 
-            if (query.ChannelId != null)
+            if (!query.ChannelId.IsEmpty)
             {
                 capabilities = capabilities
                     .Where(c =>
@@ -46,7 +43,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                     );
             }
 
-            if (query.ClientId != null)
+            if (!query.ClientId.IsEmpty)
             {
                 Guid capabilityId;
                 var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);

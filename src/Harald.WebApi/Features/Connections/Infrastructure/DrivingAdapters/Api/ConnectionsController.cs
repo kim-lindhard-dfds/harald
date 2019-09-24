@@ -43,33 +43,33 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             [FromQuery] string channelId
         )
         {
-            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
-            );
-            if (clientType != null)
+            var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId();
+
+            if (!string.IsNullOrEmpty(clientType))
             {
                 query.ClientType = ClientType.Create(clientType);
             }
 
-            if (clientId != null)
+            if (!string.IsNullOrEmpty(clientId))
             {
                 query.ClientId = ClientId.Create(clientId);
             }
 
-            if (channelType != null)
+            if (!string.IsNullOrEmpty(channelType))
             {
                 query.ChannelType = ChannelType.Create(channelType);
             }
 
-            if (channelId != null)
+            if (!string.IsNullOrEmpty(channelId))
             {
                 query.ChannelId = ChannelId.Create(channelId);
             }
 
             IEnumerable<Connection> connections;
+
             try
             {
-                connections =
-                    await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
+                connections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
             }
             catch (ValidationException validationException)
             {
@@ -117,7 +117,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 return BadRequest("ChannelName is required.");
             }
 
-            //TODO: Talk with Kim about how to get the user group name. Should we use the slack service or can we safely use the channelname?
+            //TODO: Talk with Kim about how to infer the user group name. Should we use the slack service or can we safely use the channelname?
             var capability = Capability.Create(clientIdAsGuid, connection.ClientName, connection.ChannelId, connection.ChannelName);
 
             await _capabilityRepository.Add(capability);
@@ -139,7 +139,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 return BadRequest("ClientId ID is required.");
             }
 
-            //TODO: Talk with Kim about this. If the id isnt a Guid our capability repo will fail. maybe we should just make it a guid :)
+            //TODO: Discuss this Kim. Argument: If the id isnt a Guid our capability repo will fail, maybe we should just make it a guid? :)
             if (!Guid.TryParse(clientId, out var clientIdAsGuid))
             {
                 return BadRequest("ClientId ID must be a Guid.");
