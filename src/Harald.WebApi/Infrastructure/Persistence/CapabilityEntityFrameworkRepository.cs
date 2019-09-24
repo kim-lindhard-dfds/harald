@@ -41,6 +41,7 @@ namespace Harald.WebApi.Infrastructure.Persistence
         {
             return await _dbContext
                 .Capabilities
+                .AsNoTracking()
                 .OrderBy(c => c.Name)
                 .ToListAsync();
         }
