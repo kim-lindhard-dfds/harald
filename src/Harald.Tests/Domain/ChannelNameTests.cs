@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Harald.WebApi.Domain;
 using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -181,9 +182,29 @@ namespace Harald.Tests.Infrastructure.Facades.Slack
         }
 
 
+        [Fact]
+        public void FixChannelNameForSlack_NameWithLength100_ReturnsValidSlackChannelName()
+        {
+            // Arrange
+            var channelNameOfLength100 = string.Join("", Enumerable
+                .Repeat(0, 100)
+                .Select(n => 
+                        (char)new Random().Next(97,123)
+                    )
+                );
+            
+            // Act
+            var fixedChannelName = ChannelName.Create(channelNameOfLength100);
+
+            // Assert
+            AssertValidSlackChannelName(fixedChannelName);
+            
+            
+        }
+
         private void AssertValidSlackChannelName(string name)
         {
-            Assert.True(name.Length <= 21);
+            Assert.True(name.Length <= 80);
             AssertValidSlackName(name);
         }
 
