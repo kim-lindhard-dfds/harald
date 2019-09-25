@@ -22,7 +22,7 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
                 case string str when str.Equals(new ChannelTypeSlack(), StringComparison.OrdinalIgnoreCase):
                     return new ChannelTypeSlack();
                 default:
-                    return null;
+                    throw new ArgumentException($"Invalid channel type {channelType}");
             }
         }
     }

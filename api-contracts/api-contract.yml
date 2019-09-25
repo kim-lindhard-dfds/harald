@@ -84,7 +84,7 @@ paths:
         parameters:
           - in: query
             name: clientType
-            required: true
+            required: false
             schema:
             type: string
             enum:
@@ -120,8 +120,8 @@ paths:
       summary: A queryable collection of existing communication channels
       parameters:
         - in: query
-          name: type
-          required: false
+          name: channelType
+          required: true
           schema:
             type: string
             enum:

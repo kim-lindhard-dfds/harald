@@ -9,6 +9,7 @@ using Harald.WebApi.Domain.Queries;
 using Harald.WebApi.Features.Connections.Domain.Model;
 using Harald.WebApi.Features.Connections.Domain.Queries;
 using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
+using Harald.WebApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
@@ -17,6 +18,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
     [ApiController]
     public class ConnectionsController : ControllerBase
     {
+        private readonly ISlackService _slackService;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
         private readonly IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
@@ -112,8 +114,8 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 return BadRequest("ChannelName is required.");
             }
 
-            //TODO: Talk with Kim about how to infer the user group name. Should we use the slack service or can we safely use the channelname?
-            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName, connection.ChannelId, connection.ChannelName);
+            var userGroup = await _slackService.EnsureUserGroupExists(connection.ClientName);
+            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName, connection.ChannelId, userGroup.Id);
 
             await _capabilityRepository.Add(capability);
 
@@ -134,10 +136,23 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 return BadRequest("ClientId ID is required.");
             }
 
+            ClientType clientTypeValueObject = null;
+            ChannelType channelTypeValueObject = null;
+
+            try
+            {
+                clientTypeValueObject = (ClientType)clientType;
+                channelTypeValueObject = (ChannelType)channelType;
+            }
+            catch (ArgumentException)
+            {
+                //Ignore exceptions as its irrelevant in our case.
+            }
+
             var getMatchedConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
-                                            (ClientType)clientType,
+                                            clientTypeValueObject,
                                             (ClientId)clientId,
-                                            (ChannelType)channelType,
+                                            channelTypeValueObject,
                                             (ChannelId)channelId);
 
             var matchedConnections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(getMatchedConnectionsQuery);

@@ -21,7 +21,7 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
                 case string str when str.Equals(new ClientTypeCapability(), StringComparison.OrdinalIgnoreCase):
                     return new ClientTypeCapability();
                 default:
-                    return null;
+                    throw new ArgumentException($"Invalid client type {clientType}");
             }
         }
     }

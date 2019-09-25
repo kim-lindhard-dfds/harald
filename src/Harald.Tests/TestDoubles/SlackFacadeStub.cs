@@ -11,6 +11,7 @@ using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Harald.Infrastructure.Slack.Http.Response;
 using Harald.Infrastructure.Slack.Model;
+using System.Linq;
 
 namespace Harald.Tests.TestDoubles
 {
@@ -153,7 +154,9 @@ namespace Harald.Tests.TestDoubles
 
         public Task<IEnumerable<ChannelDto>> GetChannels(string token)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new[] { new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = "FooBar1" },
+                                            new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = "FooBar2" }}
+                        .AsEnumerable());
         }
     }
 }
