@@ -31,11 +31,6 @@ namespace Harald.Infrastructure.Slack.Model
         {
             var results = new List<ValidationResult>();
 
-            if (_value.Length > 21)
-            {
-                results.Add(new ValidationResult(string.Format(ValidationMessages.Harald_Infrastructure_Slack_Model_SlackChannelName_Validate_Length, _value, _value.Length)));
-            }
-
             if (_value.Contains("_"))
             {
                 results.Add(new ValidationResult(string.Format(ValidationMessages.Harald_Infrastructure_Slack_Model_SlackChannelName_Validate_Validate_Name, _value)));
