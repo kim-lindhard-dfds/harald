@@ -3,6 +3,8 @@ using Harald.Tests.Builders;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api.Model;
+using Harald.WebApi.Infrastructure.Services;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -55,6 +57,8 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         [Fact]
         public async Task add_connection_returns_expected_status_code()
         {
+            var slackFacadeSpy = new SlackFacadeSpy();
+            var logger = new LoggerFactory().CreateLogger<SlackService>();
             var clientId = Guid.NewGuid();
             var connection = new ConnectionDto()
             {
@@ -71,6 +75,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
                 var client = builder
                     .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { clientId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
+                    .WithService<ISlackService>(new SlackService(slackFacadeSpy, logger))
                     .Build();
 
                 var payload = new ObjectContent(connection.GetType(), connection, new JsonMediaTypeFormatter());

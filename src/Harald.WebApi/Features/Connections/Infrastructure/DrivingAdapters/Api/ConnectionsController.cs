@@ -28,13 +28,15 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler,
                 ISlackFacade slackFacade,
-                ICapabilityRepository capabilityRepository)
+                ICapabilityRepository capabilityRepository,
+                ISlackService slackService)
         {
             _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler =
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
 
             _slackFacade = slackFacade;
             _capabilityRepository = capabilityRepository;
+            _slackService = slackService;
         }
 
         [HttpGet]
