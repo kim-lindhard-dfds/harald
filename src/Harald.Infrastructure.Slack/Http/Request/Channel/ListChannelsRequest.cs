@@ -7,8 +7,7 @@ namespace Harald.Infrastructure.Slack.Http.Request.Channel
     {
         public ListChannelsRequest(string token)
         {
-            RequestUri = new System.Uri($"api/channels.list", System.UriKind.Relative);
-            Content = new FormUrlEncodedContent(new[]{ new KeyValuePair<string, string>("token", token) });
+            RequestUri = new System.Uri($"api/conversations.list?token={token}", System.UriKind.Relative);
             Method = HttpMethod.Get;
         }
     }

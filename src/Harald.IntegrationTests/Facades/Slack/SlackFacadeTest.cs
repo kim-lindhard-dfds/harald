@@ -1,13 +1,12 @@
-using System;
-using System.Net.Http;
-using Xunit;
-using System.Net;
-using System.Threading.Tasks;
-using Harald.WebApi.Domain;
 using Harald.Infrastructure.Slack;
-using Harald.WebApi.Infrastructure.Serialization;
-using Xunit.Priority;
 using Harald.Infrastructure.Slack.Exceptions;
+using Harald.WebApi.Domain;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
+using Xunit.Priority;
 
 namespace Harald.IntegrationTests.Facades.Slack
 {
@@ -121,8 +120,23 @@ namespace Harald.IntegrationTests.Facades.Slack
             Assert.NotEmpty(sendNotificationToChannelResponse.TimeStamp);
             Assert.True(pinMessageToChannelResponse.Ok);
         }
-        
 
+        [Fact]
+        public async Task Get_channels_should_return_list_of_channel_objects()
+        {
+            // Arrange
+            var httpClient = GetHttpClient();
+            var sut = new SlackFacade(httpClient);
+            var token = Environment.GetEnvironmentVariable("SLACK_TESTING_API_AUTH_TOKEN");
+
+            //Act
+            var channels = await sut.GetChannels(token);
+
+            // Assert
+            Assert.True(!string.IsNullOrEmpty(token));
+            Assert.True(channels != null);
+        }
+        
         static public HttpClient GetHttpClient()
         {
             var httpClient = new HttpClient();
