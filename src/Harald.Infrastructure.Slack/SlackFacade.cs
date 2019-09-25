@@ -222,9 +222,9 @@ namespace Harald.Infrastructure.Slack
 
         private async Task<string> GetUserId(string email)
         {
-            var userId = await _cache.GetStringAsync(email);
+            var userId = await _cache?.GetStringAsync(email);
 
-            if (userId == string.Empty)
+            if (string.IsNullOrEmpty(userId))
             {
                 using (var response = await _client.SendAsync(new GetUserByEmailRequest(email)))
                 {
