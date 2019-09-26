@@ -14,7 +14,7 @@ namespace Harald.Infrastructure.Slack.Http.Response.Conversation
         {
             var slackChannelObj = this.Channels.Where(ch => name.Equals(ch.Name));
 
-            return slackChannelObj.Any() ? slackChannelObj.First() : null;
+            return slackChannelObj?.FirstOrDefault();
         }
 
         public bool ChannelExists(string name)

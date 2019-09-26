@@ -40,7 +40,9 @@ namespace Harald.Infrastructure.Slack
 
         Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description);
 
-        Task RenameUserGroup(string usergroupId, string name, string handle);
+        Task DisableUserGroup(string userGroupId);
+
+        Task RenameUserGroup(string userGroupId, string name, string handle);
 
         Task AddUserGroupUser(string userGroupId, string email);
 

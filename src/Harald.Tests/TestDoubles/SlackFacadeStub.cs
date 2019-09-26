@@ -158,5 +158,10 @@ namespace Harald.Tests.TestDoubles
                                             new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = "FooBar2" }}
                         .AsEnumerable());
         }
+
+        public Task DisableUserGroup(string userGroupId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

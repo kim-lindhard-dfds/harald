@@ -232,6 +232,11 @@ namespace Harald.Tests.TestDoubles
             throw new NotImplementedException();
         }
 
+        public Task DisableUserGroup(string userGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CreateUserGroupWasCalled { get; private set; }
     }
 }

@@ -4,9 +4,9 @@ namespace Harald.Infrastructure.Slack.Http.Request.UserGroup
 {
     public class GetUserGroupsRequest : SlackRequest
     {
-        public GetUserGroupsRequest()
+        public GetUserGroupsRequest(bool includeDisabled = false)
         {
-            RequestUri = new System.Uri($"api/usergroups.list", System.UriKind.Relative);
+            RequestUri = new System.Uri($"api/usergroups.list?include_disabled={includeDisabled}", System.UriKind.Relative);
             Method = HttpMethod.Get;
         }
     }

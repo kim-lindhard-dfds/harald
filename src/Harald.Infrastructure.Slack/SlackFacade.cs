@@ -149,17 +149,17 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
-        public async Task RenameUserGroup(string usergroupId, string name, string handle)
+        public async Task RenameUserGroup(string userGroupId, string name, string handle)
         {
-            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(usergroupId, name, handle)))
+            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
             {
                 await Parse<SlackResponse>(response);
             }
         }
 
-        public async Task AddUserGroupUser(string usergroupId, string name, string handle)
+        public async Task AddUserGroupUser(string userGroupId, string name, string handle)
         {
-            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(usergroupId, name, handle)))
+            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -202,6 +202,15 @@ namespace Harald.Infrastructure.Slack
                 return data.UserGroups;
             }
         }
+
+        public async Task DisableUserGroup(string userGroupId)
+        {
+            using (var response = await _client.SendAsync(new DisableUserGroupRequest(userGroupId)))
+            {
+                await Parse<SlackResponse>(response);
+            }
+        }
+
         private async Task UpdateUserGroupUsers(string userGroupId, List<string> users)
         {
             using (var response = await _client.SendAsync(new UpdateUserGroupUsersRequest(userGroupId, users)))
@@ -222,7 +231,10 @@ namespace Harald.Infrastructure.Slack
 
         private async Task<string> GetUserId(string email)
         {
-            var userId = await _cache?.GetStringAsync(email);
+            string userId = string.Empty;
+            
+            if(_cache != null)
+                userId = await _cache?.GetStringAsync(email);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -232,7 +244,7 @@ namespace Harald.Infrastructure.Slack
 
                     userId = lookup?.User.Id;
 
-                    if(!string.IsNullOrEmpty(userId))
+                    if(_cache != null && !string.IsNullOrEmpty(userId))
                     {
                         await _cache.SetStringAsync(email, userId);
                     }
