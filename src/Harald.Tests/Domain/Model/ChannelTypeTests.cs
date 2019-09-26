@@ -27,10 +27,10 @@ namespace Harald.Tests.Domain.Model
         
         
         [Fact]
-        public void Create_will_return_a_ChannelTypeSlack_WHEN_given_a_wrong_type()
+        public void Create_will_return_a_ChannelTypeSlack_WHEN_given_string_slack()
         {
             // Arrange
-            var name = "slack";
+            var name = "sLaCk";
 
 
             // Act / Assert
