@@ -65,12 +65,13 @@ paths:
                 $ref: '#/components/schemas/errorObject'
     post:
       summary: Creates a connection to a channel and creates a new channel if it doesnt already exist.
-        parameters:
+      parameters:
         - in: body
-        - required: true
-        schema:
+          name: connection
+          required: true
+          schema:
             $ref: "#/components/schemas/connection"
-        responses:
+      responses:
         200:
             description: Success.
         400:
@@ -86,35 +87,35 @@ paths:
             name: clientType
             required: false
             schema:
-            type: string
-            enum:
-                - capability
+              type: string
+              enum:
+                  - capability
           - in: query
             name: clientId
             required: true
             schema:
-            type: string
+              type: string
           - in: query
             name: channelType
             required: false
             schema:
-            type: string
-            enum:
-                - slack
+              type: string
+              enum:
+                  - slack
           - in: query
             name: channelId
             required: false
             schema:
-            type: string
-          responses:
-            200:
-              description: Success.
-            400:
-              description: Bad request - required input is missing.
-            422:
-              description: Unprocessable entity - capability ID can't be processed.
-            500:
-              description: Internal error
+              type: string
+        responses:
+          200:
+            description: Success.
+          400:
+            description: Bad request - required input is missing.
+          422:
+            description: Unprocessable entity - capability ID can't be processed.
+          500:
+            description: Internal error
   /channels:
     get:
       summary: A queryable collection of existing communication channels
