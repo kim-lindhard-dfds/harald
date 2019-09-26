@@ -31,7 +31,7 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
                 
             if (returnChannelType == null)
             {
-                throw new ArgumentException(
+                throw new ValidationException(
                     $"Invalid channel type: '{channelType}'. Your options are: '{String.Join("', '", validChannelTypes)}'");
             }
 

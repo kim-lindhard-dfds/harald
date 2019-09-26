@@ -128,12 +128,18 @@ paths:
             enum:
               - slack
       responses:
-        "200":
+        200:
           description: Returns a collection of channels
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/channels"
+        422:
+          description: Unprocessable entity - Given type does not exist
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/errorObject'
 servers:
   - url: /api/v1/
 components:
