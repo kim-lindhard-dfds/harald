@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using Harald.WebApi.Domain;
 
 namespace Harald.WebApi.Features.Connections.Domain.Model
@@ -16,13 +18,23 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
 
         public static ClientType Create(string clientType)
         {
-            switch (clientType)
+            var validClientTypes = Assembly
+                .GetAssembly(typeof(ClientType))
+                .GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(ClientType)))
+                .Select(t => (ClientType) Activator.CreateInstance(t))
+                .ToList();
+            
+            var returnChannelType = validClientTypes.SingleOrDefault(c =>
+                clientType.Equals(c, StringComparison.OrdinalIgnoreCase));
+                
+            if (returnChannelType == null)
             {
-                case string str when str.Equals(new ClientTypeCapability(), StringComparison.OrdinalIgnoreCase):
-                    return new ClientTypeCapability();
-                default:
-                    throw new ArgumentException($"Invalid client type {clientType}");
+                throw new ValidationException(
+                    $"Invalid client type: '{clientType}'. Your options are: '{String.Join("', '", validClientTypes)}'");
             }
+
+            return returnChannelType;
         }
     }
 

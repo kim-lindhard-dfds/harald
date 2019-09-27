@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
+using Harald.WebApi.Domain;
 
 namespace Harald.WebApi.Controllers
 {
@@ -31,9 +32,9 @@ namespace Harald.WebApi.Controllers
             {
                 convertedChannelType = ChannelType.Create(channelType);
             }
-            catch(ArgumentException exp)
+            catch(ValidationException exp)
             {
-                return BadRequest(exp);
+                return UnprocessableEntity(new {Message = exp.MessageToUser});
             }
 
             switch (convertedChannelType)

@@ -21,15 +21,16 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
         private readonly ISlackService _slackService;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
+
         private readonly IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
             _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
 
         public ConnectionsController(
             IQueryHandler<FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler,
-                ISlackFacade slackFacade,
-                ICapabilityRepository capabilityRepository,
-                ISlackService slackService)
+            ISlackFacade slackFacade,
+            ICapabilityRepository capabilityRepository,
+            ISlackService slackService)
         {
             _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler =
                 findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler;
@@ -73,16 +74,17 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 
             try
             {
-                connections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
+                connections =
+                    await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(query);
             }
             catch (ValidationException validationException)
             {
                 return StatusCode(
-                    (int)HttpStatusCode.UnprocessableEntity, 
+                    (int) HttpStatusCode.UnprocessableEntity,
                     new {message = validationException.MessageToUser}
                 );
             }
-            
+
             var connectionDtos = connections.Select(ConnectionDto.CreateFromConnection);
 
             return Ok(new ItemsEnvelope<ConnectionDto>(connectionDtos));
@@ -117,7 +119,8 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             }
 
             var userGroup = await _slackService.EnsureUserGroupExists(connection.ClientName);
-            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName, connection.ChannelId, userGroup.Id);
+            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName,
+                connection.ChannelId, userGroup.Id);
 
             await _capabilityRepository.Add(capability);
 
@@ -135,41 +138,48 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
         {
             if (string.IsNullOrEmpty(clientId))
             {
-                return BadRequest("ClientId ID is required.");
+                return BadRequest(new {message = "ClientId ID is required."});
             }
 
-            ClientType clientTypeValueObject = null;
-            ChannelType channelTypeValueObject = null;
+            ClientType clientTypeValueObject;
+            ChannelType channelTypeValueObject;
 
             try
             {
-                clientTypeValueObject = (ClientType)clientType;
-                channelTypeValueObject = (ChannelType)channelType;
+                clientTypeValueObject = string.IsNullOrEmpty(clientType) ? null : (ClientType) clientType;
+                channelTypeValueObject = string.IsNullOrEmpty(channelType) ? null : (ChannelType) channelType;
             }
-            catch (ArgumentException)
+            catch (ValidationException validationException)
             {
-                //Ignore exceptions as its irrelevant in our case.
+                return StatusCode(
+                    (int) HttpStatusCode.UnprocessableEntity,
+                    new {message = validationException.MessageToUser}
+                );
             }
 
             var getMatchedConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
-                                            clientTypeValueObject,
-                                            (ClientId)clientId,
-                                            channelTypeValueObject,
-                                            (ChannelId)channelId);
+                clientTypeValueObject,
+                (ClientId) clientId,
+                channelTypeValueObject,
+                (ChannelId) channelId);
 
-            var matchedConnections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(getMatchedConnectionsQuery);
+            var matchedConnections =
+                await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(
+                    getMatchedConnectionsQuery);
 
             foreach (var connection in matchedConnections)
             {
                 await _slackFacade.LeaveChannel(connection.ChannelId.ToString());
 
                 var getAllChannelConnectionsQuery = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
-                                            null,
-                                            null,
-                                            connection.ChannelType,
-                                            connection.ChannelId);
+                    null,
+                    null,
+                    connection.ChannelType,
+                    connection.ChannelId);
 
-                var allChannelConnections = await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(getAllChannelConnectionsQuery);
+                var allChannelConnections =
+                    await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(
+                        getAllChannelConnectionsQuery);
 
                 if (allChannelConnections.All(c => c.ClientId.ToString().Equals(clientId)))
                 {
