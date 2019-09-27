@@ -121,7 +121,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 
             await _capabilityRepository.Add(capability);
 
-            var response = await _slackFacade.JoinChannel(connection.ChannelName);
+            var response = await _slackFacade.JoinChannel(((ChannelName)connection.ChannelName).ToString());
             
             return Accepted(response.Channel);
         }

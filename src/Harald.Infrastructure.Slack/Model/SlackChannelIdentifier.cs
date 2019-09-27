@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace Harald.Infrastructure.Slack.Model
 {
-    public class SlackChannelIdentifier : IValidatableObject
+    public class SlackChannelIdentifier
     {
         private readonly string _value;
 
@@ -25,11 +22,6 @@ namespace Harald.Infrastructure.Slack.Model
         public static implicit operator string(SlackChannelIdentifier input)
         {
             return input.ToString();
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            return new List<ValidationResult>();
         }
 
         public override bool Equals(object obj)

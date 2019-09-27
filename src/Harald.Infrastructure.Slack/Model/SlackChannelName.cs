@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Harald.Infrastructure.Slack.Model
 {
@@ -10,6 +12,20 @@ namespace Harald.Infrastructure.Slack.Model
         public SlackChannelName(string value)
         {
             _value = value;
+
+            if(!string.IsNullOrEmpty(_value))
+            { 
+                var validationMessages = Validate(null);
+
+                if (validationMessages.Any())
+                {
+                    string messageFormatter(string x, string y) => x + Environment.NewLine + y;
+
+                    throw new ArgumentException(validationMessages
+                                                .Select(o => o.ErrorMessage)
+                                                .Aggregate(messageFormatter));
+                }
+            }
         }
 
         public override string ToString()

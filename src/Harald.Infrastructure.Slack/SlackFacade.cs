@@ -33,6 +33,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
+
             using (var response = await _client.SendAsync(new CreateChannelRequest(channelName)))
             { 
                 return await Parse<CreateChannelResponse>(response);
