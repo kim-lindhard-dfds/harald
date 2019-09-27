@@ -1,7 +1,7 @@
 using Harald.WebApi.Features.Connections.Domain.Model;
 using Xunit;
 
-namespace Harald.Tests.Domain.Model
+namespace Harald.Tests.features.Connections.Domain.Model
 {
     public class ChannelTypeTests
     {
