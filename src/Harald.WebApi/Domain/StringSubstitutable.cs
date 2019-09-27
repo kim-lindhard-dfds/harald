@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore.Query.ExpressionTranslators.Internal;
-
 namespace Harald.WebApi.Domain
 {
     public abstract class StringSubstitutable
