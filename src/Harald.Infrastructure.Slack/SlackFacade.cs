@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Harald.Infrastructure.Slack
 {
@@ -24,11 +25,13 @@ namespace Harald.Infrastructure.Slack
     {
         private readonly HttpClient _client;
         private readonly IDistributedCache _cache;
-        
-        public SlackFacade(HttpClient client = null, IDistributedCache cache = null)
+        private readonly SlackOptions _options;
+
+        public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null)
         {
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
+            _options = options?.Value;
         }
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
@@ -81,8 +84,13 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        public async Task<IEnumerable<ChannelDto>> GetChannels(string token = null)
         {
+            if(string.IsNullOrEmpty(token))
+            { 
+                token = _options?.SlackApiRequestToken;
+            }
+
             using (var response = await _client.SendAsync(new ListChannelsRequest(token)))
             {
                 var result = await Parse<ListChannelsResponse>(response);

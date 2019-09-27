@@ -84,5 +84,38 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
                 Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
             }
         }
+
+        [Fact]
+        public async Task add_existing_connection_returns_expected_status_code()
+        {
+            var slackFacadeSpy = new SlackFacadeSpy();
+            var logger = new LoggerFactory().CreateLogger<SlackService>();
+            var clientId = Guid.NewGuid();
+            var connection = new ConnectionDto()
+            {
+                ClientId = Guid.NewGuid().ToString(),
+                ClientName = "MyClient",
+                ClientType = "capability",
+                ChannelId = Guid.NewGuid().ToString(),
+                ChannelName = "MyChannel",
+                ChannelType = "slack"
+            };
+
+            using (var builder = new HttpClientBuilder())
+            {
+                var client = builder
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { clientId }))
+                    .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
+                    .WithService<ISlackService>(new SlackService(slackFacadeSpy, logger))
+                    .Build();
+
+                var payload = new ObjectContent(connection.GetType(), connection, new JsonMediaTypeFormatter());
+                var response = await client.PostAsync($"api/v1/connections", payload);
+                var response2 = await client.PostAsync($"api/v1/connections", payload);
+
+                Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+                Assert.Equal(HttpStatusCode.Accepted, response2.StatusCode);
+            }
+        }
     }
 }
