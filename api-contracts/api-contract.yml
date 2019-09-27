@@ -111,9 +111,17 @@ paths:
           200:
             description: Success.
           400:
-            description: Bad request - required input is missing.
+            description: Bad request - ClientId ID is required.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/errorObject'
           422:
-            description: Unprocessable entity - capability ID can't be processed.
+            description: Unprocessable entity - Given clientType or channelType does not exist
+            content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/errorObject'  
           500:
             description: Internal error
   /channels:
