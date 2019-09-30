@@ -7,7 +7,8 @@ namespace Harald.WebApi.Domain
     public interface ICapabilityRepository
     {
         Task<IEnumerable<Capability>> GetAll();
-        Task<Capability> Get(Guid id);
+        
+        Task<IEnumerable<Capability>> GetById(Guid id);
         Task Add(Capability capability);
         Task Update(Capability capability);
     }
