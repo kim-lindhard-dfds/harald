@@ -28,7 +28,14 @@ namespace Harald.Tests.TestDoubles
         public StubCapabilityRepository()
         {
         }
-        
+
+        public Task<IEnumerable<Capability>> GetById(Guid id)
+        {
+            var capabilities = _capabilities.Where(c => c.Id == id);
+
+            return Task.FromResult(capabilities);
+        }
+
         public Task Add(Capability capability)
         {
             _capabilities.Add(capability);
@@ -43,13 +50,6 @@ namespace Harald.Tests.TestDoubles
         public Task<IEnumerable<Capability>> GetAll()
         {
             return Task.FromResult(_capabilities.AsEnumerable());
-        }
-
-        public Task<Capability> Get(Guid id)
-        {
-            var capability = _capabilities.FirstOrDefault(c => c.Id == id);
-
-            return Task.FromResult(capability);
         }
     }
 }

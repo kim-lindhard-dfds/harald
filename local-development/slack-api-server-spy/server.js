@@ -89,10 +89,19 @@ app.post("/api/pins.add", async (req, res) => {
     });
 });
 
-app.post("*", async (req, res) => {
+app.post("/api/channels.join", async (req, res) => {
     collectRequestData(req);
-
-    return res.json({ success: true });
+    
+    let channel = { 
+        "Id": generateRandomString(9).toUpperCase(), 
+        "Name": req.body.name
+    };
+    
+    conversations.push(channel);
+    return res.json({
+        "Ok": true,
+        "Channel": channel
+    });
 });
 
 
