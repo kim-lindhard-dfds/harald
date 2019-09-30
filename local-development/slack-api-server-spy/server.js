@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const interactions = [];
-
+const conversations = [];
 function collectRequestData(request) {
     let interaction = {
         path: request.path,
@@ -33,7 +33,7 @@ app.get("/interactions/next", (req, res) => {
 
 app.post("/interactions/reset", (req, res) => {
     interactions = [];
-
+    conversations = [];
     res.sendStatus(200)
 });
 
@@ -46,12 +46,20 @@ app.get("/api/usergroups.list", (req, res) => {
     });
 });
 
+
+
 app.post("/api/channels.create", async (req, res) => {
     collectRequestData(req);
 
+    let channel = { 
+        "Id": generateRandomString(9).toUpperCase(), 
+        "Name": req.body.name
+    };
+    conversations.push(channel);
+
     return res.json({
         "Ok": true,
-        "Channel": { "Id": "id", "Name": "name" }
+        "Channel": channel
     });
 });
 
@@ -95,6 +103,17 @@ app.get("/api/usergroups.list", (req, res) => {
         "Ok": true
     });
 });
+
+function generateRandomString(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 
 app.listen(port, () => {
     console.log("Slack API spy is listening on port " + port);
