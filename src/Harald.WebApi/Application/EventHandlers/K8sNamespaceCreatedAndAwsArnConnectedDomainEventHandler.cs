@@ -21,7 +21,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(K8sNamespaceCreatedAndAwsArnConnectedDomainEvent domainEvent)
         {
-            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
+            var capabilities = await _capabilityRepository.GetById(domainEvent.Payload.CapabilityId);
 
             // 1st Message, instant.
             var missingAdsyncTaskTable = SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(
@@ -29,11 +29,13 @@ namespace Harald.WebApi.Application.EventHandlers
                 k8sCreatedDone:true, 
                 adsyncDone:false
             );
-            
-            await _slackFacade.SendNotificationToChannel(
-                capability.SlackChannelId.ToString(), 
-                $"Nearly there... time to grab a coffee?\n{missingAdsyncTaskTable}"
+            foreach (var capability in capabilities)
+            {
+                await _slackFacade.SendNotificationToChannel(
+                    capability.SlackChannelId.ToString(), 
+                    $"Nearly there... time to grab a coffee?\n{missingAdsyncTaskTable}"
                 );
+            }
 
             var timeToWait = (60 * 15); // 15 Minutes
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + timeToWait;
@@ -44,11 +46,15 @@ namespace Harald.WebApi.Application.EventHandlers
                 k8sCreatedDone: true, 
                 adsyncDone:true
             );
-            await _slackFacade.SendDelayedNotificationToChannel(
-                capability.SlackChannelId.ToString(), 
-                $"All done:\n{allDoneTaskTable}", 
-                timestamp
-            );
+            
+            foreach (var capability in capabilities)
+            {
+                await _slackFacade.SendDelayedNotificationToChannel(
+                    capability.SlackChannelId.ToString(), 
+                    $"All done:\n{allDoneTaskTable}", 
+                    timestamp
+                );
+            }
         }
     }
 }

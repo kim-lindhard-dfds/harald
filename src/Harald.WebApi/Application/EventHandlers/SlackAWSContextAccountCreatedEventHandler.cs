@@ -11,7 +11,8 @@ namespace Harald.WebApi.Application.EventHandlers
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
 
-        public SlackAwsContextAccountCreatedEventHandler(ISlackFacade slackFacade, ICapabilityRepository capabilityRepository)
+        public SlackAwsContextAccountCreatedEventHandler(ISlackFacade slackFacade,
+            ICapabilityRepository capabilityRepository)
         {
             _slackFacade = slackFacade;
             _capabilityRepository = capabilityRepository;
@@ -19,9 +20,10 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(AWSContextAccountCreatedDomainEvent domainEvent)
         {
-
-            var addUserCmd = $"Get-ADUser \"CN=IT BuildSource DevEx,OU=Shared Mailboxes,OU=IT,OU=DFDS AS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
-            var installToolsCmd = $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
+            var addUserCmd =
+                $"Get-ADUser \"CN=IT BuildSource DevEx,OU=Shared Mailboxes,OU=IT,OU=DFDS AS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
+            var installToolsCmd =
+                $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
 
 
             var sb = new StringBuilder();
@@ -39,11 +41,15 @@ namespace Harald.WebApi.Application.EventHandlers
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());
-            
+
             // Send message to Capability Slack channel
-            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
-            await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
-            
+            var capabilities = await _capabilityRepository.GetById(domainEvent.Payload.CapabilityId);
+
+            foreach (var capability in capabilities)
+            {
+                await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(),
+                    $"Status update\n{SlackContextAddedToCapabilityDomainEventHandler.CreateTaskTable(true, false, false)}");
+            }
         }
     }
 }

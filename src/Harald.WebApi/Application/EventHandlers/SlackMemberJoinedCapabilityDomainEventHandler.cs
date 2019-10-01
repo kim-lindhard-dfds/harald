@@ -29,48 +29,53 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(MemberJoinedCapabilityDomainEvent domainEvent)
         {
-            var capability = await _capabilityRepository.Get(domainEvent.Payload.CapabilityId);
-
-            if (capability == null)
+            var capabilities = await _capabilityRepository.GetById(domainEvent.Payload.CapabilityId);
+            
+            // TODO not cool to do a foreach over so much code
+            foreach (var capability in capabilities)
             {
-                _logger.LogError(
-                    $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't add member {domainEvent.Payload.MemberEmail} to Slack.");
-                return;    
-            }
-
-            try
-            {
-                // Invite user to Slack channel:
-                await _slackFacade.InviteToChannel(
-                    email: domainEvent.Payload.MemberEmail,
-                    channelIdentifier: capability.SlackChannelId.ToString());
-            }
-            catch (SlackFacadeException ex)
-            {
-                _logger.LogError($"Issue with Slack API during InviteToChannel: {ex} : {ex.Message}");
-            }
-
-            try
-            {
-                if (string.IsNullOrEmpty(capability.SlackUserGroupId))
+                if (capability == null)
                 {
-                    var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
-                    // Update Capability with UserGroupId
-                    var updatedCapability = Capability.Create(
-                        capability.Id, 
-                        capability.Name, 
-                        capability.SlackChannelId,
-                        userGroup.Id
-                    );
-                    
-                    await _capabilityRepository.Update(updatedCapability);
+                    _logger.LogError(
+                        $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't add member {domainEvent.Payload.MemberEmail} to Slack.");
+                    return;
                 }
-                // Add user to Slack user group:    
-                await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,userGroupId: capability.SlackUserGroupId);
-            }
-            catch (SlackFacadeException ex)
-            {
-                _logger.LogError($"Issue with Slack API during AddUserGroupUser: {ex} : {ex.Message}");
+
+                try
+                {
+                    await _slackFacade.InviteToChannel(
+                        email: domainEvent.Payload.MemberEmail,
+                        channelIdentifier: capability.SlackChannelId.ToString());
+                }
+                catch (SlackFacadeException ex)
+                {
+                    _logger.LogError($"Issue with Slack API during InviteToChannel: {ex} : {ex.Message}");
+                }
+
+                try
+                {
+                    if (string.IsNullOrEmpty(capability.SlackUserGroupId))
+                    {
+                        var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
+                        // Update Capability with UserGroupId
+                        var updatedCapability = Capability.Create(
+                            capability.Id,
+                            capability.Name,
+                            capability.SlackChannelId,
+                            userGroup.Id
+                        );
+
+                        await _capabilityRepository.Update(updatedCapability);
+                    }
+
+                    // Add user to Slack user group:    
+                    await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,
+                        userGroupId: capability.SlackUserGroupId);
+                }
+                catch (SlackFacadeException ex)
+                {
+                    _logger.LogError($"Issue with Slack API during AddUserGroupUser: {ex} : {ex.Message}");
+                }
             }
         }
     }

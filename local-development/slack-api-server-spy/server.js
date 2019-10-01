@@ -109,13 +109,6 @@ app.post("/api/channels.join", async (req, res) => {
     });
 });
 
-app.post("*", async (req, res) => {
-    collectRequestData(req);
-
-    return res.json({ success: true });
-});
-
-
 app.get("/api/conversations.list", (req, res) => {
     collectRequestData(req);
 
