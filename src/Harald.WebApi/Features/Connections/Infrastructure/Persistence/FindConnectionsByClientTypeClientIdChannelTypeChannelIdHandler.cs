@@ -32,6 +32,11 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         {
             var capabilities = await QueryCapabilities(query);
 
+            if (capabilities.Any() == false)
+            {
+                return Enumerable.Empty<Connection>();
+            }
+
             var ConversationIds = capabilities.Select(c => c.SlackChannelId.ToString());
 
             var channelDtos = await GetSlackConversationsByIds(ConversationIds);
@@ -64,20 +69,20 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                     );
             }
 
-            if (query.ClientId == null || query.ClientId.IsEmpty) return capabilities;
-            {
-                Guid capabilityId;
-                var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
-                if (capabilityIdIsValid == false)
-                {
-                    throw new ValidationException(
-                        $"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
-                }
+            if (query.ClientId == null || query.ClientId.IsEmpty) {return capabilities;}
 
-                capabilities = capabilities
-                    .Where(c =>
-                        c.Id.Equals(capabilityId));
+
+            Guid capabilityId;
+            var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
+            if (capabilityIdIsValid == false)
+            {
+                throw new ValidationException(
+                    $"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
             }
+
+            capabilities = capabilities
+                .Where(c =>
+                    c.Id.Equals(capabilityId));
 
 
             return capabilities;
@@ -93,7 +98,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
             return relevantConversations;
         }
 
-        
+
         private IEnumerable<Connection> MergeIntoConnections(
             IEnumerable<Capability> capabilities,
             IEnumerable<ChannelDto> channelDtos
@@ -106,7 +111,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                 var relevantCapability = capabilities.Where(c => c.SlackChannelId == channelDto.Id);
 
                 connections.AddRange(
-                    relevantCapability.Select(capability => 
+                    relevantCapability.Select(capability =>
                         new Connection(
                             new ClientTypeCapability(),
                             new ClientName(capability.Name),

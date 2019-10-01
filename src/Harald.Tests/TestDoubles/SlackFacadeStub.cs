@@ -21,6 +21,11 @@ namespace Harald.Tests.TestDoubles
 
         public bool SendNotificationToChannelCalled { get; private set; } = false;
 
+        public SlackFacadeStub()
+        {
+            _simulateFailOnSendMessage = false;
+        }
+
         public SlackFacadeStub(bool simulateFailOnSendMessage)
         {
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
