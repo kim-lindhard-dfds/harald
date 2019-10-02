@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using Harald.WebApi.Domain;
 
 namespace Harald.WebApi.Features.Connections.Domain.Model
@@ -9,22 +11,31 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         {
         }
 
-              
-        public static explicit operator ChannelType(String input) 
+
+        public static explicit operator ChannelType(string input)
         {
-            return new ChannelType(input);
+            return Create(input);
         }
-        
+
         public static ChannelType Create(string channelType)
         {
-            channelType = channelType.ToLower();
+            var validChannelTypes = Assembly
+                .GetAssembly(typeof(ChannelType))
+                .GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(ChannelType)))
+                .Select(t => (ChannelType) Activator.CreateInstance(t))
+                .ToList();
 
-            if (channelType.Equals(new ChannelTypeSlack()))
+            var returnChannelType = validChannelTypes.SingleOrDefault(c =>
+                channelType.Equals(c, StringComparison.OrdinalIgnoreCase));
+                
+            if (returnChannelType == null)
             {
-                return new ChannelTypeSlack();
+                throw new ValidationException(
+                    $"Invalid channel type: '{channelType}'. Your options are: '{String.Join("', '", validChannelTypes)}'");
             }
 
-            throw new ArgumentException($"a channelType could not be created from the string: '{channelType}'");
+            return returnChannelType;
         }
     }
 

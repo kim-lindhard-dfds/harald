@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
+using Harald.Infrastructure.Slack.Dto;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
@@ -28,16 +30,14 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
-            var createChannelResponse = await _slackFacade.CreateChannel(
-                ChannelName.Create(domainEvent.Payload.CapabilityName)
-            );
+            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
 
-            UserGroup userGroup = null;
+            UserGroupDto userGroup = null;
             try
             {
                 userGroup = await _slackService.EnsureUserGroupExists(domainEvent.Payload.CapabilityName);
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API during CreateUserGroup: {ex} : {ex.Message}");
             }
@@ -64,7 +64,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
                 // Notify channel about handle.
                 var sendNotificationResponse = await _slackFacade.SendNotificationToChannel(
-                    channelId: channelId, 
+                    channelIdentifier: channelId.ToString(), 
                   message: 
                   $"Thank you for creating capability '{capability.Name}'.\n" +
                   $"This channel along with handle @{userGroup.Handle} has been created.\n" + 
@@ -72,7 +72,7 @@ namespace Harald.WebApi.Application.EventHandlers
                   $"If you want to define a better handle, you can do this in the '{userGroup.Name}'");
 
                 // Pin message.
-                await _slackFacade.PinMessageToChannel(channelId, sendNotificationResponse.TimeStamp);
+                await _slackFacade.PinMessageToChannel(channelId.ToString(), sendNotificationResponse.TimeStamp);
             }
             else
             {

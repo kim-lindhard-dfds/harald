@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack.Dto;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Features.Connections.Domain.Model;
@@ -18,7 +19,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
         public async Task GIVEN_query_with_ChannelType_not_equal_to_ChannelTypeSlack_EXPECT_empty_result()
         {
             // Arrange
-            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null, null);
             var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                 null,
                 null,
@@ -40,7 +41,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
         public async Task GIVEN_query_with_SenderType_not_equal_to_SenderTypeCapability_EXPECT_empty_result()
         {
             // Arrange
-            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(null, null);
             var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                 new ClientTypeTest(),
                 null,
@@ -82,8 +83,10 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "NotTheChannelWeWant",
                 "slackUserGroupId"
             ));
+            
+            var slackFacadeSpy = new SlackFacadeSpy();
 
-            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository,slackFacadeSpy);
 
             var channelIdOfWantedChannel = new ChannelId(idOfWantedChannels);
             var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
@@ -130,8 +133,9 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "slackChannelId",
                 "slackUserGroupId"
             ));
+            var slackFacadeSpy = new SlackFacadeSpy();
 
-            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository,slackFacadeSpy);
 
             var clientIdOfWantedSender = new ClientId(idOfWantedSender.ToString());
             var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
@@ -173,8 +177,9 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "slackUserGroupId"
             ));
 
-
-            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository);
+            var slackFacadeSpy = new SlackFacadeSpy();
+            slackFacadeSpy.Conversations.AddRange(new []{new ChannelDto{Id = "slackChannelId", Name = "slackChannelName"}});
+            var sut = new FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(capabilityRepository, slackFacadeSpy);
 
             var query = new FindConnectionsByClientTypeClientIdChannelTypeChannelId(
                 null,

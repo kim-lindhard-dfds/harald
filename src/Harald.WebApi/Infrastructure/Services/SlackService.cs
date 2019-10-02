@@ -1,8 +1,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Microsoft.Extensions.Logging;
+using Harald.Infrastructure.Slack.Dto;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Infrastructure.Services
 {
@@ -16,9 +18,9 @@ namespace Harald.WebApi.Infrastructure.Services
             _slackFacade = slackFacade;
             _logger = logger;
         }
-        public async Task<UserGroup> EnsureUserGroupExists(string capabilityName)
+        public async Task<UserGroupDto> EnsureUserGroupExists(string capabilityName)
         {
-            UserGroup userGroup = null;
+            UserGroupDto userGroup = null;
             try
             {
                 var existingUserGroups = await _slackFacade.GetUserGroups();
@@ -37,7 +39,7 @@ namespace Harald.WebApi.Infrastructure.Services
 
                 userGroup = response.UserGroup;
             }
-            catch (SlackFacade.SlackFacadeException ex)
+            catch (SlackFacadeException ex)
             {
                 _logger.LogError($"Issue with Slack API: {ex} : {ex.Message}");
             }

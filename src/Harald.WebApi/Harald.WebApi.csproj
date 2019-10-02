@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <LangVersion>7.2</LangVersion>
+    <UserSecretsId>3ef49f6c-9399-4f25-a41e-6a3d4cd216cb</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,10 @@
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Harald.Infrastructure.Slack\Harald.Infrastructure.Slack.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack.Dto;
 
 namespace Harald.WebApi.Infrastructure.Services
 {
     public interface ISlackService
     {
-        Task<UserGroup> EnsureUserGroupExists(string capabilityName);
+        Task<UserGroupDto> EnsureUserGroupExists(string capabilityName);
     }
 }

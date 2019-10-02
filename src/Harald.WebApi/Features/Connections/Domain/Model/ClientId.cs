@@ -9,9 +9,9 @@ namespace Harald.WebApi.Features.Connections.Domain.Model
         {
         }
         
-        public static explicit operator ClientId(String input) 
+        public static explicit operator ClientId(string input) 
         {
-            return new ClientId(input);
+            return Create(input);
         }
 
         public static ClientId Create(string clientId)

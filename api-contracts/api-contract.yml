@@ -24,8 +24,7 @@ paths:
           description: Service unavailable - error trying to send the message.
   /connections:
     get:
-      summary: A queryable collection of connections between publishers and
-        communication channels
+      summary: A queryable collection of connections between publishers and communication channels
       parameters:
         - in: query
           name: clientType
@@ -64,24 +63,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorObject'
+    post:
+      summary: Creates a connection to a channel and creates a new channel if it doesnt already exist.
+      parameters:
+        - in: body
+          name: connection
+          required: true
+          schema:
+            $ref: "#/components/schemas/connection"
+      responses:
+        200:
+            description: Success.
+        400:
+            description: Bad request - required input is missing.
+        422:
+            description: Unprocessable entity - capability ID can't be processed.
+        500:
+            description: Internal error
+    delete:
+        summary: Deletes a connection.
+        parameters:
+          - in: query
+            name: clientType
+            required: false
+            schema:
+              type: string
+              enum:
+                  - capability
+          - in: query
+            name: clientId
+            required: true
+            schema:
+              type: string
+          - in: query
+            name: channelType
+            required: false
+            schema:
+              type: string
+              enum:
+                  - slack
+          - in: query
+            name: channelId
+            required: false
+            schema:
+              type: string
+        responses:
+          200:
+            description: Success.
+          400:
+            description: Bad request - ClientId ID is required.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/errorObject'
+          422:
+            description: Unprocessable entity - Given clientType or channelType does not exist
+            content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/errorObject'  
+          500:
+            description: Internal error
   /channels:
     get:
       summary: A queryable collection of existing communication channels
       parameters:
         - in: query
-          name: type
-          required: false
+          name: channelType
+          required: true
           schema:
             type: string
             enum:
               - slack
       responses:
-        "200":
+        200:
           description: Returns a collection of channels
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/channels"
+        422:
+          description: Unprocessable entity - Given type does not exist
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/errorObject'
 servers:
   - url: /api/v1/
 components:

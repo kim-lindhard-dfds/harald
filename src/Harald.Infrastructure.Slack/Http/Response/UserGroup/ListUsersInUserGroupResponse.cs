@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Harald.WebApi.Infrastructure.Facades.Slack
+namespace Harald.Infrastructure.Slack.Http.Response.UserGroup
 {
-    public class ListUsersInUserGroupResponse : GeneralResponse
+    public class ListUsersInUserGroupResponse : SlackResponse
     {
         public List<string> Users { get; set; }
 

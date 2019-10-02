@@ -4,6 +4,8 @@ namespace Harald.WebApi.Domain
     {
         private readonly string _value;
 
+        public bool IsEmpty => string.IsNullOrEmpty(_value);
+
         protected StringSubstitutable(string value)
         {
             _value = value;

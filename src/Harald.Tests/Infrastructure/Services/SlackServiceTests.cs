@@ -2,10 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Harald.Tests.TestDoubles;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Xunit;
+using Harald.Infrastructure.Slack.Dto;
 
 namespace Harald.Tests.Infrastructure.Services
 {
@@ -13,7 +14,7 @@ namespace Harald.Tests.Infrastructure.Services
     {
     
         [Fact]
-        public void TestWeCallSlackFacadeAndCreateUserGroupOnlyIfNotExisting()
+        public async Task TestWeCallSlackFacadeAndCreateUserGroupOnlyIfNotExisting()
         {
             var slackFacadeSpy = new SlackFacadeSpy();
             var logger = new LoggerFactory().CreateLogger<SlackService>();
@@ -21,7 +22,7 @@ namespace Harald.Tests.Infrastructure.Services
 
             var capabilityName = "foo";
 
-           sut.EnsureUserGroupExists(capabilityName);
+            await sut.EnsureUserGroupExists(capabilityName);
             
             Assert.True(slackFacadeSpy.CreateUserGroupWasCalled);
             Assert.Equal(capabilityName + "-members", slackFacadeSpy.CreateUserGroupHandle);
@@ -36,7 +37,7 @@ namespace Harald.Tests.Infrastructure.Services
             var logger = new LoggerFactory().CreateLogger<SlackService>();
             var sut = new SlackService(slackFacadeSpy, logger);
             
-            slackFacadeSpy.UserGroups.Add(new UserGroup
+            slackFacadeSpy.UserGroups.Add(new UserGroupDto
             {
                 Handle = "foocapability-members",
                 Id = "bar",

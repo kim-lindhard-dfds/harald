@@ -1,7 +1,9 @@
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Harald.IntegrationTests.Features.Infrastructure.Model;
 using Newtonsoft.Json;
 
 namespace Harald.IntegrationTests.Features.Infrastructure
@@ -48,6 +50,28 @@ namespace Harald.IntegrationTests.Features.Infrastructure
             var httpClient = new HttpClient();
 
             await httpClient.PostAsync(uri,null);
+        }
+
+        public async Task<SlackConversationDto> ChannelsCreateAsync(string channelName)
+        {
+            var uri = new Uri("http://localhost:1447/api/channels.create");
+            var payload = new {name = channelName };
+            var json = JsonConvert.SerializeObject(payload);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var httpClient = new HttpClient();
+            var responseMessage = await httpClient.PostAsync(
+                uri,
+                content
+            );
+
+
+            var contentString = await responseMessage.Content.ReadAsStringAsync();
+            
+            dynamic deserializeObject = JsonConvert.DeserializeObject(contentString);
+
+            return new SlackConversationDto{Id = deserializeObject.Channel.Id, Name = deserializeObject.Channel.Name };
         }
     }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-
+    <UserSecretsId>3ef49f6c-9399-4f25-a41e-6a3d4cd216cb</UserSecretsId>
     <IsPackable>false</IsPackable>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
@@ -17,6 +17,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Harald.WebApi\Harald.WebApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -2,9 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
-using Harald.WebApi.Infrastructure.Facades.Slack;
+using Harald.Infrastructure.Slack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Harald.WebApi.Controllers
 {
@@ -16,7 +17,7 @@ namespace Harald.WebApi.Controllers
         private readonly ICapabilityRepository _capabilityRepository;
 
         public DispatchController(
-            ISlackFacade slackFacade, 
+            ISlackFacade slackFacade,
             ICapabilityRepository capabilityRepository)
         {
             _slackFacade = slackFacade;
@@ -31,21 +32,25 @@ namespace Harald.WebApi.Controllers
                 return BadRequest("capabilityId is required.");
             }
 
-            var capability = await _capabilityRepository.Get(input.CapabilityId.Value);
+            var capabilities = await _capabilityRepository.GetById(input.CapabilityId.Value);
 
-            if (capability == null)
+            if (capabilities.Any() == false)
             {
-                return UnprocessableEntity($"Capability ID '{input.CapabilityId.Value}' doesn't exist.");
+                return UnprocessableEntity($"No channel for capability ID '{input.CapabilityId.Value}' Found");
             }
 
-            var sendNotificationToChannelResponse =
-             await _slackFacade.SendNotificationToChannel(capability.SlackChannelId, input.Message);
-         
-            if (!sendNotificationToChannelResponse.Ok)
+            foreach (var capability in capabilities)
             {
-                return StatusCode(
-                    StatusCodes.Status503ServiceUnavailable,
-                    $"An error occured trying to send notification: {sendNotificationToChannelResponse.Error}");
+                var sendNotificationToChannelResponse =
+                    await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), input.Message);
+
+
+                if (!sendNotificationToChannelResponse.Ok)
+                {
+                    return StatusCode(
+                        StatusCodes.Status503ServiceUnavailable,
+                        $"An error occured trying to send notification: {sendNotificationToChannelResponse.Error}");
+                }
             }
 
             return Accepted();
@@ -54,11 +59,8 @@ namespace Harald.WebApi.Controllers
 
     public class DispatchMessageInput
     {
-        [Required]
+        [Required] public Guid? CapabilityId { get; set; }
 
-        public Guid? CapabilityId { get; set; }
-
-        [Required]
-        public string Message { get; set; }
+        [Required] public string Message { get; set; }
     }
 }
