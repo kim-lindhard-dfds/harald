@@ -5,6 +5,7 @@ using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Features.Connections.Configuration;
+using Harald.WebApi.Features.KafkaMessageConsumer.Configuration;
 using Harald.WebApi.Features.Metrics.Configuration;
 using Harald.WebApi.Features.PrometheusHealthCheck.Configuration;
 using Harald.WebApi.Infrastructure.Messaging;
@@ -66,9 +67,8 @@ namespace Harald.WebApi
             ConfigureDomainEvents(services);
 
             services.AddConnectionDependencies();
-
+            services.AddKafkaMessageConsumerDependencies();
             services.AddMetricsDependencies();
-            services.AddHostedService<ConsumerHostedService>();
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
@@ -128,8 +128,7 @@ namespace Harald.WebApi
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
             services.AddScoped<ExternalEventMetaDataStore>();
-            services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
-            services.AddTransient<KafkaConsumerFactory>();
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
