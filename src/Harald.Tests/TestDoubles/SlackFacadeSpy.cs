@@ -207,9 +207,14 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult(UserGroups.AsEnumerable());
         }
 
+        public readonly List<ChannelDto> Conversations = new List<ChannelDto>();
         public Task<GetConversationsResponse> GetConversations()
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new GetConversationsResponse
+            {
+                Channels = Conversations,
+                Ok = true
+            });
         }
 
         public Task LeaveChannel(SlackChannelIdentifier channelIdentifier)

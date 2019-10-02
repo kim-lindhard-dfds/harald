@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack;
+using Harald.Infrastructure.Slack.Dto;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Queries;
 using Harald.WebApi.Features.Connections.Domain.Model;
@@ -13,24 +15,48 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
         FindConnectionsByClientTypeClientIdChannelTypeChannelId, IEnumerable<Connection>>
     {
         private readonly ICapabilityRepository _capabilityRepository;
+        private readonly ISlackFacade _slackFacade;
 
         public FindConnectionsByClientTypeClientIdChannelTypeChannelIdHandler(
-            ICapabilityRepository capabilityRepository)
+            ICapabilityRepository capabilityRepository,
+            ISlackFacade slackFacade
+        )
         {
             _capabilityRepository = capabilityRepository;
+            _slackFacade = slackFacade;
         }
 
         public async Task<IEnumerable<Connection>> HandleAsync(
-            FindConnectionsByClientTypeClientIdChannelTypeChannelId query)
+            FindConnectionsByClientTypeClientIdChannelTypeChannelId query
+        )
         {
-            if (query.ChannelType != null && !query.ChannelType.IsEmpty && !(query.ChannelType is ChannelTypeSlack))
+            var capabilities = await QueryCapabilities(query);
+
+            if (capabilities.Any() == false)
             {
                 return Enumerable.Empty<Connection>();
             }
 
+            var ConversationIds = capabilities.Select(c => c.SlackChannelId.ToString());
+
+            var channelDtos = await GetSlackConversationsByIds(ConversationIds);
+
+            var connections = MergeIntoConnections(capabilities, channelDtos);
+
+            return connections;
+        }
+
+        private async Task<IEnumerable<Capability>> QueryCapabilities(
+            FindConnectionsByClientTypeClientIdChannelTypeChannelId query)
+        {
+            if (query.ChannelType != null && !query.ChannelType.IsEmpty && !(query.ChannelType is ChannelTypeSlack))
+            {
+                return Enumerable.Empty<Capability>();
+            }
+
             if (query.ClientType != null && !query.ClientType.IsEmpty && !(query.ClientType is ClientTypeCapability))
             {
-                return Enumerable.Empty<Connection>();
+                return Enumerable.Empty<Capability>();
             }
 
             var capabilities = await _capabilityRepository.GetAll();
@@ -43,35 +69,62 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
                     );
             }
 
-            if (query.ClientId != null && !query.ClientId.IsEmpty)
+            if (query.ClientId == null || query.ClientId.IsEmpty) {return capabilities;}
+
+
+            Guid capabilityId;
+            var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
+            if (capabilityIdIsValid == false)
             {
-                Guid capabilityId;
-                var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
-                if(capabilityIdIsValid == false)
-                {
-                    throw new ValidationException($"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
-                }
-                
-                capabilities = capabilities
-                    .Where(c =>
-                        c.Id.Equals(capabilityId));
+                throw new ValidationException(
+                    $"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
             }
 
-            var connections = capabilities.Select(ConvertCapabilityToConnection);
+            capabilities = capabilities
+                .Where(c =>
+                    c.Id.Equals(capabilityId));
 
-            return connections;
+
+            return capabilities;
         }
 
-        private Connection ConvertCapabilityToConnection(Capability capability)
+        private async Task<IEnumerable<ChannelDto>> GetSlackConversationsByIds(IEnumerable<string> channelIds)
         {
-            return new Connection(
-                new ClientTypeCapability(),
-                new ClientName(capability.Name), 
-                new ClientId(capability.Id.ToString()),
-                new ChannelTypeSlack(),
-                ChannelName.Create(capability.Name),
-                new ChannelId(capability.SlackChannelId)
-            );
+            var conversations = await _slackFacade.GetConversations();
+
+            var relevantConversations = conversations.Channels.Where(c => channelIds.Contains(c.Id));
+
+
+            return relevantConversations;
+        }
+
+
+        private IEnumerable<Connection> MergeIntoConnections(
+            IEnumerable<Capability> capabilities,
+            IEnumerable<ChannelDto> channelDtos
+        )
+        {
+            var connections = new List<Connection>();
+
+            foreach (var channelDto in channelDtos)
+            {
+                var relevantCapability = capabilities.Where(c => c.SlackChannelId == channelDto.Id);
+
+                connections.AddRange(
+                    relevantCapability.Select(capability =>
+                        new Connection(
+                            new ClientTypeCapability(),
+                            new ClientName(capability.Name),
+                            new ClientId(capability.Id.ToString()),
+                            new ChannelTypeSlack(),
+                            ChannelName.Create(channelDto.Name),
+                            new ChannelId(capability.SlackChannelId)
+                        )
+                    )
+                );
+            }
+
+            return connections;
         }
     }
 }

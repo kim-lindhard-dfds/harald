@@ -21,6 +21,11 @@ namespace Harald.Tests.TestDoubles
 
         public bool SendNotificationToChannelCalled { get; private set; } = false;
 
+        public SlackFacadeStub()
+        {
+            _simulateFailOnSendMessage = false;
+        }
+
         public SlackFacadeStub(bool simulateFailOnSendMessage)
         {
             _simulateFailOnSendMessage = simulateFailOnSendMessage;
@@ -88,7 +93,7 @@ namespace Harald.Tests.TestDoubles
         
         public Task<GetConversationsResponse> GetConversations()
         {
-            throw new System.NotImplementedException();
+           return Task.FromResult<GetConversationsResponse>(new GetConversationsResponse{Ok = true, Channels = new List<ChannelDto>()});
         }
 
         public Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelId, string message)
