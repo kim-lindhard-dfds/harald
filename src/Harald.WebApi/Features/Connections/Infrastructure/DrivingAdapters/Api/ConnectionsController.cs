@@ -102,6 +102,11 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             {
                 return BadRequest("ClientType is required.");
             }
+            
+            if (string.IsNullOrEmpty(connection.ClientName))
+            {
+                return BadRequest("ClientName is required.");
+            }            
 
             if (string.IsNullOrEmpty(connection.ChannelId))
             {
