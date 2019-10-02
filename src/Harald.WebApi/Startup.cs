@@ -8,6 +8,7 @@ using Harald.WebApi.Application.EventHandlers;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Features.Connections.Configuration;
+using Harald.WebApi.Features.Metrics.Configuration;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -60,7 +61,7 @@ namespace Harald.WebApi
                 if (authToken != null)
                 {
                     cfg.DefaultRequestHeaders
-                    .Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
+                        .Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
                 }
             });
 
@@ -71,25 +72,36 @@ namespace Harald.WebApi
             ConfigureDomainEvents(services);
 
             services.AddConnectionDependencies();
-            
-            services.AddHostedService<MetricHostedService>();
+
+            services.AddMetricsDependencies();
             services.AddHostedService<ConsumerHostedService>();
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(connectionString, tags: new[] { "backing services", "postgres" });
+                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
 
             services.AddSwaggerDocument();
         }
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
-            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
-            services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
-            services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
-            services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();
-            services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAwsContextAccountCreatedEventHandler>();
-            services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
+            services
+                .AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services
+                .AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>,
+                    SlackMemberJoinedCapabilityDomainEventHandler>();
+            services
+                .AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>,
+                    SlackMemberLeftCapabilityDomainEventHandler>();
+            services
+                .AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>,
+                    SlackContextAddedToCapabilityDomainEventHandler>();
+            services
+                .AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>,
+                    SlackAwsContextAccountCreatedEventHandler>();
+            services
+                .AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>,
+                    K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
             services.AddTransient<EventHandlerFactory>();
 
             var topic = "build.selfservice.events.capabilities";
@@ -113,11 +125,11 @@ namespace Harald.WebApi
                 .Register<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>(
                     eventName: "k8s_namespace_created_and_aws_arn_connected",
                     topicName: topic);
-           
-                var serviceProvider = services.BuildServiceProvider();
 
-          
-                services.AddSingleton(eventRegistry);
+            var serviceProvider = services.BuildServiceProvider();
+
+
+            services.AddSingleton(eventRegistry);
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
@@ -146,32 +158,6 @@ namespace Harald.WebApi
         }
     }
 
-    public class MetricHostedService : IHostedService
-    {
-        private const string Host = "0.0.0.0";
-        private const int Port = 8080;
-
-        private IMetricServer _metricServer;
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            Console.WriteLine($"Staring metric server on {Host}:{Port}");
-
-            _metricServer = new KestrelMetricServer(Host, Port).Start();
-
-            return Task.CompletedTask;
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            using (_metricServer)
-            {
-                Console.WriteLine("Shutting down metric server");
-                await _metricServer.StopAsync();
-                Console.WriteLine("Done shutting down metric server");
-            }
-        }
-    }
 
     public static class MyPrometheusStuff
     {
@@ -184,9 +170,10 @@ namespace Harald.WebApi
         static MyPrometheusStuff()
         {
             HealthChecksResult = Metrics.CreateGauge("healthcheck",
-                "Shows health check status (status=unhealthy|degraded|healthy) 1 for triggered, otherwise 0", new GaugeConfiguration
+                "Shows health check status (status=unhealthy|degraded|healthy) 1 for triggered, otherwise 0",
+                new GaugeConfiguration
                 {
-                    LabelNames = new[] { HealthCheckLabelServiceName, HealthCheckLabelStatusName },
+                    LabelNames = new[] {HealthCheckLabelServiceName, HealthCheckLabelStatusName},
                     SuppressInitialValue = false
                 });
 
@@ -194,7 +181,7 @@ namespace Harald.WebApi
                 "Shows duration of the health check execution in seconds",
                 new GaugeConfiguration
                 {
-                    LabelNames = new[] { HealthCheckLabelServiceName },
+                    LabelNames = new[] {HealthCheckLabelServiceName},
                     SuppressInitialValue = false
                 });
         }
