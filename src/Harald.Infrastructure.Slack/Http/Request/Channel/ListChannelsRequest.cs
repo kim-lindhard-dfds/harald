@@ -6,7 +6,7 @@ namespace Harald.Infrastructure.Slack.Http.Request.Channel
     {
         public ListChannelsRequest(string token, bool excludeArchived = true)
         {
-            RequestUri = new System.Uri($"api/conversations.list?token={token}&exclude_archived={excludeArchived}", System.UriKind.Relative);
+            RequestUri = new System.Uri($"api/conversations.list?token={token}&limit=10000&exclude_archived={excludeArchived}", System.UriKind.Relative);
             Method = HttpMethod.Get;
         }
     }
