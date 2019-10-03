@@ -39,6 +39,12 @@ namespace Harald.WebApi.Infrastructure.Persistence
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task Remove(Capability capability)
+        {
+            _dbContext.Capabilities.Remove(capability);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Capability>> GetAll()
         {
             return await _dbContext

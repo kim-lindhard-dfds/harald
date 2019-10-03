@@ -186,6 +186,10 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                     await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(
                         getAllChannelConnectionsQuery);
 
+                var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName,
+                    connection.ChannelId, "");
+                await _capabilityRepository.Remove(capability);
+
                 if (allChannelConnections.All(c => c.ClientId.ToString().Equals(clientId)))
                 {
                     await _slackFacade.ArchiveChannel(connection.ChannelId.ToString());
