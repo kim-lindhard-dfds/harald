@@ -1,31 +1,27 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace Harald.Infrastructure.Slack.Model
 {
-    public class SlackChannelName : IValidatableObject
+    public class SlackChannelName
     {
         private readonly string _value;
 
-        public SlackChannelName(string value)
+        
+        private const int MAX_CHANNEL_NAME_LENGTH = 80;
+        public SlackChannelName(string source)
         {
-            _value = value;
+            if(string.IsNullOrEmpty(source)) { throw new ArgumentException($"SlackChannelName can't be: '{source}'''");}
 
-            if(!string.IsNullOrEmpty(_value))
-            { 
-                var validationMessages = Validate(null);
-
-                if (validationMessages.Any())
-                {
-                    string messageFormatter(string x, string y) => x + Environment.NewLine + y;
-
-                    throw new ArgumentException(validationMessages
-                                                .Select(o => o.ErrorMessage)
-                                                .Aggregate(messageFormatter));
-                }
+            if (MAX_CHANNEL_NAME_LENGTH < source.Length)
+            {
+                source = source.Substring(0, MAX_CHANNEL_NAME_LENGTH);
             }
+
+            var fixedChannelName = source
+                .Replace('_', '-')
+                .ToLowerInvariant();
+
+            _value = fixedChannelName;
         }
 
         public override string ToString()
@@ -41,23 +37,6 @@ namespace Harald.Infrastructure.Slack.Model
         public static implicit operator string(SlackChannelName input)
         {
             return input.ToString();
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-
-            if (_value.Length > 80)
-            {
-                results.Add(new ValidationResult(string.Format(ValidationMessages.Harald_Infrastructure_Slack_Model_SlackChannelName_Validate_Length, _value, _value.Length)));
-            }
-
-            if (_value.Contains("_"))
-            {
-                results.Add(new ValidationResult(string.Format(ValidationMessages.Harald_Infrastructure_Slack_Model_SlackChannelName_Validate_Validate_Name, _value)));
-            }
-
-            return new List<ValidationResult>();
         }
 
         public override bool Equals(object obj)
