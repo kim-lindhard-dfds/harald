@@ -28,7 +28,7 @@ namespace Harald.Tests.Controllers
                 // Assert
                 var result = await response.Content.ReadAsStringAsync();
                 Assert.True(!string.IsNullOrEmpty(result));
-                Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
         

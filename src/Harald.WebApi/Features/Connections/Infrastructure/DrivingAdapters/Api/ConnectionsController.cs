@@ -102,6 +102,11 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             {
                 return BadRequest("ClientType is required.");
             }
+            
+            if (string.IsNullOrEmpty(connection.ClientName))
+            {
+                return BadRequest("ClientName is required.");
+            }            
 
             if (string.IsNullOrEmpty(connection.ChannelId))
             {
@@ -180,6 +185,10 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                 var allChannelConnections =
                     await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(
                         getAllChannelConnectionsQuery);
+
+                var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName,
+                    connection.ChannelId, "");
+                await _capabilityRepository.Remove(capability);
 
                 if (allChannelConnections.All(c => c.ClientId.ToString().Equals(clientId)))
                 {
