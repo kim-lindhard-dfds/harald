@@ -95,11 +95,6 @@ namespace Harald.Infrastructure.Slack
             {
                 var result = await Parse<ListChannelsResponse>(response);
 
-                foreach (var ch in result.Channels)
-                {
-                    ch.Type = "slack";
-                }
-
                 return result.Channels;
             }
         }
