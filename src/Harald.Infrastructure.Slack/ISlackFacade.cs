@@ -20,6 +20,8 @@ namespace Harald.Infrastructure.Slack
 
         Task<SlackResponse> PinMessageToChannel(SlackChannelIdentifier channelIdentifier, string messageTimeStamp);
 
+        string GetBotUserId();
+
         Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName);
 
         Task DeleteChannel(SlackChannelIdentifier channelIdentifier, string token);

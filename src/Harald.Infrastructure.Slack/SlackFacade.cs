@@ -1,3 +1,4 @@
+using System;
 using Harald.Infrastructure.Slack.Dto;
 using Harald.Infrastructure.Slack.Exceptions;
 using Harald.Infrastructure.Slack.Http.Request.Channel;
@@ -26,17 +27,23 @@ namespace Harald.Infrastructure.Slack
         private readonly HttpClient _client;
         private readonly IDistributedCache _cache;
         private readonly SlackOptions _options;
+        private readonly string _botUserId;
 
         public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null)
         {
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
             _options = options?.Value;
+            _botUserId = Environment.GetEnvironmentVariable("SLACK_API_BOT_USER_ID") ?? "";
         }
 
+        public string GetBotUserId()
+        {
+            return _botUserId;
+        }
+        
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
-
             using (var response = await _client.SendAsync(new CreateChannelRequest(channelName)))
             { 
                 return await Parse<CreateChannelResponse>(response);
@@ -51,6 +58,7 @@ namespace Harald.Infrastructure.Slack
                 await Parse<SlackResponse>(response);
             }
         }
+        
 
         public async Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
         {

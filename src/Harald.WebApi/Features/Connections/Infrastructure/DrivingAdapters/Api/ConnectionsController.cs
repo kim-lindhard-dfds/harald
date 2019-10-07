@@ -192,7 +192,17 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
 
                 if (allChannelConnections.All(c => c.ClientId.ToString().Equals(clientId)))
                 {
-                    await _slackFacade.ArchiveChannel(connection.ChannelId.ToString());
+                    var channelsAll = await _slackFacade.GetConversations();
+                    var channelsFiltered = channelsAll.Channels.Where(ch => 
+                        ch.Creator.Equals(_slackFacade.GetBotUserId())
+                        &&
+                        ch.Id.Equals(connection.ChannelId))
+                        .ToList();
+                    
+                    if (channelsFiltered.Count > 0)
+                    {
+                        await _slackFacade.ArchiveChannel(connection.ChannelId.ToString());
+                    }
                 }
             }
 
