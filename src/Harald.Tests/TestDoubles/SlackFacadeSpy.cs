@@ -86,6 +86,11 @@ namespace Harald.Tests.TestDoubles
             return Task.FromResult(new SlackResponse { Ok = true});
         }
 
+        public string GetBotUserId()
+        {
+            return "";
+        }
+
         public SlackChannelName CreatedChannelName { get; private set; }
 
         public Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
