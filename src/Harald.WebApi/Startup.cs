@@ -71,7 +71,7 @@ namespace Harald.WebApi
             ConfigureDomainEvents(services);
 
             services.AddConnectionDependencies();
-            
+
             services.AddHostedService<MetricHostedService>();
             services.AddHostedService<ConsumerHostedService>();
 
@@ -113,10 +113,10 @@ namespace Harald.WebApi
                 .Register<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>(
                     eventName: "k8s_namespace_created_and_aws_arn_connected",
                     topicName: topic);
-           
+
                 var serviceProvider = services.BuildServiceProvider();
 
-          
+
                 services.AddSingleton(eventRegistry);
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
@@ -136,6 +136,8 @@ namespace Harald.WebApi
 
             app.UseSwagger();
             app.UseSwaggerUi3();
+
+            app.UseHttpMetrics();
 
             app.UseMvc();
 
