@@ -34,14 +34,11 @@ namespace Harald.Infrastructure.Slack
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
             _options = options?.Value;
-            _botUserId = Environment.GetEnvironmentVariable("SLACK_API_BOT_USER_ID") ?? "";
+            _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
         }
 
-        public string GetBotUserId()
-        {
-            return _botUserId;
-        }
-        
+        public string GetBotUserId() => _botUserId;
+
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
             using (var response = await _client.SendAsync(new CreateChannelRequest(channelName)))

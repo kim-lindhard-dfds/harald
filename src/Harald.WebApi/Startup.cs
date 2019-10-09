@@ -39,6 +39,8 @@ namespace Harald.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddOptions();
+            services.Configure<SlackOptions>(Configuration);
 
             var connectionString = Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
 

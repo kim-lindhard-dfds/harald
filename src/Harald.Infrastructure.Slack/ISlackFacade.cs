@@ -18,9 +18,9 @@ namespace Harald.Infrastructure.Slack
 
         Task<SendNotificationResponse> SendNotificationToUser(string email, string message);
 
-        Task<SlackResponse> PinMessageToChannel(SlackChannelIdentifier channelIdentifier, string messageTimeStamp);
-
         string GetBotUserId();
+
+        Task<SlackResponse> PinMessageToChannel(SlackChannelIdentifier channelIdentifier, string messageTimeStamp);
 
         Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName);
 
