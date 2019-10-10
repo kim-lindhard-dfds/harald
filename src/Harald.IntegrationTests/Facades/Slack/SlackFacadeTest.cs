@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Harald.IntegrationTests.Facades.Slack
@@ -13,10 +14,15 @@ namespace Harald.IntegrationTests.Facades.Slack
     {
         private TestConfiguration _configuration;
         private HttpClient _httpClient;
+        private IOptions<SlackOptions> _slackOptions;
 
         public SlackFacadeTest()
         {
             _configuration = TestHelper.GetApplicationConfiguration(Environment.CurrentDirectory);
+            _slackOptions = Options.Create(new SlackOptions
+            {
+                SLACK_API_BOT_USER_ID = _configuration.SLACK_API_BOT_USER_ID
+            });
             _httpClient = GetHttpClient();
         }
 
@@ -24,7 +30,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var channelName = ChannelName.Create(Guid.NewGuid().ToString());
 
             // Act
@@ -43,7 +49,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task InviteToChannel_Given_valid_input_Should_invite_to_channel()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var channelName = ChannelName.Create(Guid.NewGuid().ToString());
             var userEmail = _configuration.SLACK_TESTING_USER_EMAIL;
 
@@ -62,7 +68,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task CreateUserGroup_And_Add_User_Given_valid_input_Should_create_group_with_user()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var groupName = Guid.NewGuid().ToString();
             var handle = UserGroupHandle.Create(Guid.NewGuid().ToString());
             const string description = "Group created through integration test.";
@@ -90,7 +96,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task SendNotificationToChannel_Given_valid_input_Should_send_notfication_to_channel()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var channelName = ChannelName.Create(Guid.NewGuid().ToString());
             const string message = "Integration test message.";
 
@@ -110,7 +116,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task PinMessageToChannel_Given_valid_input_Should_send_notfication_to_channel()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var channelName = ChannelName.Create(Guid.NewGuid().ToString());
             const string message = "Integration test message.";
 
@@ -132,7 +138,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task Get_channels_should_return_list_of_channel_objects()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient);
+            var sut = new SlackFacade(_httpClient, _slackOptions);
             var bearerToken = _configuration.SLACK_TESTING_API_AUTH_TOKEN;
 
             //Act
