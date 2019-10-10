@@ -51,6 +51,11 @@ namespace Harald.Tests.TestDoubles
             throw new System.NotImplementedException();
         }
 
+        public string GetBotUserId()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
             throw new System.NotImplementedException();
