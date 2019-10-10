@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: harald
   namespace: selfservice-herald-vbqkr
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
   labels:
     app: harald
     project: selfservice
@@ -14,5 +17,8 @@ spec:
   - name: external
     port: 80
     targetPort: web
+  - name: metrics
+    port: 8080
+    targetPort: 8080
   selector:
     app: harald

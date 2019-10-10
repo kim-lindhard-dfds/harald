@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 
 namespace Harald.WebApi
 {
@@ -71,6 +72,7 @@ namespace Harald.WebApi
 
             services.AddConnectionDependencies();
             
+            services.AddHostedService<MetricHostedService>();
             services.AddHostedService<ConsumerHostedService>();
 
             services.AddHealthChecks()
@@ -134,10 +136,36 @@ namespace Harald.WebApi
 
             app.UseSwagger();
             app.UseSwaggerUi3();
+            app.UseHttpMetrics();
 
             app.UseMvc();
         }
     }
 
-    
+    public class MetricHostedService : IHostedService
+    {
+        private const string Host = "0.0.0.0";
+        private const int Port = 8080;
+
+        private IMetricServer _metricServer;
+
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine($"Staring metric server on {Host}:{Port}");
+
+            _metricServer = new KestrelMetricServer(Host, Port).Start();
+
+            return Task.CompletedTask;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            using (_metricServer)
+            {
+                Console.WriteLine("Shutting down metric server");
+                await _metricServer.StopAsync();
+                Console.WriteLine("Done shutting down metric server");
+            }
+        }
+    }
 }
