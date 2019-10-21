@@ -87,6 +87,7 @@ namespace Harald.WebApi
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
             services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services.AddTransient<IEventHandler<CapabilityDeletedDomainEvent>, CapabilityDeletedEventNotifyDedHandler>();
             services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
             services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();

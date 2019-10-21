@@ -12,14 +12,17 @@ namespace Harald.Tests.Scenarios
 {
     public class CapabilityDeletedScenario
     {
+        private Guid _capabilityId;
+        private string _capabilityName;
+        
         private IServiceProvider _serviceProvider;
 
         [Fact]
         public async Task CapabilityDeletedScenarioRecipe()
         {
-            Given_a_service_collection_with_a_imMemoryDb_and_SlackFacadeSpy();
+                  Given_a_service_collection_with_a_imMemoryDb_and_SlackFacadeSpy();
             await And_a_existing_capability_slack_channel();
-            When_Capability_event_is_raised();
+            await When_Capability_deleted_event_is_raised();
             Then_a_message_with_channel_info_should_be_posted_in_the_ded_channel();
         }
 
@@ -40,9 +43,11 @@ namespace Harald.Tests.Scenarios
 
         private async Task And_a_existing_capability_slack_channel()
         {
+            _capabilityId = Guid.NewGuid();
+            _capabilityName = "aFineCapability";
             var capabilityCreatedDomainEvent = CapabilityCreatedDomainEvent.Create(
-                Guid.NewGuid(),
-                "aFineCapability"
+                _capabilityId,
+                _capabilityName
             );
             var handler = _serviceProvider.GetService<IEventHandler<CapabilityCreatedDomainEvent>>();
 
@@ -50,14 +55,22 @@ namespace Harald.Tests.Scenarios
             await handler.HandleAsync(capabilityCreatedDomainEvent);
         }
 
-        private void When_Capability_event_is_raised()
+        private async Task When_Capability_deleted_event_is_raised()
         {
-            throw new NotImplementedException();
+            var capabilityDeletedEvent = CapabilityDeletedDomainEvent.Create(
+                _capabilityId,
+                _capabilityName
+            );
+            
+            var handler = _serviceProvider.GetService<IEventHandler<CapabilityDeletedDomainEvent>>();
+
+            // Act
+            await handler.HandleAsync(capabilityDeletedEvent);
         }
 
         private void Then_a_message_with_channel_info_should_be_posted_in_the_ded_channel()
         {
-            throw new NotImplementedException();
+//            throw new NotImplementedException();
         }
     }
 }
