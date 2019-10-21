@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Harald.Infrastructure.Slack;
 using Harald.Tests.Builders;
@@ -70,7 +71,16 @@ namespace Harald.Tests.Scenarios
 
         private void Then_a_message_with_channel_info_should_be_posted_in_the_ded_channel()
         {
-//            throw new NotImplementedException();
+            var slackFacadeSpy = (SlackFacadeSpy)_serviceProvider.GetService<ISlackFacade>();
+
+            var hardCodedDedChannelId = "GFYE9B99Q";
+           var dedMessages = slackFacadeSpy.ChannelsMessages.Where(pair => pair.Key == hardCodedDedChannelId);
+           
+           Assert.Contains(dedMessages, pair =>
+           {
+               var channelMessages = pair.Value;
+               return channelMessages.Any(m => m.Contains("deleted"));
+           });
         }
     }
 }

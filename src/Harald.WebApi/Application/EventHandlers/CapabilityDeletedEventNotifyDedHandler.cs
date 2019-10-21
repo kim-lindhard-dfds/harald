@@ -1,13 +1,31 @@
+using System.Text;
 using System.Threading.Tasks;
+using Harald.Infrastructure.Slack;
+using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
+    
     public class CapabilityDeletedEventNotifyDedHandler : IEventHandler<CapabilityDeletedDomainEvent>
     {
-        public Task HandleAsync(CapabilityDeletedDomainEvent domainEvent)
+        private readonly ISlackFacade _slackFacade;
+
+        public CapabilityDeletedEventNotifyDedHandler(ISlackFacade slackFacade)
         {
-            return Task.CompletedTask;
+            _slackFacade = slackFacade;
+        }
+
+        public async Task HandleAsync(CapabilityDeletedDomainEvent domainEvent)
+        {
+            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
+            
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.AppendLine($":x: Capability with Id: '{domainEvent.Payload.CapabilityId}' & name : '{domainEvent.Payload.CapabilityName}' have been deleted");
+            stringBuilder.AppendLine($"Please Do the needfull");
+            
+            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), stringBuilder.ToString());
         }
     }
 }
