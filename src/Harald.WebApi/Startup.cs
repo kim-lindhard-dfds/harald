@@ -101,6 +101,9 @@ namespace Harald.WebApi
                 .Register<CapabilityCreatedDomainEvent>(
                     eventName: "capability_created",
                     topicName: topic)
+                .Register<CapabilityDeletedDomainEvent>(
+                    eventName: "capability_deleted",
+                    topicName: topic)
                 .Register<MemberJoinedCapabilityDomainEvent>(
                     eventName: "member_joined_capability",
                     topicName: topic)
