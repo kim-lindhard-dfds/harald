@@ -1,5 +1,5 @@
 [![Build Status](https://dfds.visualstudio.com/DevelopmentExcellence/_apis/build/status/Harald-pipeline?branchName=master)](https://dfds.visualstudio.com/DevelopmentExcellence/_build/latest?definitionId=1416&branchName=master)
-
+[![Build Status](https://dfds.visualstudio.com/DevelopmentExcellence/_apis/build/status/Harald-pipeline?branchName=master&stageName=CI)](https://dfds.visualstudio.com/DevelopmentExcellence/_build/latest?definitionId=1416&branchName=master)
 # Harald
 The notification service aka herold aka herald.
 
