@@ -13,6 +13,7 @@ namespace Harald.WebApi
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Dafda.Configuration", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console(new CompactJsonFormatter())
                 .CreateLogger();

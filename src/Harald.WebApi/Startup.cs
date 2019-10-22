@@ -19,7 +19,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Prometheus;
+using Dafda.Configuration;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Harald.WebApi
 {
@@ -68,10 +71,23 @@ namespace Harald.WebApi
             services.AddTransient<ISlackService, SlackService>();
 
             ConfigureDomainEvents(services);
+            
+            // Kafka
 
             services.AddConnectionDependencies();
-            services.AddKafkaMessageConsumer();
+            //services.AddKafkaMessageConsumer();
             services.AddMetrics();
+            
+            // Dafda
+
+            services.AddConsumer(options =>
+            {
+                options.WithConfigurationSource(Configuration);
+                options.WithEnvironmentStyle("DEVEX_KAFKA");
+                const string topicCapabilities = "build.selfservice.events.capabilities";
+                
+                options.RegisterMessageHandler<CapabilityCreatedDomainEvent, SlackCapabilityCreatedDomainEventHandler>(topicCapabilities, "capability_created");
+            });
 
 
             services.AddHealthChecks()
@@ -83,8 +99,6 @@ namespace Harald.WebApi
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
-            services
-                .AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
             services
                 .AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>,
                     SlackMemberJoinedCapabilityDomainEventHandler>();
@@ -105,9 +119,6 @@ namespace Harald.WebApi
             var topic = "build.selfservice.events.capabilities";
 
             var eventRegistry = new DomainEventRegistry()
-                .Register<CapabilityCreatedDomainEvent>(
-                    eventName: "capability_created",
-                    topicName: topic)
                 .Register<MemberJoinedCapabilityDomainEvent>(
                     eventName: "member_joined_capability",
                     topicName: topic)

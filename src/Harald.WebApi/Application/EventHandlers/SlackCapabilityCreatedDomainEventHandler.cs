@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Dafda.Messaging;
 using Harald.WebApi.Domain;
 using Harald.WebApi.Domain.Events;
 using Harald.Infrastructure.Slack;
@@ -9,15 +10,14 @@ using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Application.EventHandlers
 {
-    public class SlackCapabilityCreatedDomainEventHandler : IEventHandler<CapabilityCreatedDomainEvent>
+    public class SlackCapabilityCreatedDomainEventHandler : IMessageHandler<CapabilityCreatedDomainEvent>
     {
-        private readonly ILogger<SlackCapabilityCreatedDomainEventHandler> _logger;
+        private readonly ILogger<CapabilityCreatedDomainEvent> _logger;
         private readonly ISlackFacade _slackFacade;
         private readonly ICapabilityRepository _capabilityRepository;
         private readonly ISlackService _slackService;
 
-        public SlackCapabilityCreatedDomainEventHandler(
-            ILogger<SlackCapabilityCreatedDomainEventHandler> logger,
+        public SlackCapabilityCreatedDomainEventHandler(ILogger<CapabilityCreatedDomainEvent> logger,
             ISlackFacade slackFacade,
             ICapabilityRepository capabilityRepository,
             ISlackService slackService)
@@ -28,14 +28,17 @@ namespace Harald.WebApi.Application.EventHandlers
             _slackService = slackService;
         }
 
-        public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
+        public async Task Handle(CapabilityCreatedDomainEvent message)
         {
-            var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
+            _logger.LogInformation(@"Handling: {@Message}", message);
+            /*
+
+            var createChannelResponse = await _slackFacade.CreateChannel(message.CapabilityName);
 
             UserGroupDto userGroup = null;
             try
             {
-                userGroup = await _slackService.EnsureUserGroupExists(domainEvent.Payload.CapabilityName);
+                userGroup = await _slackService.EnsureUserGroupExists(message.CapabilityName);
             }
             catch (SlackFacadeException ex)
             {
@@ -49,13 +52,13 @@ namespace Harald.WebApi.Application.EventHandlers
             if (createChannelResponse.Ok)
             {
                 var channelId = new ChannelId(createChannelResponse?.Channel?.Id);
-                _logger.LogInformation($"Slack channel '{channelName}' for capability '{domainEvent.Payload.CapabilityName}' created with ID: {channelId}");
+                _logger.LogInformation($"Slack channel '{channelName}' for capability '{message.CapabilityName}' created with ID: {channelId}");
 
                 var userGroupId = userGroup?.Id;
                 // Save even without user group.
                 var capability = Capability.Create(
-                    id: domainEvent.Payload.CapabilityId,
-                    name: domainEvent.Payload.CapabilityName,
+                    id: message.CapabilityId,
+                    name: message.CapabilityName,
                     slackChannelId: channelId,
                     slackUserGroupId: userGroupId);
                 _logger.LogInformation($"Capability id: '{capability.Id}'  name: '{capability.Name}' slackChannelId: '{capability.SlackChannelId}', userGroupId: '{capability.SlackUserGroupId}'");
@@ -77,7 +80,7 @@ namespace Harald.WebApi.Application.EventHandlers
             else
             {
                 _logger.LogError($"Error creating Slack channel '{channelName}', Error: '{createChannelResponse.Error}'");
-            }
+            }*/
         }
     }
 }
