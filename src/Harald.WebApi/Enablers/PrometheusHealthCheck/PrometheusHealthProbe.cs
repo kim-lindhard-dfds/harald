@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Prometheus;
 
-namespace Harald.WebApi.Features.PrometheusHealthCheck
+namespace Harald.WebApi.Enablers.PrometheusHealthCheck
 {
     public static class PrometheusHealthProbe
     {

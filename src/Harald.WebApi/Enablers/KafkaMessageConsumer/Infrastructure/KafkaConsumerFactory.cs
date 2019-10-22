@@ -4,7 +4,7 @@ using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 
-namespace Harald.WebApi.Features.KafkaMessageConsumer.Infrastructure
+namespace Harald.WebApi.Enablers.KafkaMessageConsumer.Infrastructure
 {
     public class KafkaConsumerFactory
     {

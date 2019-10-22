@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Harald.WebApi.Features.KafkaMessageConsumer.Infrastructure
+namespace Harald.WebApi.Enablers.KafkaMessageConsumer.Infrastructure
 {
     public class KafkaConsumerHostedService : IHostedService
     {

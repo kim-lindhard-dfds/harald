@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Harald.WebApi.Features.Metrics.Configuration
+namespace Harald.WebApi.Enablers.Metrics.Configuration
 {
     public static class DependencyInjection
     {

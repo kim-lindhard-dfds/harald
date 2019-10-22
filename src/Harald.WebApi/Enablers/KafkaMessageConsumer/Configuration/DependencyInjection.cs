@@ -1,7 +1,7 @@
-using Harald.WebApi.Features.KafkaMessageConsumer.Infrastructure;
+using Harald.WebApi.Enablers.KafkaMessageConsumer.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Harald.WebApi.Features.KafkaMessageConsumer.Configuration
+namespace Harald.WebApi.Enablers.KafkaMessageConsumer.Configuration
 {
     public static class DependencyInjection
     {

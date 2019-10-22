@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace Harald.WebApi.Features.PrometheusHealthCheck.Configuration
+namespace Harald.WebApi.Enablers.PrometheusHealthCheck.Configuration
 {
     public static class Middleware
     {

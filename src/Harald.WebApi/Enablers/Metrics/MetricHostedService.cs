@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
 
-namespace Harald.WebApi.Features.Metrics
+namespace Harald.WebApi.Enablers.Metrics
 {
     public class MetricHostedService : IHostedService
     {
