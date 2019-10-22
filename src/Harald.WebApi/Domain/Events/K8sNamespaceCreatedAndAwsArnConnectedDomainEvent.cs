@@ -5,9 +5,9 @@ namespace Harald.WebApi.Domain.Events
 {
     public class K8sNamespaceCreatedAndAwsArnConnectedDomainEvent : IDomainEvent<K8sNamespaceCreatedAndAwsArnConnectedData>
     {
-        public K8sNamespaceCreatedAndAwsArnConnectedDomainEvent(ExternalEvent domainEvent)
+        public K8sNamespaceCreatedAndAwsArnConnectedDomainEvent(IntegrationEvent integrationEvent)
         {
-            Payload = (domainEvent.Payload as JObject)?.ToObject<K8sNamespaceCreatedAndAwsArnConnectedData>();
+            Payload = (integrationEvent.Payload as JObject)?.ToObject<K8sNamespaceCreatedAndAwsArnConnectedData>();
         }
 
         public K8sNamespaceCreatedAndAwsArnConnectedData Payload { get; }

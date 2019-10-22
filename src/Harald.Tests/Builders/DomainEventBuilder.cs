@@ -18,7 +18,7 @@ namespace Harald.Tests.Builders
 
 
 
-        public static ExternalEvent BuildAWSContextAccountCreatedEventData()
+        public static IntegrationEvent BuildAWSContextAccountCreatedEventData()
         {
 
             dynamic data = new JObject();
@@ -34,11 +34,11 @@ namespace Harald.Tests.Builders
             return BuildGeneralDomainEvent("aws_context_account_created", data);
         }
 
-        private static ExternalEvent BuildGeneralDomainEvent(string type, object data)
+        private static IntegrationEvent BuildGeneralDomainEvent(string type, object data)
         {
             var correlationId = Guid.NewGuid().ToString();
 
-            var generalDomainEvent = new ExternalEvent("1", type, correlationId, "", data);
+            var generalDomainEvent = new IntegrationEvent("1", type, correlationId, "", data);
             return generalDomainEvent;
 
         }

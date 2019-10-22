@@ -5,9 +5,9 @@ namespace Harald.WebApi.Domain.Events
 {
     public class CapabilityDeletedDomainEvent : IDomainEvent<CapabilityDeletedData>
     {
-        public CapabilityDeletedDomainEvent(ExternalEvent domainEvent)
+        public CapabilityDeletedDomainEvent(IntegrationEvent integrationEvent)
         {
-            Payload = (domainEvent.Payload as JObject)?.ToObject<CapabilityDeletedData>();
+            Payload = (integrationEvent.Payload as JObject)?.ToObject<CapabilityDeletedData>();
         }
 
         public CapabilityDeletedDomainEvent(CapabilityDeletedData payload)

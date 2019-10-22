@@ -5,9 +5,9 @@ namespace Harald.WebApi.Domain.Events
 {
     public class AWSContextAccountCreatedDomainEvent : IDomainEvent<AWSContextAccountCreatedData>
     {
-        public AWSContextAccountCreatedDomainEvent(ExternalEvent domainEvent)
+        public AWSContextAccountCreatedDomainEvent(IntegrationEvent integrationEvent)
         {
-            Payload = (domainEvent.Payload as JObject)?.ToObject<AWSContextAccountCreatedData>();
+            Payload = (integrationEvent.Payload as JObject)?.ToObject<AWSContextAccountCreatedData>();
         }
 
         public AWSContextAccountCreatedData Payload { get; }

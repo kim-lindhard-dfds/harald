@@ -1,9 +1,8 @@
-using System;
 using Newtonsoft.Json;
 
 namespace Harald.WebApi.Domain.Events
 {
-    public class ExternalEvent : IDomainEvent<object>
+    public class IntegrationEvent
     {
 
         public string Version { get; private set; }
@@ -15,7 +14,7 @@ namespace Harald.WebApi.Domain.Events
 
         public object Payload { get; private set; }
 
-        public ExternalEvent(
+        public IntegrationEvent(
             string version, string eventName, string xCorrelationId, string xSender, object payload)
         {
             Version = version;

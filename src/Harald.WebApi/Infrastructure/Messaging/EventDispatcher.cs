@@ -32,7 +32,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
         {
             try
             {
-                var generalDomainEventObj = JsonConvert.DeserializeObject<ExternalEvent>(generalDomainEventJson);
+                var generalDomainEventObj = JsonConvert.DeserializeObject<IntegrationEvent>(generalDomainEventJson);
                 await SendAsync(generalDomainEventObj, serviceScope);
             }
             catch (JsonReaderException ex)
@@ -41,24 +41,24 @@ namespace Harald.WebApi.Infrastructure.Messaging
             }
         }
 
-        public async Task SendAsync(ExternalEvent externalEvent, IServiceScope serviceScope)
+        public async Task SendAsync(IntegrationEvent integrationEvent, IServiceScope serviceScope)
         {
-            if (externalEvent == null)
+            if (integrationEvent == null)
             {
                 throw new EventMessageIncomprehensible("Received a blank message");
             }
 
             _externalEventMetaDataStore.Store(
-                externalEvent.Version,
-                externalEvent.EventName,
-                externalEvent.XCorrelationId,
-                externalEvent.XSender
+                integrationEvent.Version,
+                integrationEvent.EventName,
+                integrationEvent.XCorrelationId,
+                integrationEvent.XSender
             );
             
-            using (LogContext.PushProperty("CorrelationId", externalEvent.XCorrelationId))
+            using (LogContext.PushProperty("CorrelationId", integrationEvent.XCorrelationId))
             {
-                var eventType = _eventRegistry.GetInstanceTypeFor(externalEvent.EventName);
-                dynamic domainEvent = Activator.CreateInstance(eventType, externalEvent);
+                var eventType = _eventRegistry.GetInstanceTypeFor(integrationEvent.EventName);
+                dynamic domainEvent = Activator.CreateInstance(eventType, integrationEvent);
                 dynamic handlersList = _eventHandlerFactory.GetEventHandlersFor(domainEvent, serviceScope);
             
                 foreach (var handler in handlersList)
