@@ -67,8 +67,8 @@ namespace Harald.WebApi
             ConfigureDomainEvents(services);
 
             services.AddConnectionDependencies();
-            services.AddKafkaMessageConsumerDependencies();
-            services.AddMetricsDependencies();
+            services.AddKafkaMessageConsumer();
+            services.AddMetrics();
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())

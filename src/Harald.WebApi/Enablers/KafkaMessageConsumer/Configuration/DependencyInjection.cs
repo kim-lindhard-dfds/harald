@@ -5,7 +5,7 @@ namespace Harald.WebApi.Enablers.KafkaMessageConsumer.Configuration
 {
     public static class DependencyInjection
     {
-        public static void AddKafkaMessageConsumerDependencies(this IServiceCollection services)
+        public static void AddKafkaMessageConsumer(this IServiceCollection services)
         {
             services.AddHostedService<KafkaConsumerHostedService>();
             services.AddTransient<KafkaConsumerFactory.KafkaConfiguration>();
