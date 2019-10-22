@@ -47,6 +47,11 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
+        public Task Remove(Capability capability)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<IEnumerable<Capability>> GetAll()
         {
             return Task.FromResult(_capabilities.AsEnumerable());

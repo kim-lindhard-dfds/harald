@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Prometheus;
 
 namespace Harald.WebApi
 {
@@ -35,6 +36,8 @@ namespace Harald.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddOptions();
+            services.Configure<SlackOptions>(Configuration);
 
             var connectionString = Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
 
@@ -69,6 +72,7 @@ namespace Harald.WebApi
             services.AddConnectionDependencies();
             services.AddKafkaMessageConsumer();
             services.AddMetrics();
+
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
@@ -125,6 +129,7 @@ namespace Harald.WebApi
 
             services.AddSingleton(eventRegistry);
 
+
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 
             services.AddScoped<ExternalEventMetaDataStore>();
@@ -141,6 +146,8 @@ namespace Harald.WebApi
 
             app.UseSwagger();
             app.UseSwaggerUi3();
+
+            app.UseHttpMetrics();
 
             app.UseMvc();
 

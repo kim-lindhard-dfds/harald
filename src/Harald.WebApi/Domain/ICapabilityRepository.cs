@@ -11,5 +11,6 @@ namespace Harald.WebApi.Domain
         Task<IEnumerable<Capability>> GetById(Guid id);
         Task Add(Capability capability);
         Task Update(Capability capability);
+        Task Remove(Capability capability);
     }
 }

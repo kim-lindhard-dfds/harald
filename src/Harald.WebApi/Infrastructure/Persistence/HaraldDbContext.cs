@@ -15,12 +15,7 @@ namespace Harald.WebApi.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Capability>(cfg =>
-            {
-                cfg.ToTable("Capability");
-                cfg.Property(e => e.SlackChannelId)
-                    .HasConversion(v => v.ToString(), v => new ChannelId(v));
-            });
+            modelBuilder.ApplyConfiguration(new CapabilityConfiguration());
         }
     }
 }

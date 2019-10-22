@@ -1,4 +1,4 @@
-﻿namespace Harald.Infrastructure.Slack.Dto
+namespace Harald.WebApi.Controllers.Model
 {
     public class ChannelDto
     {
@@ -6,6 +6,6 @@
 
         public string Name { get; set; }
         
-        public string Creator { get; set; }
+        public string Type { get; set; }
     }
 }
