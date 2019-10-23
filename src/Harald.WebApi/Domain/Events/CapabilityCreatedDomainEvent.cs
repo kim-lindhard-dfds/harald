@@ -8,8 +8,8 @@ namespace Harald.WebApi.Domain.Events
 {
     public class CapabilityCreatedDomainEvent
     {
-        public Guid CapabilityId { get; private set; }
-        public string CapabilityName { get; private set; }
+        public Guid CapabilityId { get; set; }
+        public string CapabilityName { get; set; }
 
         public CapabilityCreatedDomainEvent(Guid capabilityId, string capabilityName)
         {

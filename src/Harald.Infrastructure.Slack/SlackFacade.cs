@@ -47,6 +47,11 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
+        public async Task<string> Testerino()
+        {
+            return await Task.Run(() => "xaxa");
+        }
+
         // This uses an undocumented API, tread carefully.
         public async Task DeleteChannel(SlackChannelIdentifier channelIdentifier, string token)
         {

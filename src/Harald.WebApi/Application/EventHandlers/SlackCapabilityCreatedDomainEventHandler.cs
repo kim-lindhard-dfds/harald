@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dafda.Messaging;
 using Harald.WebApi.Domain;
@@ -28,11 +31,23 @@ namespace Harald.WebApi.Application.EventHandlers
             _slackService = slackService;
         }
 
+        async Task Reee()
+        {
+            Console.WriteLine("RERERERERER");
+            await Task.Run(() => { Task.Delay(1000); });
+            Console.WriteLine("ERERERERERE");
+        }
+
         public async Task Handle(CapabilityCreatedDomainEvent message)
         {
             _logger.LogInformation(@"Handling: {@Message}", message);
-            /*
 
+            var x = "";
+            var xx = new List<string>();
+            await Reee();
+            var convs = await _slackFacade.GetConversations();
+            
+            // _dbContext seems to get disposed here.
             var createChannelResponse = await _slackFacade.CreateChannel(message.CapabilityName);
 
             UserGroupDto userGroup = null;
@@ -80,7 +95,7 @@ namespace Harald.WebApi.Application.EventHandlers
             else
             {
                 _logger.LogError($"Error creating Slack channel '{channelName}', Error: '{createChannelResponse.Error}'");
-            }*/
+            }
         }
     }
 }
