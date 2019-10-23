@@ -46,7 +46,7 @@ namespace Harald.WebApi
 
             services
                 .AddEntityFrameworkNpgsql()
-                .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); }, ServiceLifetime.Transient);
+                .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); }, ServiceLifetime.Scoped);
 
             services.AddTransient<ICapabilityRepository, CapabilityEntityFrameworkRepository>();
 
