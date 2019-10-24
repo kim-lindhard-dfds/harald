@@ -1,8 +1,8 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:41626",
       "sslPort": 44310
@@ -15,7 +15,7 @@
       "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "kafka:9092"
       }
     },
     "Harald.WebApi": {
@@ -26,10 +26,25 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "HARALD_DATABASE_CONNECTIONSTRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=harald_db;",
-        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
+        "HARALD_KAFKA_BOOTSTRAP_SERVERS": "kafka:9092",
         "HARALD_KAFKA_GROUP_ID": "harald-consumer",
-        "HARALD_KAFKA_ENABLE_AUTO_COMMIT": "false"
+        "HARALD_KAFKA_ENABLE_AUTO_COMMIT": "false",
+        "DEVEX_KAFKA_GROUP_ID": "harald-consumer",
+        "DEVEX_KAFKA_ENABLE_AUTO_COMMIT": "false",
+        "DEVEX_KAFKA_BOOTSTRAP_SERVERS": "kafka:9092"
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "https://+:443;http://+:80",
+        "ASPNETCORE_HTTPS_PORT": "44350",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "httpPort": 63142,
+      "useSSL": true,
+      "sslPort": 44350
     }
   }
 }

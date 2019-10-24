@@ -1,8 +1,21 @@
-version: '3'
+version: '3.4'
 
 services:
+  harald.webapi:
+    build:
+      context: ./src/Harald.WebApi
+      dockerfile: Dockerfile
+    environment:
+    - "HARALD_KAFKA_GROUP_ID=harald-consumer"
+    - "HARALD_KAFKA_ENABLE_AUTO_COMMIT=false"
+    - "HARALD_KAFKA_BOOTSTRAP_SERVERS=kafka:9092"
+    - "HARALD_DATABASE_CONNECTIONSTRING=User ID=postgres;Password=p;Host=database;Port=5432;Database=harald_db;"
+    - "SLACK_API_BOT_USER_ID=WMUSMU954"
+
+
   database:
     image: postgres:latest
+    hostname: database
     ports:
     - 5432:5432
     environment:
@@ -10,27 +23,30 @@ services:
     - POSTGRES_PASSWORD=p
 
   db-migration:
-    build: ./db
+    build: 
+      context: ./db
+      dockerfile: Dockerfile
     depends_on:
     - database
     # volumes:
     # - ${PWD}/db/export:/tmp
     environment:
     # - DEBUG=1                     # enable script debugging
-    - LOCAL_DEVELOPMENT=1         # will try to CREATE DATABASE ${PGDATABASE}
-    - PGDATABASE=harald_db        # database name
-    - PGHOST=database             # same as avove - docker-compose service name
-    - PGPORT=5432                 # same as above
-    - PGUSER=postgres             # same as above
-    - PGPASSWORD=p                # same as above
-    - PGSSLMODE=disable           # ignore SSLMODE for local development (overwritten - see ./db/Dockerfile)
+    - "LOCAL_DEVELOPMENT=1"         # will try to CREATE DATABASE ${PGDATABASE}
+    - "PGDATABASE=harald_db"        # database name
+    - "PGHOST=database"             # same as avove - docker-compose service name
+    - "PGPORT=5432"                 # same as above
+    - "PGUSER=postgres"             # same as above
+    - "PGPASSWORD=p"                # same as above
+    - "PGSSLMODE=disable"           # ignore SSLMODE for local development (overwritten - see ./db/Dockerfile)
 
   kafka:
+    hostname: kafka
     image: spotify/kafka
     ports:
     - "2181:2181"
     - "9092:9092"
     environment:
-      - "ADVERTISED_HOST=localhost"
+      - "ADVERTISED_HOST=kafka"
       - "ADVERTISED_PORT=9092"
       - "AUTO_CREATE_TOPICS=true"
