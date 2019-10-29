@@ -1,4 +1,5 @@
-[![Build Status](https://dfds.visualstudio.com/DevelopmentExcellence/_apis/build/status/Harald-CI?branch=master)](https://dfds.visualstudio.com/DevelopmentExcellence/_build/latest?definitionId=1047&branch=master) [![Release Status](https://dfds.vsrm.visualstudio.com/_apis/public/Release/badge/ace5e409-c242-4356-93f4-23c53a3dc87b/41/63)](https://dfds.visualstudio.com/DevelopmentExcellence/_release?definitionId=41&_a=releases)
+[![Build Status](https://dfds.visualstudio.com/DevelopmentExcellence/_apis/build/status/Harald-pipeline?branchName=master)](https://dfds.visualstudio.com/DevelopmentExcellence/_build/latest?definitionId=1416&branchName=master)
+[![Build Status](https://dfds.visualstudio.com/DevelopmentExcellence/_apis/build/status/Harald-pipeline?branchName=master&stageName=CI)](https://dfds.visualstudio.com/DevelopmentExcellence/_build/latest?definitionId=1416&branchName=master)
 # Harald
 The notification service aka herold aka herald.
 

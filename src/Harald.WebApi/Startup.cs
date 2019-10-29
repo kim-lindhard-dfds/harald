@@ -83,23 +83,14 @@ namespace Harald.WebApi
 
         private static void ConfigureDomainEvents(IServiceCollection services)
         {
-            services
-                .AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
-            services
-                .AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>,
-                    SlackMemberJoinedCapabilityDomainEventHandler>();
-            services
-                .AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>,
-                    SlackMemberLeftCapabilityDomainEventHandler>();
-            services
-                .AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>,
-                    SlackContextAddedToCapabilityDomainEventHandler>();
-            services
-                .AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>,
-                    SlackAwsContextAccountCreatedEventHandler>();
-            services
-                .AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>,
-                    K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
+            services.AddTransient<IEventHandler<CapabilityCreatedDomainEvent>, SlackCapabilityCreatedDomainEventHandler>();
+            services.AddTransient<IEventHandler<CapabilityDeletedDomainEvent>, CapabilityDeletedEventNotifyDedHandler>();
+            services.AddTransient<IEventHandler<MemberJoinedCapabilityDomainEvent>, SlackMemberJoinedCapabilityDomainEventHandler>();
+            services.AddTransient<IEventHandler<MemberLeftCapabilityDomainEvent>, SlackMemberLeftCapabilityDomainEventHandler>();
+            services.AddTransient<IEventHandler<ContextAddedToCapabilityDomainEvent>, SlackContextAddedToCapabilityDomainEventHandler>();
+            services.AddTransient<IEventHandler<AWSContextAccountCreatedDomainEvent>, SlackAwsContextAccountCreatedEventHandler>();
+            services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8SNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
+
             services.AddTransient<EventHandlerFactory>();
 
             var topic = "build.selfservice.events.capabilities";
@@ -107,6 +98,9 @@ namespace Harald.WebApi
             var eventRegistry = new DomainEventRegistry()
                 .Register<CapabilityCreatedDomainEvent>(
                     eventName: "capability_created",
+                    topicName: topic)
+                .Register<CapabilityDeletedDomainEvent>(
+                    eventName: "capability_deleted",
                     topicName: topic)
                 .Register<MemberJoinedCapabilityDomainEvent>(
                     eventName: "member_joined_capability",

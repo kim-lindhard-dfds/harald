@@ -5,9 +5,9 @@ namespace Harald.WebApi.Domain.Events
 {
     public class CapabilityCreatedDomainEvent : IDomainEvent<CapabilityCreatedData>
     {
-        public CapabilityCreatedDomainEvent(ExternalEvent domainEvent)
+        public CapabilityCreatedDomainEvent(IntegrationEvent integrationEvent)
         {
-            Payload = (domainEvent.Payload as JObject)?.ToObject<CapabilityCreatedData>();
+            Payload = (integrationEvent.Payload as JObject)?.ToObject<CapabilityCreatedData>();
         }
 
         public CapabilityCreatedDomainEvent(CapabilityCreatedData payload)

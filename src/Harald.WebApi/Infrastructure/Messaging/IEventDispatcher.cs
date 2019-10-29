@@ -7,7 +7,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
     public interface IEventDispatcher
     {
         Task Send(string generalDomainEventJson, IServiceScope serviceScope);
-        Task SendAsync(ExternalEvent externalEvent, IServiceScope serviceScope);
+        Task SendAsync(IntegrationEvent integrationEvent, IServiceScope serviceScope);
     }
     
 }

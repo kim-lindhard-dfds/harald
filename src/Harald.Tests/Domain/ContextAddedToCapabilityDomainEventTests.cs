@@ -26,7 +26,7 @@ namespace Harald.Tests.Domain
 
 
             var messageId = Guid.NewGuid();
-            var generalDomainEvent = new ExternalEvent(
+            var generalDomainEvent = new IntegrationEvent(
                 version: "1",
                 eventName: "context_added_to_capability",
                 xCorrelationId: Guid.NewGuid().ToString(),
