@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using Harald.Infrastructure.Slack;
 using Harald.WebApi.Application.EventHandlers;
@@ -11,16 +12,20 @@ using Harald.WebApi.Enablers.SlackHealthCheck;
 using Harald.WebApi.Features.Connections.Configuration;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
-using Harald.WebApi.Infrastructure.Serialization;
 using Harald.WebApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Prometheus;
+using JsonSerializer = Harald.WebApi.Infrastructure.Serialization.JsonSerializer;
 
 namespace Harald.WebApi
 {
@@ -146,6 +151,26 @@ namespace Harald.WebApi
             app.UseHttpMetrics();
 
             app.UseHealthChecks("/health");
+            
+            // Same as above, but in JSON and more descriptive/expanded
+            app.UseHealthChecks("/health-json", new HealthCheckOptions()
+            {
+                ResponseWriter = async (HttpContext httpContext, HealthReport result) =>
+                {
+                    httpContext.Response.ContentType = "application/json";
+
+                    var json = new JObject(
+                        new JProperty("status", result.Status.ToString()),
+                        new JProperty("results", new JObject(result.Entries.Select(pair =>
+                            new JProperty(pair.Key, new JObject(
+                                new JProperty("status", pair.Value.Status.ToString()),
+                                new JProperty("description", pair.Value.Description),
+                                new JProperty("data", new JObject(pair.Value.Data.Select(
+                                    p => new JProperty(p.Key, p.Value))))))))));
+                    await httpContext.Response.WriteAsync(
+                        json.ToString(Formatting.Indented));
+                }
+            });
 
             app.UseMvc();
 
