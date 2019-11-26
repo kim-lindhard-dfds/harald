@@ -7,6 +7,7 @@ using Harald.WebApi.Domain.Events;
 using Harald.WebApi.Enablers.KafkaMessageConsumer.Configuration;
 using Harald.WebApi.Enablers.Metrics.Configuration;
 using Harald.WebApi.Enablers.PrometheusHealthCheck.Configuration;
+using Harald.WebApi.Enablers.SlackHealthCheck;
 using Harald.WebApi.Features.Connections.Configuration;
 using Harald.WebApi.Infrastructure.Messaging;
 using Harald.WebApi.Infrastructure.Persistence;
@@ -76,6 +77,7 @@ namespace Harald.WebApi
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddCheck<SlackHealthProbe>(name: "slack", tags: new [] {"backing services", "slack"})
                 .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
 
             services.AddSwaggerDocument();
@@ -142,6 +144,8 @@ namespace Harald.WebApi
             app.UseSwaggerUi3();
 
             app.UseHttpMetrics();
+
+            app.UseHealthChecks("/health");
 
             app.UseMvc();
 
