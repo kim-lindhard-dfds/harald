@@ -16,9 +16,15 @@ using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using ExtensionMethods;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace Harald.Infrastructure.Slack
 {
@@ -28,20 +34,22 @@ namespace Harald.Infrastructure.Slack
         private readonly IDistributedCache _cache;
         private readonly SlackOptions _options;
         private readonly string _botUserId;
+        private readonly ILogger<SlackFacade> _logger;
 
-        public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null)
+        public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null, ILogger<SlackFacade> logger = null)
         {
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
             _options = options?.Value;
             _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
+            _logger = logger;
         }
 
         public string GetBotUserId() => _botUserId;
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
-            using (var response = await _client.SendAsync(new CreateChannelRequest(channelName)))
+            using (var response = await SendAsync(new CreateChannelRequest(channelName)))
             { 
                 return await Parse<CreateChannelResponse>(response);
             }
@@ -50,7 +58,7 @@ namespace Harald.Infrastructure.Slack
         // This uses an undocumented API, tread carefully.
         public async Task DeleteChannel(SlackChannelIdentifier channelIdentifier, string token)
         {
-            using (var response = await _client.SendAsync(new DeleteChannelRequest(channelIdentifier, token)))
+            using (var response = await SendAsync(new DeleteChannelRequest(channelIdentifier, token)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -59,7 +67,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await _client.SendAsync(new LeaveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new LeaveChannelRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -67,7 +75,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task ArchiveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await _client.SendAsync(new ArchiveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new ArchiveChannelRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -75,7 +83,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task RenameChannel(SlackChannelIdentifier channelIdentifier, SlackChannelName channelName)
         {
-            using (var response = await _client.SendAsync(new RenameChannelRequest(channelIdentifier, channelName)))
+            using (var response = await SendAsync(new RenameChannelRequest(channelIdentifier, channelName)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -83,7 +91,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
         {
-            using (var response = await _client.SendAsync(new JoinChannelRequest(channelName, validate)))
+            using (var response = await SendAsync(new JoinChannelRequest(channelName, validate)))
             {
                 return await Parse<JoinChannelResponse>(response);
             }
@@ -96,7 +104,7 @@ namespace Harald.Infrastructure.Slack
                 token = _options?.SlackApiRequestToken;
             }
 
-            using (var response = await _client.SendAsync(new ListChannelsRequest(token)))
+            using (var response = await SendAsync(new ListChannelsRequest(token)))
             {
                 var result = await Parse<ListChannelsResponse>(response);
 
@@ -106,7 +114,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelIdentifier, string message)
         {
-            using (var response = await _client.SendAsync(new SendNotificationRequest(channelIdentifier, message)))
+            using (var response = await SendAsync(new SendNotificationRequest(channelIdentifier, message)))
             {
                 return await Parse<SendNotificationResponse>(response);
             }
@@ -121,7 +129,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<SendNotificationResponse> SendDelayedNotificationToChannel(SlackChannelIdentifier channelIdentifier, string message, long delayTimeInEpoch)
         {
-            using (var response = await _client.SendAsync(new SendDelayedNotificationRequest(channelIdentifier, message, delayTimeInEpoch)))
+            using (var response = await SendAsync(new SendDelayedNotificationRequest(channelIdentifier, message, delayTimeInEpoch)))
             {
                 return await Parse<SendNotificationResponse>(response);
             }
@@ -129,7 +137,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<SlackResponse> PinMessageToChannel(SlackChannelIdentifier channelIdentifier, string messageTimeStamp)
         {
-            using (var response = await _client.SendAsync(new PinMessageToChannelRequest(channelIdentifier, messageTimeStamp)))
+            using (var response = await SendAsync(new PinMessageToChannelRequest(channelIdentifier, messageTimeStamp)))
             {
                 return await Parse<SlackResponse>(response);
             }
@@ -139,7 +147,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
 
-            using (var response = await _client.SendAsync(new InviteToChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new InviteToChannelRequest(channelIdentifier, userId)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -149,7 +157,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
             
-            using (var response = await _client.SendAsync(new RemoveFromChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new RemoveFromChannelRequest(channelIdentifier, userId)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -157,7 +165,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
         {
-            using (var response = await _client.SendAsync(new CreateUserGroupRequest(name, handle, description)))
+            using (var response = await SendAsync(new CreateUserGroupRequest(name, handle, description)))
             {
                 return await Parse<CreateUserGroupResponse>(response);
             }
@@ -165,7 +173,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task RenameUserGroup(string userGroupId, string name, string handle)
         {
-            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
+            using (var response = await SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -173,7 +181,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task AddUserGroupUser(string userGroupId, string name, string handle)
         {
-            using (var response = await _client.SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
+            using (var response = await SendAsync(new UpdateUserGroupRequest(userGroupId, name, handle)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -201,7 +209,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<GetConversationsResponse> GetConversations()
         {
-            using (var response = await _client.SendAsync(new GetConversationsRequest()))
+            using (var response = await SendAsync(new GetConversationsRequest()))
             {
                 return await Parse<GetConversationsResponse>(response);
             }
@@ -209,7 +217,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<IEnumerable<UserGroupDto>> GetUserGroups()
         {
-            using (var response = await _client.SendAsync(new GetUserGroupsRequest()))
+            using (var response = await SendAsync(new GetUserGroupsRequest()))
             {
                 var data = await Parse<ListUserGroupsResponse>(response);
 
@@ -219,7 +227,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task DisableUserGroup(string userGroupId)
         {
-            using (var response = await _client.SendAsync(new DisableUserGroupRequest(userGroupId)))
+            using (var response = await SendAsync(new DisableUserGroupRequest(userGroupId)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -227,7 +235,7 @@ namespace Harald.Infrastructure.Slack
 
         private async Task UpdateUserGroupUsers(string userGroupId, List<string> users)
         {
-            using (var response = await _client.SendAsync(new UpdateUserGroupUsersRequest(userGroupId, users)))
+            using (var response = await SendAsync(new UpdateUserGroupUsersRequest(userGroupId, users)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -235,7 +243,7 @@ namespace Harald.Infrastructure.Slack
 
         private async Task<List<string>> GetUserGroupUsers(string userGroupId)
         {
-            using (var response = await _client.SendAsync(new GetUserGroupUsersRequest(userGroupId)))
+            using (var response = await SendAsync(new GetUserGroupUsersRequest(userGroupId)))
             {
                 var data = await Parse<ListUsersInUserGroupResponse>(response);
 
@@ -252,7 +260,7 @@ namespace Harald.Infrastructure.Slack
 
             if (string.IsNullOrEmpty(userId))
             {
-                using (var response = await _client.SendAsync(new GetUserByEmailRequest(email)))
+                using (var response = await SendAsync(new GetUserByEmailRequest(email)))
                 {
                     var lookup = await Parse<LookupUserResponse>(response);
 
@@ -266,6 +274,35 @@ namespace Harald.Infrastructure.Slack
             }
 
             return userId;
+        }
+
+        private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage, int retryPeriod = 0, int retryAttempts = 0)
+        {
+            const int mils = 1000;
+            const int tooManyRequestsStatusCode = 429;
+            const string retryAfterHeader = "retry-after";
+            const int maximumRetryAttempts = 5;
+            
+            if (retryPeriod != 0 && retryAttempts <= maximumRetryAttempts)
+            {
+                await Task.Delay(retryPeriod * mils);
+            }
+            
+            var resp = await _client.SendAsync(requestMessage);
+
+            if (resp.StatusCode == (HttpStatusCode) tooManyRequestsStatusCode)
+            {
+                int retryAfter = 0;
+                {
+                    resp.Headers.TryGetValues(retryAfterHeader, out var retryRaw);
+                    retryAfter = int.Parse(retryRaw.First());
+                }
+                
+                _logger.Log(LogLevel.Information, $"URI '{requestMessage.RequestUri}' returned 429 TooManyRequests, waiting given period before trying again: {retryAfter} seconds.");
+                return await SendAsync(await requestMessage.CloneAsync(), retryAfter, retryAttempts + 1);
+            }
+
+            return resp;
         }
 
         private async Task<T> Parse<T>(HttpResponseMessage response) where T : SlackResponse
@@ -286,6 +323,47 @@ namespace Harald.Infrastructure.Slack
                 default:
                     throw new SlackFacadeException($"API error: {content}");
             }
+        }
+    }
+}
+
+namespace ExtensionMethods
+{
+    public static class HttpRequestMessageExtensions
+    {
+        public static async Task<HttpRequestMessage> CloneAsync(this HttpRequestMessage request)
+        {
+            var clone = new HttpRequestMessage(request.Method, request.RequestUri)
+            {
+                Content = await request.Content.CloneAsync().ConfigureAwait(false),
+                Version = request.Version
+            };
+            foreach (KeyValuePair<string, object> prop in request.Properties)
+            {
+                clone.Properties.Add(prop);
+            }
+            foreach (KeyValuePair<string, IEnumerable<string>> header in request.Headers)
+            {
+                clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+
+            return clone;
+        }
+
+        public static async Task<HttpContent> CloneAsync(this HttpContent content)
+        {
+            if (content == null) return null;
+
+            var ms = new MemoryStream();
+            await content.CopyToAsync(ms).ConfigureAwait(false);
+            ms.Position = 0;
+
+            var clone = new StreamContent(ms);
+            foreach (KeyValuePair<string, IEnumerable<string>> header in content.Headers)
+            {
+                clone.Headers.Add(header.Key, header.Value);
+            }
+            return clone;
         }
     }
 }
