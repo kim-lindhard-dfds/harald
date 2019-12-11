@@ -22,6 +22,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ExtensionMethods;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -32,14 +33,16 @@ namespace Harald.Infrastructure.Slack
     {
         private readonly HttpClient _client;
         private readonly IDistributedCache _cache;
+        private readonly IMemoryCache _tokenCache;
         private readonly SlackOptions _options;
         private readonly string _botUserId;
         private readonly ILogger<SlackFacade> _logger;
 
-        public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null, ILogger<SlackFacade> logger = null)
+        public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null, IMemoryCache tokenCache = null, ILogger<SlackFacade> logger = null)
         {
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
+            _tokenCache = tokenCache;
             _options = options?.Value;
             _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
             _logger = logger;
@@ -99,17 +102,25 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<IEnumerable<ChannelDto>> GetChannels(string token = null)
         {
+            var tokenCacheKey = $"SlackGetChannels.{token}";
+
             if(string.IsNullOrEmpty(token))
             { 
                 token = _options?.SlackApiRequestToken;
             }
 
-            using (var response = await SendAsync(new ListChannelsRequest(token)))
+            if (_tokenCache.Get(tokenCacheKey) == null)
             {
-                var result = await Parse<ListChannelsResponse>(response);
-
-                return result.Channels;
+                using (var response = await SendAsync(new ListChannelsRequest(token)))
+                {
+                    var result = await Parse<ListChannelsResponse>(response);
+                    _tokenCache.Set(tokenCacheKey, result.Channels, DateTimeOffset.Now.AddSeconds(10));
+                    return result.Channels;
+                }
             }
+            
+            return _tokenCache.Get<IEnumerable<ChannelDto>>(tokenCacheKey);
+
         }
 
         public async Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelIdentifier, string message)
@@ -209,10 +220,19 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<GetConversationsResponse> GetConversations()
         {
-            using (var response = await SendAsync(new GetConversationsRequest()))
+            const string tokenCacheKey = "SlackGetConversations";
+            
+            if (_tokenCache.Get(tokenCacheKey) == null)
             {
-                return await Parse<GetConversationsResponse>(response);
+                using (var response = await SendAsync(new GetConversationsRequest()))
+                {
+                    var parsedResp = await Parse<GetConversationsResponse>(response);
+                    _tokenCache.Set(tokenCacheKey, parsedResp, DateTimeOffset.Now.AddSeconds(10));
+                    return parsedResp;
+                }
             }
+            
+            return _tokenCache.Get<GetConversationsResponse>(tokenCacheKey);
         }
 
         public async Task<IEnumerable<UserGroupDto>> GetUserGroups()
