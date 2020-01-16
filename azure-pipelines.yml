@@ -21,11 +21,13 @@ resources:
        image: dfdsdk/pipeline:0.0.1
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        AWS_PROFILE: "default"
      - container: cd_runner
        image: dfdsdk/pipeline:0.0.1
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
+        AWS_PROFILE: "saml"
 
 stages:
 # Continuous Integration steps
@@ -59,7 +61,6 @@ stages:
         SLACK_TESTING_API_AUTH_TOKEN: $(SLACK_TESTING_API_AUTH_TOKEN)
         SLACK_TESTING_USER_EMAIL: $(SLACK_TESTING_USER_EMAIL)
         SLACK_API_BOT_USER_ID: $(SLACK_API_BOT_USER_ID)
-        AWS_PROFILE: "default"
       displayName: Pipeline Bash Script
 
     - task: PublishTestResults@2
