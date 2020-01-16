@@ -12,7 +12,7 @@ pr: none
 # Variables and Variable Groups used in rest of pipeline
 variables:
   agent-pool: 'Docker-pool'
-  k8s-service-connection: 'Kubernetes-selfservice-herald'
+  k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
 
 resources:
@@ -83,7 +83,7 @@ stages:
 # Continuous Deployment steps
 - stage: CD
   dependsOn: CI
-  condition: succeeded('CI')
+  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
@@ -104,6 +104,30 @@ stages:
       runOnce:
         deploy:
           steps:
+          # Setup auth against k8s
+          - bash: |
+              VERSION=1.14.6
+              BUILD_DATE=2019-08-22
+              DOWNLOAD_URL=https://amazon-eks.s3-us-west-2.amazonaws.com/${VERSION}/${BUILD_DATE}/bin/linux/amd64/aws-iam-authenticator
+              LOCAL_FILE=./aws-iam-authenticator
+              curl -Lo $LOCAL_FILE $DOWNLOAD_URL
+              chmod +x $LOCAL_FILE
+              sudo mv $LOCAL_FILE /usr/local/bin
+              
+              # Install saml2aws
+              VERSION=2.20.0
+              DOWNLOAD_URL=https://github.com/Versent/saml2aws/releases/download/v${VERSION}/saml2aws_${VERSION}_linux_amd64.tar.gz
+              LOCAL_FILE=./saml2aws.tar.gz
+              curl -Lo $LOCAL_FILE $DOWNLOAD_URL
+              tar xvzf $LOCAL_FILE
+              rm $LOCAL_FILE
+              sudo mv saml2aws /usr/local/bin
+
+              saml2aws login --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --skip-prompt --force
+              eval $(saml2aws script --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto)
+            env:
+              SAML2AWS_PASSWORD: $(SAML2AWS_PASSWORD)          
+
           # Download manifest from current artifacts pipeline
           - download: current
             artifact: manifests
