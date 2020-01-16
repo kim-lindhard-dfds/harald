@@ -98,6 +98,7 @@ stages:
   - deployment: K8s
     displayName: 'Deploy to Kubernetes'
     pool: '$(agent-pool)'
+    container: cd_runner
     environment: 'Hellman'
     dependsOn: Create_Infrastruture_On_AWS
     condition: succeeded('Create_Infrastruture_On_AWS')
@@ -158,6 +159,6 @@ stages:
             inputs:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(k8s-service-connection)'
-              namespace: 'selfservice-herald-vbqkr'
+              namespace: '$(KUBENAMESPACE)'
               command: apply
               arguments: '-f $(Pipeline.Workspace)/manifests/'
