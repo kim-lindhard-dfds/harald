@@ -36,11 +36,6 @@ namespace Harald.WebApi.Application.EventHandlers
             sb.AppendLine("---");
             sb.AppendLine($"Please execute the following script in K8s root and AWS prime context for this repo https://github.com/dfds/ded-toolbox/tree/master/k8s-service-account-config-to-ssm:");
             sb.AppendLine(addDeployCredentials);
-            sb.AppendLine("---");
-            sb.AppendLine($"Please manually set Tax settings for AWS Account {domainEvent.Payload.AccountId}");
-            sb.AppendLine($"\tCountry: Denmark");
-            sb.AppendLine($"\tTax registration number: DK14194711");
-            sb.AppendLine($"\tBusiness Legal Name: DFDS A/S");
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());
