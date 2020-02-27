@@ -77,7 +77,9 @@ namespace Harald.WebApi
 
             services.AddConnectionDependencies();
             services.AddKafkaMessageConsumer();
-            services.AddMetrics();
+            
+            var shouldStartMetricHostedService = Configuration["HARALD_START_METRIC_SERVER"] != "false";
+            services.AddMetrics(shouldStartMetricHostedService);
 
 
             services.AddHealthChecks()

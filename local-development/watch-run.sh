@@ -14,5 +14,7 @@ HARALD_DATABASE_CONNECTIONSTRING="User ID=postgres;Password=p;Host=localhost;Por
 HARALD_KAFKA_BOOTSTRAP_SERVERS=localhost:9092 \
 HARALD_KAFKA_GROUP_ID=harald-consumer \
 HARALD_KAFKA_ENABLE_AUTO_COMMIT=false \
+HARALD_START_METRIC_SERVER=false \
+SLACK_API_BOT_USER_ID="This-is-not-an-user-id" \
 dotnet watch --project ./../src/Harald.WebApi/Harald.WebApi.csproj \
 run --server.urls "http://*:5123" --no-launch-profile
