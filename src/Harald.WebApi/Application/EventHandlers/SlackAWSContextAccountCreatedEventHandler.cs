@@ -21,7 +21,7 @@ namespace Harald.WebApi.Application.EventHandlers
         public async Task HandleAsync(AWSContextAccountCreatedDomainEvent domainEvent)
         {
             var addUserCmd =
-                $"Get-ADUser \"CN=IT BuildSource DevEx,OU=Shared Mailboxes,OU=IT,OU=DFDS AS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
+                $"Get-ADUser \"CN=IT BuildSource DevEx,OU=DFDS AS,OU=Mailboxes,OU=Accounts,OU=DFDS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
             var installToolsCmd =
                 $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
             var addDeployCredentials = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
