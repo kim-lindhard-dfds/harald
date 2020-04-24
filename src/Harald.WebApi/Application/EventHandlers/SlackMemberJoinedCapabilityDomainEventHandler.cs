@@ -65,6 +65,7 @@ namespace Harald.WebApi.Application.EventHandlers
                             userGroup.Id
                         );
 
+                        await updatedCapability.AddMember(domainEvent.Payload.MemberEmail);
                         await _capabilityRepository.Update(updatedCapability);
                     }
 

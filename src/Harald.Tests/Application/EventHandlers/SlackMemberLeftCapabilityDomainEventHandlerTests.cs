@@ -28,10 +28,11 @@ namespace Harald.Tests.Application.EventHandlers
                 "theUserGroup"
             );
             var userEmail = "torpen@dfds.com";
+            await capability.AddMember(userEmail);
             var nullLogger = new NullLogger<SlackMemberLeftCapabilityDomainEventHandler>();
             var slackFacadeSpy = new SlackFacadeSpy();
             var stubCapabilityRepository = new StubCapabilityRepository();
-            stubCapabilityRepository.Add(capability);
+            await stubCapabilityRepository.Add(capability);
             var slackMemberLeftCapabilityDomainEventHandler = new SlackMemberLeftCapabilityDomainEventHandler(
                 nullLogger,
                 slackFacadeSpy,
@@ -43,6 +44,7 @@ namespace Harald.Tests.Application.EventHandlers
 
 
             // Act
+
             await slackMemberLeftCapabilityDomainEventHandler.HandleAsync(memberLeftCapabilityDomainEvent);
 
             // Assert 
