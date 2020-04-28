@@ -49,7 +49,7 @@ namespace Harald.WebApi.Domain
 
             if (name.Contains("-"))
             {
-                regExPattern = @"[a-zA-Z1-9]+-[a-zA-Z1-9]+";
+                regExPattern = @"[a-zA-Z1-9]+[a-zA-Z1-9]+";
             }
             else
             {

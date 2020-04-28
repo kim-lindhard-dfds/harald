@@ -11,30 +11,33 @@ pr: none
 
 # Variables and Variable Groups used in rest of pipeline
 variables:
-  agent-pool: 'Docker-pool'
-  k8s-service-connection: 'Kubernetes-selfservice-herald'
+  k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
+  vmImage: 'ubuntu-latest'
 
 resources:
    containers:
      - container: ci_runner
-       image: dfdsdk/pipeline:0.0.1
+       image: dfdsdk/pre-prime-pipeline:0.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        AWS_PROFILE: "default"
      - container: cd_runner
-       image: dfdsdk/pipeline:0.0.1
+       image: dfdsdk/pre-prime-pipeline:0.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
+        AWS_PROFILE: "saml"
 
 stages:
 # Continuous Integration steps
 - stage: CI
+  pool:
+    vmImage: $(vmImage)
   # Validation jobs
   jobs:
   # Build jobs
   - job: "Create_ECR"
-    pool: '$(agent-pool)'
     container: ci_runner
     steps:
     - bash:
@@ -43,8 +46,6 @@ stages:
   - job: Build
     dependsOn: Create_ECR
     condition: succeeded('Create_ECR')
-    pool: 
-      vmImage: 'ubuntu-16.04'
     steps:
     # - task: DotNetCoreInstaller@0
     #   inputs:
@@ -83,11 +84,12 @@ stages:
 # Continuous Deployment steps
 - stage: CD
   dependsOn: CI
-  condition: succeeded('CI')
+  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  pool:
+    vmImage: $(vmImage)  
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
-    pool: '$(agent-pool)'
     container: cd_runner
     steps:
     - bash:
@@ -95,20 +97,48 @@ stages:
 
   - deployment: K8s
     displayName: 'Deploy to Kubernetes'
-    pool: '$(agent-pool)'
+    variables:
+      AWS_PROFILE: "saml"
     environment: 'Hellman'
     dependsOn: Create_Infrastruture_On_AWS
     condition: succeeded('Create_Infrastruture_On_AWS')
 
-    strategy: 
+    strategy:
       runOnce:
         deploy:
           steps:
+          # Setup auth against k8s
+          - bash: |
+              VERSION=1.14.6
+              BUILD_DATE=2019-08-22
+              DOWNLOAD_URL=https://amazon-eks.s3-us-west-2.amazonaws.com/${VERSION}/${BUILD_DATE}/bin/linux/amd64/aws-iam-authenticator
+              LOCAL_FILE=./aws-iam-authenticator
+              curl -Lo $LOCAL_FILE $DOWNLOAD_URL
+              chmod +x $LOCAL_FILE
+              sudo mv $LOCAL_FILE /usr/local/bin
+
+              # Install saml2aws
+              VERSION=2.20.0
+              DOWNLOAD_URL=https://github.com/Versent/saml2aws/releases/download/v${VERSION}/saml2aws_${VERSION}_linux_amd64.tar.gz
+              LOCAL_FILE=./saml2aws.tar.gz
+              curl -Lo $LOCAL_FILE $DOWNLOAD_URL
+              tar xvzf $LOCAL_FILE
+              rm $LOCAL_FILE
+              sudo mv saml2aws /usr/local/bin
+
+              # Configure saml2aws
+              saml2aws configure --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --session-duration=28800 --skip-prompt
+
+              saml2aws login --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --skip-prompt --force
+              eval $(saml2aws script --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto)
+            env:
+              SAML2AWS_PASSWORD: $(SAML2AWS_PASSWORD)
+
           # Download manifest from current artifacts pipeline
           - download: current
             artifact: manifests
             displayName: 'Download Artifact: manifests'
-          
+
           # Replace token values in yaml files with pipeline variables
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace tokens in yaml files'
@@ -117,7 +147,7 @@ stages:
               targetFiles: '*.yml'
               tokenPrefix: '$('
               tokenSuffix: ')'
-          
+
           # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
           - publish: $(Pipeline.Workspace)/manifests/
             artifact: deployed-manifests
@@ -129,6 +159,6 @@ stages:
             inputs:
               connectionType: Kubernetes Service Connection
               kubernetesServiceEndpoint: '$(k8s-service-connection)'
-              namespace: 'selfservice-herald-vbqkr'
+              namespace: '$(KUBENAMESPACE)'
               command: apply
               arguments: '-f $(Pipeline.Workspace)/manifests/'
