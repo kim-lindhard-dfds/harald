@@ -11,7 +11,6 @@ pr: none
 
 # Variables and Variable Groups used in rest of pipeline
 variables:
-  agent-pool: 'Docker-pool'
   k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
 
@@ -36,7 +35,6 @@ stages:
   jobs:
   # Build jobs
   - job: "Create_ECR"
-    pool: '$(agent-pool)'
     container: ci_runner
     steps:
     - bash:
@@ -89,7 +87,6 @@ stages:
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
-    pool: '$(agent-pool)'
     container: cd_runner
     steps:
     - bash:
@@ -97,7 +94,6 @@ stages:
 
   - deployment: K8s
     displayName: 'Deploy to Kubernetes'
-    pool: '$(agent-pool)'
     variables:
       AWS_PROFILE: "saml"
     environment: 'Hellman'
