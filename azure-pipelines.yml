@@ -13,6 +13,7 @@ pr: none
 variables:
   k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
+  vmImage: 'ubuntu-latest'
 
 resources:
    containers:
@@ -31,6 +32,8 @@ resources:
 stages:
 # Continuous Integration steps
 - stage: CI
+  pool:
+    vmImage: $(vmImage)
   # Validation jobs
   jobs:
   # Build jobs
@@ -43,8 +46,6 @@ stages:
   - job: Build
     dependsOn: Create_ECR
     condition: succeeded('Create_ECR')
-    pool:
-      vmImage: 'ubuntu-16.04'
     steps:
     # - task: DotNetCoreInstaller@0
     #   inputs:
@@ -84,6 +85,8 @@ stages:
 - stage: CD
   dependsOn: CI
   condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  pool:
+    vmImage: $(vmImage)  
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
