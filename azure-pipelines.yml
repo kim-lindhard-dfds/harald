@@ -11,9 +11,9 @@ pr: none
 
 # Variables and Variable Groups used in rest of pipeline
 variables:
-  agent-pool: 'Docker-pool'
   k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
+  vmImage: 'ubuntu-latest'
 
 resources:
    containers:
@@ -32,11 +32,12 @@ resources:
 stages:
 # Continuous Integration steps
 - stage: CI
+  pool:
+    vmImage: $(vmImage)
   # Validation jobs
   jobs:
   # Build jobs
   - job: "Create_ECR"
-    pool: '$(agent-pool)'
     container: ci_runner
     steps:
     - bash:
@@ -45,8 +46,6 @@ stages:
   - job: Build
     dependsOn: Create_ECR
     condition: succeeded('Create_ECR')
-    pool:
-      vmImage: 'ubuntu-16.04'
     steps:
     # - task: DotNetCoreInstaller@0
     #   inputs:
@@ -86,10 +85,11 @@ stages:
 - stage: CD
   dependsOn: CI
   condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  pool:
+    vmImage: $(vmImage)  
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
-    pool: '$(agent-pool)'
     container: cd_runner
     steps:
     - bash:
@@ -97,7 +97,6 @@ stages:
 
   - deployment: K8s
     displayName: 'Deploy to Kubernetes'
-    pool: '$(agent-pool)'
     variables:
       AWS_PROFILE: "saml"
     environment: 'Hellman'
