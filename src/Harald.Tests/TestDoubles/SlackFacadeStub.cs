@@ -83,7 +83,7 @@ namespace Harald.Tests.TestDoubles
 
         public Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new CreateUserGroupResponse() { Ok = true, UserGroup = new UserGroupDto() { Id = "TESTGROUP", Handle = "TESTHANDLE", Name = "TestGroup" } });
         }
 
         public Task RemoveUserGroupUser(string userGroupId, string email)
@@ -93,7 +93,7 @@ namespace Harald.Tests.TestDoubles
 
         public Task<IEnumerable<UserGroupDto>> GetUserGroups()
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new List<UserGroupDto>().AsEnumerable());
         }
         
         public Task<GetConversationsResponse> GetConversations()

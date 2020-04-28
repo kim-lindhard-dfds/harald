@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Facades\**" />
+    <EmbeddedResource Remove="Infrastructure\Facades\**" />
+    <None Remove="Infrastructure\Facades\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="appsettings.json" />
   </ItemGroup>
 
@@ -37,7 +43,6 @@
   <ItemGroup>
     <Folder Include="Application" />
     <Folder Include="Domain\Events" />
-    <Folder Include="Infrastructure\Facades\Slack" />
   </ItemGroup>
 
 </Project>
