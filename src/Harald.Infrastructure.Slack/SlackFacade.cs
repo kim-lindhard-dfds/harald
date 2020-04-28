@@ -23,9 +23,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ExtensionMethods;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Logging;
 
 namespace Harald.Infrastructure.Slack
 {

@@ -31,7 +31,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         public async Task CreateChannel_Given_valid_input_Should_create_channel()
         {
             // Arrange
-            var sut = new SlackFacade(_httpClient, _slackOptions, null, new MemoryCache(new MemoryCacheOptions()));
+            var sut = new SlackFacade(_httpClient, _slackOptions, null);
             var channelName = ChannelName.Create(Guid.NewGuid().ToString());
 
             // Act
