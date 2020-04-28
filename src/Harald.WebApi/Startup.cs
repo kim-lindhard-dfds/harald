@@ -25,9 +25,12 @@ namespace Harald.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -35,18 +38,45 @@ namespace Harald.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddOptions();
             services.Configure<SlackOptions>(Configuration);
+            
+            var connectionString = Configuration.GetConnectionString("HaraldDbContext") ?? Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
 
-            var connectionString = Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
+            AddRepositories(services);
+            AddSlackServices(services);
+
+            services.AddTransient<JsonSerializer>();
+
+            services.AddTransient<ISlackService, SlackService>();
+
+            ConfigureDomainEvents(services);
+
+            services.AddConnectionDependencies();
+            services.AddKafkaMessageConsumer();
+            AddMetricServices(services);
+
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
+
+            services.AddSwaggerDocument();
+        }
+
+        protected virtual void AddRepositories(IServiceCollection services)
+        {
+            var connectionString = Configuration.GetConnectionString("HaraldDbContext") ?? Configuration["HARALD_DATABASE_CONNECTIONSTRING"];
 
             services
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<HaraldDbContext>((serviceProvider, options) => { options.UseNpgsql(connectionString); });
 
             services.AddTransient<ICapabilityRepository, CapabilityEntityFrameworkRepository>();
+        }
 
+        protected virtual void AddSlackServices(IServiceCollection services)
+        {
             services.AddHttpClient<ISlackFacade, SlackFacade>(cfg =>
             {
                 var baseUrl = Configuration["SLACK_API_BASE_URL"];
@@ -62,23 +92,11 @@ namespace Harald.WebApi
                         .Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
                 }
             });
+        }
 
-            services.AddTransient<JsonSerializer>();
-
-            services.AddTransient<ISlackService, SlackService>();
-
-            ConfigureDomainEvents(services);
-
-            services.AddConnectionDependencies();
-            services.AddKafkaMessageConsumer();
+        protected virtual void AddMetricServices(IServiceCollection services)
+        {
             services.AddMetrics();
-
-
-            services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(connectionString, tags: new[] {"backing services", "postgres"});
-
-            services.AddSwaggerDocument();
         }
 
         private static void ConfigureDomainEvents(IServiceCollection services)
@@ -131,14 +149,14 @@ namespace Harald.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpMetrics();

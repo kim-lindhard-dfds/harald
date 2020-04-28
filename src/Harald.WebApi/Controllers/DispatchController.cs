@@ -5,7 +5,7 @@ using Harald.WebApi.Domain;
 using Harald.Infrastructure.Slack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
 
 namespace Harald.WebApi.Controllers
 {

@@ -5,6 +5,8 @@ using System.Net.Http;
 using Harald.WebApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -31,13 +33,36 @@ namespace Harald.Tests.Builders
         private IWebHostBuilder CreateWebHostBuilder()
         {
             return new WebHostBuilder()
-                .UseStartup<Startup>()
-                .ConfigureTestServices(services =>
+                .UseStartup<FakeStartup>()
+                .UseSetting(WebHostDefaults.ApplicationKey, typeof(Program).Assembly.FullName)
+                .ConfigureAppConfiguration((builderContext, config) =>
                 {
-                    _serviceDescriptors
-                        .Values
-                        .ToList()
-                        .ForEach(serviceOverride => services.Replace(serviceOverride));
+                    var sourcesToRemove = config.Sources
+                        .Where(s => s.GetType() == typeof(JsonConfigurationSource))
+                        .ToArray();
+
+                    foreach (var source in sourcesToRemove)
+                    {
+                        config.Sources.Remove(source);
+                    }
+
+                    config
+                        .AddJsonFile(
+                            path: "appsettings.json",
+                            optional: true,
+                            reloadOnChange: false
+                        )
+                        .AddJsonFile(
+                            path: "appsettings." + builderContext.HostingEnvironment.EnvironmentName + ".json",
+                            optional: true,
+                            reloadOnChange: false
+                        );
+                })
+                .ConfigureServices(services => {
+                    foreach (var descriptor in _serviceDescriptors)
+                    {
+                        services.Add(descriptor.Value);
+                    }
                 });
         }
 
@@ -69,9 +94,19 @@ namespace Harald.Tests.Builders
 
         public void Dispose()
         {
-            foreach (var instance in _disposables.Reverse())
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                instance.Dispose();
+                foreach (var instance in _disposables.Reverse())
+                {
+                    instance.Dispose();
+                }
             }
         }
     }
