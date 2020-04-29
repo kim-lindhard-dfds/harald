@@ -145,11 +145,7 @@ namespace Harald.WebApi
                     eventName: "k8s_namespace_created_and_aws_arn_connected",
                     topicName: topic);
 
-            var serviceProvider = services.BuildServiceProvider();
-
-
             services.AddSingleton(eventRegistry);
-
 
             services.AddTransient<IEventDispatcher, EventDispatcher>();
 

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Harald.WebApi.Domain
 {
     public class Capability
     {
-        private List<string> _members = new List<string>();
-        public IEnumerable<string> Members => _members.AsReadOnly();
+        private List<CapabilityMember> _members = new List<CapabilityMember>();
+        public IEnumerable<CapabilityMember> Members => _members.AsReadOnly();
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public ChannelId SlackChannelId { get; private set; }
@@ -40,9 +41,9 @@ namespace Harald.WebApi.Domain
 
         public ValueTask AddMember(string email) 
         {
-            if(!_members.Contains(email))
+            if (!_members.Any(m => m.Email == email))
             { 
-                _members.Add(email);
+                _members.Add(new CapabilityMember(email));
             }
 
             return new ValueTask();
@@ -50,7 +51,7 @@ namespace Harald.WebApi.Domain
 
         public ValueTask RemoveMember(string email)
         {
-            _members.Remove(email);
+            _members.Remove(_members.Find(m => m.Email == email));
 
             return new ValueTask();
         }

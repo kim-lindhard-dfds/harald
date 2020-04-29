@@ -9,9 +9,9 @@ namespace Harald.WebApi.Infrastructure.Persistence
         public void Configure(EntityTypeBuilder<Capability> builder)
         {
             builder.ToTable("Capability");
-            builder.Property(e => e.SlackChannelId)
-                .HasConversion(v => v.ToString(), v => new ChannelId(v));
             builder.HasKey(cap => new { cap.Id, cap.SlackChannelId });
+            builder.Property(e => e.SlackChannelId)
+                    .HasConversion(v => v.ToString(), v => new ChannelId(v));
 
             var navigation = builder.Metadata.FindNavigation(nameof(Capability.Members));
             navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);

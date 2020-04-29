@@ -26,7 +26,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(MemberLeftCapabilityDomainEvent domainEvent)
         {
-            var capabilitiesJoinedByMember = await _capabilityRepository.GetByFilter(o => o.Members.ToList().Contains(domainEvent.Payload.MemberEmail));
+            var capabilitiesJoinedByMember = await _capabilityRepository.GetByFilter(o => o.Members.Any(m => m.Email == domainEvent.Payload.MemberEmail));
             var capabilitiesBeingLeft = capabilitiesJoinedByMember.Where(o => o.Id == domainEvent.Payload.CapabilityId);
 
             foreach (var capability in capabilitiesBeingLeft)

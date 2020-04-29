@@ -4,9 +4,6 @@ param(
 )
 
 $name = ((,$name + $args) -join "_") -replace "\s+", "_"
-
-$name
-
 $rootDir = resolve-path .
 $migrationsDir = "$rootDir\db\migrations"
 
@@ -22,4 +19,8 @@ $filePath = "$migrationsDir\$newFileName"
 
 "-- $(Get-Date -Format "yyyy-MM-dd HH:mm") : $oldName" | set-content -Path "$filePath"
 
-write-host "$filePath"
+dotnet ef migrations add $name --project .\src\Harald.WebApi
+
+(dotnet ef migrations script -i --project .\src\Harald.WebApi) -Split [Environment]::NewLine | Select-Object -Skip 2 | Out-File -FilePath $filePath
+
+Write-Host "Created sql script: " + $filePath
