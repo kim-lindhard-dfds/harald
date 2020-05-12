@@ -57,7 +57,7 @@ namespace Harald.WebApi.Enablers.KafkaMessageConsumer.Infrastructure
             
             public ConsumerConfig GetConsumerConfiguration()
             {
-                return new ConsumerConfig(AsEnumerable());
+                return new ConsumerConfig(AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
 
             public IEnumerable<KeyValuePair<string, string>> AsEnumerable()

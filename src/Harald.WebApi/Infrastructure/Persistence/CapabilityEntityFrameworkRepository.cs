@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,15 @@ namespace Harald.WebApi.Infrastructure.Persistence
 
         public async Task<IEnumerable<Capability>> GetById(Guid id)
         {
+            return await GetByFilter(o => o.Id == id);
+        }
+
+        public async Task<IEnumerable<Capability>> GetByFilter(Expression<Func<Capability, bool>> filter)
+        {
             var capabilities = await _dbContext
                 .Capabilities
                 .AsNoTracking()
-                .Where(x => x.Id == id)
+                .Where(filter)
                 .ToListAsync();
 
             return capabilities;
@@ -47,11 +53,7 @@ namespace Harald.WebApi.Infrastructure.Persistence
 
         public async Task<IEnumerable<Capability>> GetAll()
         {
-            return await _dbContext
-                .Capabilities
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            return await GetByFilter(o => true);
         }
     }
 }

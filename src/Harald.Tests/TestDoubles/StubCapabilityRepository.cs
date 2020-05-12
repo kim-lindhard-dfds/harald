@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Harald.WebApi.Domain;
 using Harald.Infrastructure.Slack;
+using System.Linq.Expressions;
 
 namespace Harald.Tests.TestDoubles
 {
@@ -55,6 +56,13 @@ namespace Harald.Tests.TestDoubles
         public Task<IEnumerable<Capability>> GetAll()
         {
             return Task.FromResult(_capabilities.AsEnumerable());
+        }
+
+        public async Task<IEnumerable<Capability>> GetByFilter(Expression<Func<Capability, bool>> filter)
+        {
+            var matches = await GetAll();
+
+            return matches.AsQueryable().Where(filter);
         }
     }
 }

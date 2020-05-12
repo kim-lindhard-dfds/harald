@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Harald.WebApi.Domain
@@ -9,6 +10,7 @@ namespace Harald.WebApi.Domain
         Task<IEnumerable<Capability>> GetAll();
         
         Task<IEnumerable<Capability>> GetById(Guid id);
+        Task<IEnumerable<Capability>> GetByFilter(Expression<Func<Capability, bool>> filter);
         Task Add(Capability capability);
         Task Update(Capability capability);
         Task Remove(Capability capability);

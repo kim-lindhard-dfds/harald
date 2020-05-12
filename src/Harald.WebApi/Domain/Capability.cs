@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Harald.WebApi.Domain
 {
     public class Capability
     {
+        private List<CapabilityMember> _members = new List<CapabilityMember>();
+        public IEnumerable<CapabilityMember> Members => _members.AsReadOnly();
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public ChannelId SlackChannelId { get; private set; }
         public string SlackUserGroupId { get; private set; }
-
+        
         // For Entity Framework
         private Capability()
         {
@@ -32,6 +37,23 @@ namespace Harald.WebApi.Domain
             );
 
             return capability;
+        }
+
+        public ValueTask AddMember(string email) 
+        {
+            if (!_members.Any(m => m.Email == email))
+            { 
+                _members.Add(new CapabilityMember(email));
+            }
+
+            return new ValueTask();
+        }
+
+        public ValueTask RemoveMember(string email)
+        {
+            _members.Remove(_members.Find(m => m.Email == email));
+
+            return new ValueTask();
         }
     }
 }

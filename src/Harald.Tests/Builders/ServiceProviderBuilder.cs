@@ -19,7 +19,7 @@ namespace Harald.Tests.Builders
         {
             var configuration = new ConfigurationBuilder().Build();
 
-            var startup = new Startup(configuration);
+            var startup = new Startup(configuration, null);
             startup.ConfigureServices(_serviceCollection);
 
             
