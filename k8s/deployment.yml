@@ -89,6 +89,10 @@ spec:
             value: "PLAIN"
           - name: HARALD_KAFKA_SECURITY_PROTOCOL
             value: "SASL_SSL"
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
         livenessProbe:
           initialDelaySeconds: 5
           periodSeconds: 60
