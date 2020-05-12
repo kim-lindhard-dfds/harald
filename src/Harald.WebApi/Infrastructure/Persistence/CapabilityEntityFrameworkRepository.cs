@@ -17,7 +17,6 @@ namespace Harald.WebApi.Infrastructure.Persistence
             _dbContext = dbContext;
         }
 
-        //TODO: Figure out why this is 1-to-many. There should only ever be one capability entry in the Harald db.
         public async Task<IEnumerable<Capability>> GetById(Guid id)
         {
             return await GetByFilter(o => o.Id == id);
