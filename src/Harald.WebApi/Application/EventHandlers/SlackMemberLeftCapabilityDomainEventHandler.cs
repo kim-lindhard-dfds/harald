@@ -37,12 +37,9 @@ namespace Harald.WebApi.Application.EventHandlers
                         $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't remove member {domainEvent.Payload.MemberEmail} from Slack.");
                     return;
                 }
-
+                
                 if (!capabilitiesJoinedByMember.Any(o => o.SlackChannelId == capability.SlackChannelId && o.Id != capability.Id))
                 {
-                    await capability.RemoveMember(domainEvent.Payload.MemberEmail);
-                    await _capabilityRepository.Update(capability);
-
                     try
                     {
                         // Remove user from Slack channel:
@@ -73,6 +70,9 @@ namespace Harald.WebApi.Application.EventHandlers
                         message:
                         $"Thank you for your contributions to capability {capability.Name}.\nYou have been removed from corresponding Slack channel and user group.");
                 }
+
+                await capability.RemoveMember(domainEvent.Payload.MemberEmail);
+                await _capabilityRepository.Update(capability);
             }
         }
     }

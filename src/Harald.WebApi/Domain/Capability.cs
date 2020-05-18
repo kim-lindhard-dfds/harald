@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace Harald.WebApi.Domain
     public class Capability
     {
         private List<CapabilityMember> _members = new List<CapabilityMember>();
+
         public IEnumerable<CapabilityMember> Members => _members.AsReadOnly();
         public Guid Id { get; private set; }
         public string Name { get; private set; }
