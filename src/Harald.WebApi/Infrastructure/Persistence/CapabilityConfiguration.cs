@@ -13,11 +13,11 @@ namespace Harald.WebApi.Infrastructure.Persistence
             builder.Property(e => e.SlackChannelId)
                     .HasConversion(v => v.ToString(), v => new ChannelId(v));
 
-            //builder.HasMany(b => b.Members).WithOne();
+            builder.HasMany(b => b.Members).WithOne();
 
-            //var navigation = builder.Metadata.FindNavigation(nameof(Capability.Members));
-            //navigation?.SetField("_members");
-            //navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+            var navigation = builder.Metadata.FindNavigation(nameof(Capability.Members));
+            navigation?.SetField("_members");
+            navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
