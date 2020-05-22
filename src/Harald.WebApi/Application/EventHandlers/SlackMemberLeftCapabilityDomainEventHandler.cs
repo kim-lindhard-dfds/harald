@@ -38,11 +38,11 @@ namespace Harald.WebApi.Application.EventHandlers
                     return;
                 }
 
-                if (!capabilitiesJoinedByMember.Any(o => o.SlackChannelId == capability.SlackChannelId && o.Id != capability.Id))
-                {
-                    await capability.RemoveMember(domainEvent.Payload.MemberEmail);
-                    await _capabilityRepository.Update(capability);
+                await capability.RemoveMember(domainEvent.Payload.MemberEmail);
+                await _capabilityRepository.Update(capability);
 
+                if (!capabilitiesJoinedByMember.Where(c => c.Id != capability.Id).Any(o => o.SlackChannelId == capability.SlackChannelId))
+                {
                     try
                     {
                         // Remove user from Slack channel:
