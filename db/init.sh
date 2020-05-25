@@ -158,7 +158,11 @@ seed_database() {
 
         base_path=$(dirname $(readlink -f "$0"))
 
+		echo ${ORDER_FILE}
+
         while read name; do
+			echo $name
+
             table_name=$(echo $name | cut -f 1 -d '.')
             file="$base_path/seed/$name"
 
