@@ -26,6 +26,7 @@ namespace Harald.WebApi.Infrastructure.Persistence
         {
             var capabilities = await _dbContext
                 .Capabilities
+                .Include(o => o.Members)
                 .AsNoTracking()
                 .Where(filter)
                 .ToListAsync();
