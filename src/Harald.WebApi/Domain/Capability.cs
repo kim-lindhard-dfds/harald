@@ -57,5 +57,10 @@ namespace Harald.WebApi.Domain
 
             return new ValueTask();
         }
+
+        public void SetUserGroupID(string slackUserGroupId)
+        {
+            SlackUserGroupId = slackUserGroupId;
+        }
     }
 }

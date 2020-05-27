@@ -31,13 +31,13 @@ namespace Harald.WebApi.Application.EventHandlers
         {
             var capabilities = await _capabilityRepository.GetById(domainEvent.Payload.CapabilityId);
             
-            // TODO not cool to do a foreach over so much code
             foreach (var capability in capabilities)
             {
                 if (capability == null)
                 {
                     _logger.LogError(
                         $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't add member {domainEvent.Payload.MemberEmail} to Slack.");
+
                     return;
                 }
 
@@ -57,17 +57,12 @@ namespace Harald.WebApi.Application.EventHandlers
                     if (string.IsNullOrEmpty(capability.SlackUserGroupId))
                     {
                         var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
-                        // Update Capability with UserGroupId
-                        var updatedCapability = Capability.Create(
-                            capability.Id,
-                            capability.Name,
-                            capability.SlackChannelId,
-                            userGroup.Id
-                        );
 
-                        await updatedCapability.AddMember(domainEvent.Payload.MemberEmail);
-                        await _capabilityRepository.Update(updatedCapability);
+                        capability.SetUserGroupID(userGroup.Id);
                     }
+                                       
+                    await capability.AddMember(domainEvent.Payload.MemberEmail);
+                    await _capabilityRepository.Update(capability);
 
                     // Add user to Slack user group:    
                     await _slackFacade.AddUserGroupUser(email: domainEvent.Payload.MemberEmail,
