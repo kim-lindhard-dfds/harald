@@ -31,13 +31,6 @@ namespace Harald.WebApi.Application.EventHandlers
 
             foreach (var capability in capabilitiesBeingLeft)
             {
-                if (capability == null)
-                {
-                    _logger.LogError(
-                        $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't remove member {domainEvent.Payload.MemberEmail} from Slack.");
-                    return;
-                }
-
                 await capability.RemoveMember(domainEvent.Payload.MemberEmail);
                 await _capabilityRepository.Update(capability);
 
