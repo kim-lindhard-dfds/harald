@@ -43,5 +43,9 @@ ENV ASPNETCORE_URLS="http://*:50900"
 #Copy binaries from publish container to final container
 COPY --from=build-env /build/out .
 
+# OpenSSL cert for Kafka
+RUN curl -sS -o /app/cert.pem https://curl.haxx.se/ca/cacert.pem
+ENV HARALD_KAFKA_SSL_CA_LOCATION=/app/cert.pem
+
 #Run dotnet executable
 ENTRYPOINT ["dotnet", "Harald.WebApi.dll"]
