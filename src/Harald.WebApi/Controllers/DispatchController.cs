@@ -6,6 +6,7 @@ using Harald.Infrastructure.Slack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Harald.Infrastructure.Slack.Exceptions;
 
 namespace Harald.WebApi.Controllers
 {
@@ -41,15 +42,22 @@ namespace Harald.WebApi.Controllers
 
             foreach (var capability in capabilities)
             {
-                var sendNotificationToChannelResponse =
-                    await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), input.Message);
+                try
+                {
+                    var sendNotificationToChannelResponse = await _slackFacade.SendNotificationToChannel(capability.SlackChannelId.ToString(), input.Message);
 
-
-                if (!sendNotificationToChannelResponse.Ok)
+                    if (!sendNotificationToChannelResponse.Ok)
+                    {
+                        return StatusCode(
+                            StatusCodes.Status503ServiceUnavailable,
+                            $"An error occured trying to send notification: {sendNotificationToChannelResponse.Error}");
+                        }
+                    }
+                catch (Exception exp)
                 {
                     return StatusCode(
-                        StatusCodes.Status503ServiceUnavailable,
-                        $"An error occured trying to send notification: {sendNotificationToChannelResponse.Error}");
+                        StatusCodes.Status500InternalServerError,
+                        $"An error occured trying to send notification: {exp.Message}");
                 }
             }
 
