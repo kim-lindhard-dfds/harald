@@ -215,7 +215,11 @@ namespace Harald.Infrastructure.Slack
 
             users.Remove(userId);
 
-            await UpdateUserGroupUsers(userGroupId, users);
+            // TODO: Implement proper behaviour for disabling/enabling usergroups, because Slack doesn't allow usergroups with less than 1 member.
+            if (users.Count != 0)
+            {
+                await UpdateUserGroupUsers(userGroupId, users);
+            }
         }
 
         public async Task<GetConversationsResponse> GetConversations()
