@@ -2,9 +2,9 @@
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:41626",
+      "applicationUrl": "http://localhost:50900",
       "sslPort": 44310
     }
   },
@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/v1/channels?channelType=slack",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
@@ -20,15 +20,15 @@
     },
     "Harald.WebApi": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "api/values",
-      "applicationUrl": "http://localhost:5000",
+      "launchUrl": "api/v1/channels?channelType=slack",
+      "applicationUrl": "http://localhost:50900",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SLACK_API_BOT_USER_ID": "This-is-not-an-user-id",
         "HARALD_DATABASE_CONNECTIONSTRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=harald_db;",
         "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
         "HARALD_KAFKA_GROUP_ID": "harald-consumer",
-        "HARALD_KAFKA_ENABLE_AUTO_COMMIT": "false"
+        "HARALD_KAFKA_ENABLE_AUTO_COMMIT": "false",
+        "ASPNETCORE_URLS": "http://*:50900"
       }
     }
   }

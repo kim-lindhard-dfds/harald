@@ -39,6 +39,7 @@ namespace Harald.WebApi
                     }
 
                     config
+                        .AddUserSecrets("3ef49f6c-9399-4f25-a41e-6a3d4cd216cb")
                         .AddJsonFile(
                             path: "appsettings.json",
                             optional: true,
