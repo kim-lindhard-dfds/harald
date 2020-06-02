@@ -14,9 +14,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{5363531D-242B-425C-99E9-78E044B13946}"
 	ProjectSection(SolutionItems) = preProject
 		..\api-contracts\api-contract.yml = ..\api-contracts\api-contract.yml
+		..\docker-compose.yml = ..\docker-compose.yml
+		..\Dockerfile = ..\Dockerfile
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harald.Infrastructure.Slack.UnitTests", "Harald.Infrastructure.Slack.UnitTests\Harald.Infrastructure.Slack.UnitTests.csproj", "{6D2DA6C5-742F-4574-83CC-E038F25C09FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harald.Infrastructure.Slack.UnitTests", "Harald.Infrastructure.Slack.UnitTests\Harald.Infrastructure.Slack.UnitTests.csproj", "{6D2DA6C5-742F-4574-83CC-E038F25C09FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
