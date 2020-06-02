@@ -15,7 +15,6 @@ namespace Harald.WebApi.Domain
 
         public CapabilityMember(string email)
         {
-            Id = Guid.NewGuid();
             Email = email;
         }
     }

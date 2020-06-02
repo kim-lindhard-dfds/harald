@@ -54,6 +54,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
                 try
                 {
+                    //TODO: Should we remove this?
                     if (string.IsNullOrEmpty(capability.SlackUserGroupId))
                     {
                         var userGroup = await _slackService.EnsureUserGroupExists(capability.Name);
