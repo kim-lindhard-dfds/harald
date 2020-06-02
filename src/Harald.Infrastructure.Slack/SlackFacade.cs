@@ -106,7 +106,7 @@ namespace Harald.Infrastructure.Slack
 
             if(string.IsNullOrEmpty(token))
             { 
-                token = _options?.SlackApiRequestToken;
+                token = _options?.SLACK_API_AUTH_TOKEN;
             }
 
             if (_tokenCache.Get(tokenCacheKey) == null)
